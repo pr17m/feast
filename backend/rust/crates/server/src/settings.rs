@@ -34,6 +34,9 @@ pub struct Settings {
     #[serde(default)]
     pub media: MediaSection,
     pub geo: GeoSection,
+    /// Push notifications to the phone apps.
+    #[serde(default)]
+    pub push: PushSection,
     pub subscriptions: SubscriptionsSection,
     pub notifications: NotificationsSection,
     pub log: LogSection,
@@ -134,6 +137,39 @@ pub struct OtpSection {
     pub show_hint: bool,
     pub ttl_secs: u64,
     pub max_attempts: u8,
+    /// App-store review phone numbers (E.164) that sign in with `review_code`
+    /// instead of an SMS, even in production. FEAST__AUTH__OTP__REVIEW_NUMBERS (comma-separated).
+    #[serde(default, deserialize_with = "phone_list")]
+    pub review_numbers: Vec<String>,
+    /// FEAST__AUTH__OTP__REVIEW_CODE (6+ digits). Empty = review sign-in off.
+    #[serde(default)]
+    pub review_code: String,
+}
+
+/// A list of E.164 phone numbers from config or env. A single number in an env
+/// var arrives as an integer (the env source parses "+61400000000" as a number
+/// before splitting lists), so accept that, a comma-separated string, or a list.
+fn phone_list<'de, D: serde::Deserializer<'de>>(d: D) -> std::result::Result<Vec<String>, D::Error> {
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum One {
+        Number(u64),
+        Text(String),
+    }
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum Phones {
+        List(Vec<One>),
+        One(One),
+    }
+    let one = |o: One| match o {
+        One::Number(n) => vec![format!("+{n}")],
+        One::Text(t) => t.split(',').map(|p| p.trim().to_owned()).filter(|p| !p.is_empty()).collect(),
+    };
+    Ok(match Phones::deserialize(d)? {
+        Phones::List(items) => items.into_iter().flat_map(one).collect(),
+        Phones::One(o) => one(o),
+    })
 }
 
 #[derive(Debug, Clone, Default, Deserialize, Serialize)]
@@ -211,6 +247,25 @@ pub struct StockSection {
     pub app_name: String,
 }
 
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+pub struct PushSection {
+    /// "" (off) | log (development: log pushes) | fcm (Firebase Cloud Messaging; Android + iOS via APNs)
+    #[serde(default)]
+    pub provider: String,
+    #[serde(default)]
+    pub fcm: FcmSection,
+}
+
+#[derive(Debug, Clone, Default, Deserialize, Serialize)]
+pub struct FcmSection {
+    /// The Firebase service-account JSON key itself: FEAST__PUSH__FCM__CREDENTIALS_JSON
+    #[serde(default)]
+    pub credentials_json: String,
+    /// …or a path to the key file (e.g. a mounted secret).
+    #[serde(default)]
+    pub credentials_file: String,
+}
+
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct GeoSection {
     /// Request headers carrying the visitor's country, checked in order.
@@ -266,6 +321,8 @@ const SECRET_KEYS: &[&str] = &[
     "webhook_secret",
     "metrics_token",
     "seed_password",
+    "review_code",
+    "credentials_json",
 ];
 
 /// Find the config directory: the given one, else `../config` (running from `rust/`).
@@ -308,6 +365,7 @@ impl Settings {
                     .try_parsing(true)
                     .list_separator(",")
                     .with_list_parse_key("http.cors_origins")
+                    .with_list_parse_key("auth.otp.review_numbers")
                     .with_list_parse_key("auth.oauth.google.client_ids")
                     .with_list_parse_key("auth.oauth.apple.client_ids")
                     .with_list_parse_key("auth.oauth.facebook.client_ids"),
@@ -342,6 +400,12 @@ impl Settings {
         }
         if s.storage.local_dir.is_empty() {
             s.storage.local_dir = format!("data/{cc}/files");
+        }
+        // Cloud secret stores reject empty values; the Terraform modules store "-" for "not set".
+        for v in [&mut s.push.fcm.credentials_json, &mut s.auth.otp.review_code] {
+            if v.trim() == "-" {
+                v.clear();
+            }
         }
         s.validate()?;
         Ok(s)
@@ -386,6 +450,25 @@ impl Settings {
         if !["fixed", "log", "twilio"].contains(&self.auth.otp.provider.as_str()) {
             errors.push(format!("auth.otp.provider must be fixed|log|twilio, got '{}'", self.auth.otp.provider));
         }
+        if !["", "log", "fcm"].contains(&self.push.provider.as_str()) {
+            errors.push(format!("push.provider must be empty, log or fcm, got '{}'", self.push.provider));
+        }
+        if self.push.provider == "fcm" && self.push.fcm.credentials_json.trim().is_empty() && self.push.fcm.credentials_file.trim().is_empty() {
+            errors.push("push.provider=fcm needs push.fcm.credentials_json (FEAST__PUSH__FCM__CREDENTIALS_JSON) or push.fcm.credentials_file".into());
+        }
+        if !self.auth.otp.review_numbers.is_empty() {
+            let code = self.auth.otp.review_code.trim();
+            if code.len() < 6 || !code.chars().all(|c| c.is_ascii_digit()) {
+                errors.push("auth.otp.review_numbers needs auth.otp.review_code: 6 or more digits, not starting with 0 (FEAST__AUTH__OTP__REVIEW_CODE)".into());
+            } else if code == self.auth.otp.fixed_code {
+                errors.push("auth.otp.review_code must differ from auth.otp.fixed_code".into());
+            }
+            for n in &self.auth.otp.review_numbers {
+                if !n.starts_with('+') || n.len() < 8 || !n[1..].chars().all(|c| c.is_ascii_digit()) {
+                    errors.push(format!("auth.otp.review_numbers: '{n}' must be an E.164 number like +61400000000"));
+                }
+            }
+        }
         for (name, p) in self.oauth_providers() {
             if !["off", "demo", "live"].contains(&p.mode.as_str()) {
                 errors.push(format!("auth.oauth.{name}.mode must be off|demo|live"));
@@ -415,6 +498,12 @@ impl Settings {
             }
             if self.http.cors_origins.iter().any(|o| o == "*") {
                 errors.push("http.cors_origins must list your app origins in production (not *)".into());
+            }
+            if self.push.provider == "log" {
+                errors.push("push.provider=log only logs pushes: use fcm in production (or leave it empty to switch push off)".into());
+            }
+            if self.push.provider.is_empty() {
+                tracing_warn("push.provider is empty: the phone apps won't get push notifications (set fcm)");
             }
             if self.notifications.mode == "grpc" && self.notifications.service_token.is_empty() {
                 errors.push("notifications.service_token is required in production".into());
@@ -507,4 +596,47 @@ fn mask_url_passwords(s: &str) -> String {
         })
         .collect::<Vec<_>>()
         .join("\n")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[derive(Deserialize)]
+    struct P {
+        #[serde(deserialize_with = "phone_list")]
+        n: Vec<String>,
+    }
+
+    fn parse(v: serde_json::Value) -> Vec<String> {
+        serde_json::from_value::<P>(serde_json::json!({ "n": v })).unwrap().n
+    }
+
+    #[test]
+    fn review_numbers_from_env_or_config() {
+        assert_eq!(parse(serde_json::json!(61400000999u64)), vec!["+61400000999"]);
+        assert_eq!(parse(serde_json::json!("+61400000999, +919000000000")), vec!["+61400000999", "+919000000000"]);
+        assert_eq!(parse(serde_json::json!(["+61400000999", 919000000000u64])), vec!["+61400000999", "+919000000000"]);
+        assert!(parse(serde_json::json!([])).is_empty());
+        assert!(parse(serde_json::json!("")).is_empty());
+    }
+
+    #[test]
+    fn single_review_number_in_env_is_read() {
+        let cfg = Config::builder()
+            .set_default("n", Vec::<String>::new())
+            .unwrap()
+            .add_source(
+                Environment::with_prefix("FEASTTEST")
+                    .prefix_separator("__")
+                    .separator("__")
+                    .try_parsing(true)
+                    .list_separator(",")
+                    .with_list_parse_key("n")
+                    .source(Some([("FEASTTEST__N".to_owned(), "+61400000999".to_owned())].into_iter().collect())),
+            )
+            .build()
+            .unwrap();
+        assert_eq!(cfg.try_deserialize::<P>().unwrap().n, vec!["+61400000999"]);
+    }
 }

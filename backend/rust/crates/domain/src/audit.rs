@@ -417,6 +417,33 @@ pub fn records_for(env: &EventEnvelope) -> Vec<AuditRecord> {
         DomainEvent::DealReleased { bill_id, intent_id, reason } => {
             vec![AuditRecord { to_status: Some("RELEASED".into()), note: Some(format!("{reason} · payment {intent_id}")), ..rec("bill", bill_id) }]
         }
+        DomainEvent::PaymentNotApplied { intent_id, purpose, reference_id, amount, currency, reason } => vec![AuditRecord {
+            from_status: Some("CREATED".into()),
+            to_status: Some("NOT_APPLIED".into()),
+            amount: Some(*amount),
+            currency: Some(currency.clone()),
+            note: Some(format!("{} {reference_id} · {reason}", tag(purpose).to_lowercase())),
+            ..rec("payment", intent_id)
+        }],
+        DomainEvent::RefundRequested { refund: r } | DomainEvent::RefundSucceeded { refund: r } | DomainEvent::RefundFailed { refund: r } => {
+            let (from, to) = match &env.event {
+                DomainEvent::RefundRequested { .. } => (None, "PENDING"),
+                DomainEvent::RefundSucceeded { .. } => (Some("PENDING"), "SUCCEEDED"),
+                _ => (Some("PENDING"), "FAILED"),
+            };
+            let mut note = format!("{} · payment {} · {} {}", r.reason.label(), r.intent_id, tag(&r.purpose).to_lowercase(), r.reference_id);
+            if let Some(f) = r.failure.as_ref().filter(|_| to == "FAILED") {
+                note.push_str(&format!(" · {f}"));
+            }
+            vec![AuditRecord {
+                from_status: from.map(str::to_owned),
+                to_status: Some(to.into()),
+                amount: Some(r.amount),
+                currency: Some(r.currency.clone()),
+                note: Some(note),
+                ..rec("refund", &r.id)
+            }]
+        }
         // Not state changes: notifications, reminders.
         DomainEvent::NotificationCreated { .. } | DomainEvent::SubscriptionExpiring { .. } | DomainEvent::DocumentExpiring { .. } => vec![],
     };

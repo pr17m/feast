@@ -1,0 +1,36 @@
+{
+  "name": "feast-mobile",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Feast iOS and Android apps (Capacitor shells around the live Feast web app)",
+  "workspaces": [
+    "diner",
+    "partner"
+  ],
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0"
+  },
+  "scripts": {
+    "build": "node shared/build-www.mjs && node shared/configure-native.mjs",
+    "sync": "npm run build && npm run sync:diner && npm run sync:partner",
+    "sync:diner": "cd diner && npx cap sync",
+    "sync:partner": "cd partner && npx cap sync",
+    "copy": "npm run build && (cd diner && npx cap copy) && (cd partner && npx cap copy)",
+    "open:diner:ios": "cd diner && npx cap open ios",
+    "open:diner:android": "cd diner && npx cap open android",
+    "open:partner:ios": "cd partner && npx cap open ios",
+    "open:partner:android": "cd partner && npx cap open android",
+    "assets": "node shared/build-assets.mjs && (cd diner && npx capacitor-assets generate --ios --android) && (cd partner && npx capacitor-assets generate --ios --android)",
+    "apk:diner": "npm run sync:diner && cd diner/android && ./gradlew assembleDebug",
+    "apk:partner": "npm run sync:partner && cd partner/android && ./gradlew assembleDebug",
+    "aab:diner": "npm run sync:diner && cd diner/android && ./gradlew bundleRelease",
+    "aab:partner": "npm run sync:partner && cd partner/android && ./gradlew bundleRelease",
+    "typecheck": "tsc -p tsconfig.json",
+    "check": "npm run typecheck && npm run copy && node shared/check.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

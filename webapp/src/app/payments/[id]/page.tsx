@@ -8,6 +8,7 @@ import { useQuery } from "@/lib/hooks";
 import { money } from "@/lib/format";
 import { VisitActions } from "@/components/visit-actions";
 import { HistoryCard, OFFLINE_METHOD_LABEL, settlementLabel } from "@/components/audit";
+import { RefundsCard } from "@/components/refunds";
 
 export default function PaymentReceiptPage() {
   const { id } = useParams<{ id: string }>();
@@ -50,7 +51,10 @@ export default function PaymentReceiptPage() {
         {payment.settlement === "OFFLINE" && (
           <p className="rounded-lg bg-canvas px-3 py-2 text-xs text-muted ring-1 ring-line">{settlementLabel(payment)}: confirmed by {restaurant.name}.</p>
         )}
+        {payment.settlement === "OFFLINE" && <RefundsCard payment={payment} />}
       </Card>
+
+      {payment.settlement !== "OFFLINE" && <RefundsCard payment={payment} />}
 
       <p className="text-center text-sm text-muted">Show this screen to your server.</p>
       <div className="grid grid-cols-2 gap-3">

@@ -256,6 +256,8 @@ locals {
     FEAST__PAYMENTS__PROVIDERS__STRIPE__WEBHOOK_SECRET   = var.stripe_webhook_secret
     FEAST__PAYMENTS__PROVIDERS__RAZORPAY__WEBHOOK_SECRET = var.razorpay_webhook_secret
     FEAST__AUTH__OTP__TWILIO__AUTH_TOKEN         = var.twilio_auth_token
+    FEAST__PUSH__FCM__CREDENTIALS_JSON           = var.fcm_credentials_json
+    FEAST__AUTH__OTP__REVIEW_CODE                = var.review_code
   }
 }
 
@@ -402,6 +404,8 @@ locals {
       FEAST__AUTH__OTP__TWILIO__ACCOUNT_SID            = var.twilio_account_sid
       FEAST__AUTH__OTP__TWILIO__SERVICE_SID            = var.twilio_service_sid
       FEAST__HTTP__CORS_ORIGINS                        = local.url
+      FEAST__PUSH__PROVIDER                            = var.fcm_credentials_json != "" ? "fcm" : ""
+      FEAST__AUTH__OTP__REVIEW_NUMBERS                 = join(",", var.review_numbers)
     }, var.extra_env) : { name = k, value = v }
   ]
   api_secrets = [for k, p in aws_ssm_parameter.secret : { name = k, valueFrom = p.arn }]
@@ -440,7 +444,7 @@ resource "aws_ecs_task_definition" "app" {
       name         = "web"
       image        = "${aws_ecr_repository.web.repository_url}:${var.image_tag}"
       essential    = true
-      environment  = concat([{ name = "FEAST_API_INTERNAL_URL", value = "http://127.0.0.1:8080" }, { name = "FEAST_COUNTRY", value = var.country }], [for k, v in var.legal : { name = k, value = v }])
+      environment  = concat([{ name = "FEAST_API_INTERNAL_URL", value = "http://127.0.0.1:8080" }, { name = "FEAST_COUNTRY", value = var.country }], [for k, v in var.legal : { name = k, value = v }], [{ name = "FEAST_IOS_APP_IDS", value = join(",", var.ios_app_ids) }, { name = "FEAST_ANDROID_APPS", value = join(",", var.android_apps) }])
       portMappings = [{ containerPort = 3000 }]
       dependsOn    = [{ containerName = "api", condition = "HEALTHY" }]
       logConfiguration = local.log

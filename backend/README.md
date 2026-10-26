@@ -91,10 +91,58 @@ The worker relays them to the bus (Redis Streams). Consumers are idempotent:
   booking notifies the restaurant's owners.
 - **Gateways:** push to browsers over SSE at `/v1/me/events`.
 
-Delivery is at least once.
+Run as many gateways and workers as you like; side effects still happen once:
+
+- **One relay publishes at a time.** Workers take the `outbox-relay` lease in
+  the database (one atomic conditional upsert; renewed every tick, 15 s TTL),
+  so rows are published in order and once. If the holder dies, another worker
+  takes over when the lease expires.
+- **Consumers are idempotent by event id.** Notifications are unique per
+  `(event_id, user_id)`; each notification's push is claimed once per phone
+  (`push_deliveries`), so a sent push is never repeated, while a passing FCM
+  failure (5xx, 429, timeout) is retried by the sweeper with backoff (30 s,
+  1 min, 2 min…; 5 attempts, then given up and logged) and an uninstalled
+  app's token is dropped; audit records are written with the event in the
+  outbox transaction (record id `<event id>#<n>`).
+- **State-checked changes.** Cancelling a booking (diner, restaurant, admin,
+  account deletion) is a conditional update from its current status: of two
+  at once, one wins, so there is one notification, audit record and refund.
+- **One sweeper at a time** (`sweeper` lease): reminders, overdue cases,
+  unconfirmed counter payments, unsent refunds, push retries and expired
+  rate-limit/OTP rows.
 
 The reminder sweeper sends subscription-expiry reminders (7, 3 and 1 days
 before) and licence-expiry reminders (30, 7 and 1 days before).
+
+## Payments and refunds
+
+Money moves only through the payment provider (Stripe in Australia, Razorpay
+in India, `mock` in development). Every settlement path is idempotent and
+checks state in the same transaction:
+
+- A payment confirms its booking only while the booking still waits for it
+  (and, if its 20-minute hold lapsed, a table is still free). A payment that
+  arrives later — booking cancelled or expired, table taken, booking already
+  paid, bill already paid online or at the counter — never changes the booking
+  or bill: it is recorded as not applied and refunded in full, once.
+- **Refunds** (`refunds` table): created PENDING with an idempotency key (one
+  per reason, e.g. `booking-cancel:<id>`), sent to the provider with the refund
+  id as its idempotency key/receipt, and settled by the provider's answer or
+  its webhook (`refund.*` on Stripe, `refund.processed/failed` on Razorpay).
+  Final states stay final; unsent refunds are retried by the sweeper (up to 8
+  attempts, then FAILED and admins are told).
+- When: a diner cancels at least 2 hours before the slot, the restaurant or
+  Feast cancels, the diner deletes their account (same 2-hour rule), a late or
+  double payment, an admin's decision on a complaint ("refund advised"), or an
+  admin refund by hand (`POST /v1/admin/refunds`, with a note, never more than
+  what is left).
+- Counter (offline) payments never pass through Feast, so Feast never refunds
+  them; the restaurant does.
+
+**Typed bills.** The diner types the restaurant's final bill total, taxes
+included (GST in both Australia and India); Feast adds no tax on top and shows
+the line as "Bill total (incl. GST)". A deal applies to that total unless the
+offer's own terms say otherwise.
 
 ## Production notes
 
@@ -104,7 +152,11 @@ before) and licence-expiry reminders (30, 7 and 1 days before).
   - `/metrics` (Prometheus; protect it with `http.metrics_token`)
 - **Rate limits:** sign-in, OTP and signup are limited per client IP. Set
   `http.proxy_hops` to the number of proxies in front of the API so the real
-  IP is used.
+  IP is used. Counters (fixed one-minute windows) and OTP challenges (a hash of
+  the code, attempts, expiry) live in the database, so limits and codes hold
+  across every gateway instance; the sweeper deletes expired rows. If the
+  database can't be reached the limiter lets requests through (sign-in fails
+  anyway without it).
 - **Uploads:** documents are type-sniffed (PDF/JPG/PNG/WebP only), size-capped,
   and served only to the restaurant's owners and admins, with `nosniff` and
   `sandbox`.

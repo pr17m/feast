@@ -1,5 +1,6 @@
 "use client";
 
+import { InstallAppButton } from "@/components/pwa";
 import { createContext, useContext, useEffect, type ReactNode } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -27,6 +28,7 @@ import { Empty, Skeleton } from "@/components/ui";
 import { useLocalState, useQuery } from "@/lib/hooks";
 import type { RestaurantDetail } from "@/lib/api/types";
 import { setActiveCurrency } from "@/lib/format";
+import { useIsNativeApp } from "@/lib/platform";
 
 interface PartnerCtx {
   restaurant: RestaurantDetail;
@@ -132,7 +134,13 @@ export function PartnerFrame({ children }: { children: ReactNode }) {
     ) : null;
 
   return (
-    <PortalShell title={user?.role === "ADMIN" ? "Partner · admin" : "Partner"} nav={nav} switcher={switcher} preview={preview}>
+    <PortalShell
+      title={user?.role === "ADMIN" ? "Partner · admin" : "Partner"}
+      nav={nav}
+      switcher={switcher}
+      preview={preview}
+      sidebarExtra={<InstallAppButton app="partner" className="w-full rounded-xl px-3 py-2 text-sm font-semibold text-muted hover:bg-canvas hover:text-ink" />}
+    >
       {!list.data && <Skeleton className="h-64 w-full" />}
       {list.data && !restaurant && <Empty title="No restaurants linked to your account" body="Ask a Feast admin to link your restaurant to this login." />}
       {restaurant && (
@@ -182,11 +190,13 @@ export function PartnerFrame({ children }: { children: ReactNode }) {
  */
 function PartnerAlerts({ restaurant }: { restaurant: RestaurantDetail }) {
   const sub = useQuery(`subscription:${restaurant.id}`, (api) => api.partnerSubscription(restaurant.id));
+  // Store apps: say what's wrong, but plans are managed on the website (no buy links in the app).
+  const native = useIsNativeApp();
   const comp = useQuery(`compliance:${restaurant.id}`, (api) => api.compliance(restaurant.id));
   const alerts: {
     tone: "warn" | "danger" | "info";
     text: string;
-    href: string;
+    href?: string;
     cta: string;
   }[] = [];
   const c = comp.data;
@@ -219,25 +229,27 @@ function PartnerAlerts({ restaurant }: { restaurant: RestaurantDetail }) {
   if (s?.status === "EXPIRED")
     alerts.push({
       tone: "danger",
-      text: "Your subscription lapsed — your restaurant is hidden from diners.",
-      href: "/partner/subscription",
+      text: native
+        ? "Your subscription lapsed — your restaurant is hidden from diners. Manage your plan on the Feast website."
+        : "Your subscription lapsed — your restaurant is hidden from diners.",
+      href: native ? undefined : "/partner/subscription",
       cta: "Choose a plan",
     });
   else if (s?.status === "PAST_DUE")
     alerts.push({
       tone: "danger",
-      text: `Payment due — your listing will be hidden on ${new Date(s.hiddenAfter!).toLocaleDateString()}.`,
-      href: "/partner/subscription",
+      text: `Payment due — your listing will be hidden on ${new Date(s.hiddenAfter!).toLocaleDateString()}.${native ? " Manage your plan on the Feast website." : ""}`,
+      href: native ? undefined : "/partner/subscription",
       cta: "Pay now",
     });
-  else if (s?.status === "TRIAL" && (s.daysLeft ?? 99) <= 7)
+  else if (!native && s?.status === "TRIAL" && (s.daysLeft ?? 99) <= 7)
     alerts.push({
       tone: "warn",
       text: `Your free trial ends in ${s.daysLeft} day${s.daysLeft === 1 ? "" : "s"}. Pick a plan to stay listed.`,
       href: "/partner/subscription",
       cta: "See plans",
     });
-  else if (s?.status === "ACTIVE" && (s.daysLeft ?? 99) <= 7)
+  else if (!native && s?.status === "ACTIVE" && (s.daysLeft ?? 99) <= 7)
     alerts.push({
       tone: "info",
       text: `Your plan ends in ${s.daysLeft} day${s.daysLeft === 1 ? "" : "s"}.`,
@@ -260,9 +272,11 @@ function PartnerAlerts({ restaurant }: { restaurant: RestaurantDetail }) {
         >
           <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden />
           <span className="min-w-0 flex-1">{a.text}</span>
-          <Link href={a.href} className="shrink-0 font-semibold underline underline-offset-2">
-            {a.cta}
-          </Link>
+          {a.href && (
+            <Link href={a.href} className="shrink-0 font-semibold underline underline-offset-2">
+              {a.cta}
+            </Link>
+          )}
         </div>
       ))}
     </div>

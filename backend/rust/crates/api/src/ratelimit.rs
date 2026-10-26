@@ -1,59 +1,58 @@
 //! Per-client rate limiting for abuse-prone endpoints (OTP, sign-in, signup).
 //!
-//! Fixed one-minute windows per (route, client IP), kept in memory on each
-//! gateway instance. Behind a load balancer the effective limit is
-//! `limit × instances`; put a shared limiter (Redis, or the CDN/WAF) in front
-//! if that matters.
+//! Fixed one-minute windows per (route, client IP). The counters live in the
+//! shared database (`SharedStateRepository`), so the limit holds across every
+//! gateway instance behind a load balancer. If the counter store is down the
+//! request is let through (logged): rate limiting must never lock everyone out.
 
-use std::collections::HashMap;
 use std::net::IpAddr;
-use std::sync::Mutex;
-use std::time::{Duration, Instant};
+use std::sync::Arc;
 
 use axum::extract::{MatchedPath, Request, State};
 use axum::http::{HeaderValue, StatusCode};
 use axum::middleware::Next;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
+use feast_application::ports::SharedStateRepository;
 use serde_json::json;
 
 use crate::AppState;
 
-const WINDOW: Duration = Duration::from_secs(60);
-
-/// (route key, client IP) → (window start, hits in the window).
-type Hits = HashMap<(String, Option<IpAddr>), (Instant, u32)>;
+const WINDOW_MS: i64 = 60_000;
 
 pub struct RateLimiter {
     per_minute: u32,
-    hits: Mutex<Hits>,
+    store: Arc<dyn SharedStateRepository>,
 }
 
 impl RateLimiter {
-    pub fn new(per_minute: u32) -> Self {
-        Self { per_minute, hits: Mutex::new(HashMap::new()) }
+    pub fn new(per_minute: u32, store: Arc<dyn SharedStateRepository>) -> Self {
+        Self { per_minute, store }
     }
 
     /// `Ok` or the seconds until the window resets.
-    fn check(&self, route: &str, ip: Option<IpAddr>) -> Result<(), u64> {
+    async fn check_at(&self, route: &str, ip: Option<IpAddr>, now_ms: i64) -> Result<(), u64> {
         if self.per_minute == 0 {
             return Ok(());
         }
-        let now = Instant::now();
-        let Ok(mut hits) = self.hits.lock() else { return Ok(()) };
-        if hits.len() > 50_000 {
-            hits.retain(|_, (start, _)| now.duration_since(*start) < WINDOW);
-        }
-        let e = hits.entry((route.to_owned(), ip)).or_insert((now, 0));
-        if now.duration_since(e.0) >= WINDOW {
-            *e = (now, 0);
-        }
-        e.1 += 1;
-        if e.1 > self.per_minute {
-            Err(WINDOW.saturating_sub(now.duration_since(e.0)).as_secs().max(1))
+        let window = now_ms.div_euclid(WINDOW_MS);
+        let key = format!("{route}|{}", ip.map(|i| i.to_string()).unwrap_or_default());
+        let hits = match self.store.rate_hit(&key, window, (window + 2) * WINDOW_MS).await {
+            Ok(h) => h,
+            Err(e) => {
+                tracing::warn!(error = %e.message, "rate limit store unavailable; letting the request through");
+                return Ok(());
+            }
+        };
+        if hits > i64::from(self.per_minute) {
+            Err((((window + 1) * WINDOW_MS - now_ms) / 1000).max(1) as u64)
         } else {
             Ok(())
         }
+    }
+
+    async fn check(&self, route: &str, ip: Option<IpAddr>) -> Result<(), u64> {
+        self.check_at(route, ip, std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_millis() as i64).unwrap_or(0)).await
     }
 }
 
@@ -81,7 +80,7 @@ pub(crate) fn client_ip(req: &Request, proxy_hops: usize) -> Option<IpAddr> {
 
 pub async fn limit(State(s): State<AppState>, req: Request, next: Next) -> Response {
     let route = req.extensions().get::<MatchedPath>().map(|p| p.as_str().to_owned()).unwrap_or_default();
-    match s.limiter.check(&route, client_ip(&req, s.proxy_hops)) {
+    match s.limiter.check(&route, client_ip(&req, s.proxy_hops)).await {
         Ok(()) => next.run(req).await,
         Err(retry) => {
             let mut res =
@@ -99,15 +98,44 @@ pub async fn limit(State(s): State<AppState>, req: Request, next: Next) -> Respo
 mod tests {
     use super::*;
 
-    #[test]
-    fn limits_per_route_and_ip() {
-        let l = RateLimiter::new(2);
+    /// Two "instances" sharing one counter store, like gateways behind a load balancer.
+    #[derive(Default)]
+    struct Shared(std::sync::Mutex<std::collections::HashMap<(String, i64), i64>>);
+
+    #[async_trait::async_trait]
+    impl SharedStateRepository for Shared {
+        async fn rate_hit(&self, key: &str, window: i64, _: i64) -> feast_application::AppResult<i64> {
+            let mut m = self.0.lock().unwrap();
+            let e = m.entry((key.to_owned(), window)).or_insert(0);
+            *e += 1;
+            Ok(*e)
+        }
+        async fn otp_put(&self, _: &str, _: &str, _: i64) -> feast_application::AppResult<()> {
+            Ok(())
+        }
+        async fn otp_check(&self, _: &str, _: &str, _: i64, _: i64) -> feast_application::AppResult<bool> {
+            Ok(false)
+        }
+        async fn lease(&self, _: &str, _: &str, _: i64, _: i64) -> feast_application::AppResult<bool> {
+            Ok(true)
+        }
+        async fn purge_expired(&self, _: i64) -> feast_application::AppResult<u64> {
+            Ok(0)
+        }
+    }
+
+    #[tokio::test]
+    async fn limits_per_route_and_ip_across_instances() {
+        let store: Arc<dyn SharedStateRepository> = Arc::new(Shared::default());
+        let (a, b) = (RateLimiter::new(2, store.clone()), RateLimiter::new(2, store));
         let ip = Some("1.2.3.4".parse().unwrap());
-        assert!(l.check("/v1/auth/otp", ip).is_ok());
-        assert!(l.check("/v1/auth/otp", ip).is_ok());
-        assert!(l.check("/v1/auth/otp", ip).is_err());
-        assert!(l.check("/v1/auth/login", ip).is_ok());
-        assert!(l.check("/v1/auth/otp", Some("5.6.7.8".parse().unwrap())).is_ok());
+        let t = 1_800_000_010_000; // 10 s into a minute
+        assert!(a.check_at("/v1/auth/otp", ip, t).await.is_ok());
+        assert!(b.check_at("/v1/auth/otp", ip, t).await.is_ok(), "second hit, on the other instance");
+        assert_eq!(a.check_at("/v1/auth/otp", ip, t).await, Err(50), "the limit is shared, not per instance");
+        assert!(a.check_at("/v1/auth/login", ip, t).await.is_ok());
+        assert!(a.check_at("/v1/auth/otp", Some("5.6.7.8".parse().unwrap()), t).await.is_ok());
+        assert!(b.check_at("/v1/auth/otp", ip, t + 60_000).await.is_ok(), "a new minute starts afresh");
     }
 
     #[test]

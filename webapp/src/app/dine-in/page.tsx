@@ -1,10 +1,12 @@
 "use client";
 
+import { InstallAppCard } from "@/components/pwa";
 import Link from "next/link";
 import clsx from "clsx";
 import { useMemo } from "react";
 import { CalendarCheck, CheckCircle2, ChevronRight, MapPin, QrCode, Receipt } from "lucide-react";
 import { Art } from "@/components/art";
+import { ScanQrButton } from "@/components/native-app";
 import { useAuth, useToast } from "@/components/providers";
 import { Button, Card, Skeleton } from "@/components/ui";
 import { useMutation, useQuery } from "@/lib/hooks";
@@ -65,8 +67,11 @@ export default function AtTheRestaurantPage() {
             Restaurants on Feast display a QR code on the tables or at the counter. Point your phone camera at it to open the restaurant on Feast: pay the bill
             for today&apos;s booking, or book your next visit.
           </p>
+          <ScanQrButton className="mt-3 w-full" />
         </Card>
       </section>
+
+      <InstallAppCard app="diner" />
     </div>
   );
 }

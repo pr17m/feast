@@ -139,3 +139,35 @@ variable "legal" {
   type        = map(string)
   default     = {}
 }
+
+variable "fcm_credentials_json" {
+  description = "Firebase service-account JSON for phone app push notifications (FCM HTTP v1). Empty = push off. See deploy/STORE_RELEASE_CHECKLIST.md."
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "review_numbers" {
+  description = "Phone numbers (E.164) that App Store / Google Play reviewers sign in with, using review_code instead of a texted code. Empty = off."
+  type        = list(string)
+  default     = []
+}
+
+variable "review_code" {
+  description = "Sign-in code (6+ digits) for review_numbers. Required when review_numbers is set."
+  type        = string
+  default     = ""
+  sensitive   = true
+}
+
+variable "ios_app_ids" {
+  description = "iOS apps allowed to open this site's links, as \"<TeamID>.<bundle id>\" (served at /.well-known/apple-app-site-association)."
+  type        = list(string)
+  default     = []
+}
+
+variable "android_apps" {
+  description = "Android apps allowed to open this site's links, as \"<package>:<SHA-256 fingerprint>\" (several fingerprints separated by |; served at /.well-known/assetlinks.json)."
+  type        = list(string)
+  default     = []
+}

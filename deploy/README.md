@@ -128,6 +128,13 @@ Also for real data:
   - Azure: `min_replicas` / `max_replicas`
   - GCP: `min_instances` / `max_instances`
 
+## Phone apps
+
+Before submitting the iOS and Android apps, work through
+[`STORE_RELEASE_CHECKLIST.md`](STORE_RELEASE_CHECKLIST.md): push notifications
+(`fcm_credentials_json`), reviewer sign-in (`review_numbers`, `review_code`),
+app links (`ios_app_ids`, `android_apps`) and the account-deletion URL.
+
 ## Adding a country
 
 1. Copy `backend/config/countries/au.yaml` to e.g. `nz.yaml`. Set the currency, tax, payment provider, phone rules, licence documents and cities.

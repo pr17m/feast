@@ -39,6 +39,16 @@ NEXT_PUBLIC_API_MODE=http NEXT_PUBLIC_API_BASE_URL=http://localhost:8080 npm run
 
 `src/lib/api/http.ts` calls the REST routes listed in `src/lib/api/client.ts`.
 
+## Install as an app (no store needed)
+
+Feast is an installable web app, alongside the iOS/Android store apps:
+
+- **Two apps from one site.** "Feast" (diners, scope `/`, manifest `/manifest.webmanifest`) and "Feast Partner" (restaurants, scope `/partner`, manifest `/partner/manifest.webmanifest`). The admin area links no manifest, so it isn't installable. Manifests are built in `src/lib/pwa-manifest.ts`; icons come from `mobile/shared/assets` via `python3 webapp/scripts/pwa-icons.py` → `public/icons/`.
+- **Android, Chrome and Edge (desktop too).** The browser's install prompt is kept (inline script in the root layout) and offered as an "Install" card on the At the restaurant page and a confirmed booking (diners), and on the partner dashboard and sidebar ("Install app"). "Not now" hides it for 60 days. Users can always install from the browser menu.
+- **iPhone/iPad.** Safari has no install prompt, so the same cards open "Share → Add to Home Screen" steps. Hidden once opened from the home screen, and inside the store apps.
+- **Service worker** (`/sw.js`, source in `src/lib/service-worker.ts`, production builds only, never inside the store apps). Static assets are cache-first in a cache named after the build; pages are network-first, with the last visited copy kept for offline use and `/offline` for anything else. Never cached: `/v1/*` (all personal data), `runtime-config.js`, the worker, `/admin`, sign-in, payment and receipt pages, QR links, `/.well-known`, and Next's client data requests. A new deploy shows "New version of Feast available — Refresh".
+- **Not yet:** web push for installed apps (iOS 16.4+ supports it for home-screen apps; the server's FCM sender could be reused later). HTTPS is required for installation and the service worker (localhost is exempt).
+
 ## Tests
 
 `npm run test:e2e` drives every role at desktop and phone sizes with Playwright and saves screenshots to `e2e/shots/`. Start the app first (`npm run build && npm start -- -p 3100`), and install the browser once with `npx playwright install chromium`.

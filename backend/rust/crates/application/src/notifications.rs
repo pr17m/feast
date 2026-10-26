@@ -260,7 +260,12 @@ pub fn plan_for(env: &EventEnvelope) -> Option<Plan> {
         | DomainEvent::PaymentFailed { .. }
         | DomainEvent::DealClaimed { .. }
         | DomainEvent::DealUsed { .. }
-        | DomainEvent::DealReleased { .. } => None,
+        | DomainEvent::DealReleased { .. }
+        // Refund notifications come from `refund_plans`.
+        | DomainEvent::PaymentNotApplied { .. }
+        | DomainEvent::RefundRequested { .. }
+        | DomainEvent::RefundSucceeded { .. }
+        | DomainEvent::RefundFailed { .. } => None,
         DomainEvent::OfflinePaymentSubmitted { payment: p } => Some(Plan {
             recipients: owners(&p.restaurant.id),
             draft: NotificationDraft {
@@ -347,6 +352,59 @@ fn case_plan(role: CaseRole, c: &CaseRef, title: String, body: String) -> Plan {
 }
 
 /// Notifications for grievance, review and moderation events (one per party).
+/// Refunds: the diner hears when money is on its way back (and when it's done);
+/// admins hear when one fails, so someone follows up.
+pub fn refund_plans(env: &EventEnvelope) -> Vec<Plan> {
+    use feast_domain::refunds::Refund;
+    let link = |r: &Refund| match r.purpose {
+        PaymentPurpose::Booking => format!("/bookings/{}", r.reference_id),
+        _ => "/bookings".to_owned(),
+    };
+    let to_diner = |r: &Refund, title: String, body: String| {
+        r.user_id.clone().map(|uid| Plan {
+            recipients: Recipients::User(uid),
+            draft: NotificationDraft { kind: NotificationKind::PaymentReceived, title, body, link: Some(link(r)), restaurant_id: r.restaurant_id.clone() },
+        })
+    };
+    match &env.event {
+        DomainEvent::RefundRequested { refund: r } => to_diner(
+            r,
+            format!("Refund of {} started", fmt_money(r.amount, &r.currency)),
+            format!("{}. It goes back to your original payment method; banks usually take 5–10 business days.", r.reason.label()),
+        )
+        .into_iter()
+        .collect(),
+        DomainEvent::RefundSucceeded { refund: r } => to_diner(
+            r,
+            format!("Refund of {} sent", fmt_money(r.amount, &r.currency)),
+            "The payment provider has sent it back to your card or account.".to_owned(),
+        )
+        .into_iter()
+        .collect(),
+        DomainEvent::RefundFailed { refund: r } => {
+            let mut plans: Vec<Plan> = to_diner(
+                r,
+                format!("We couldn't refund {} automatically", fmt_money(r.amount, &r.currency)),
+                "Our team will sort it out and contact you.".to_owned(),
+            )
+            .into_iter()
+            .collect();
+            plans.push(Plan {
+                recipients: Recipients::Admins,
+                draft: NotificationDraft {
+                    kind: NotificationKind::PaymentReceived,
+                    title: format!("Refund failed · {}", fmt_money(r.amount, &r.currency)),
+                    body: format!("Refund {} for payment {}: {}", r.id, r.intent_id, r.failure.clone().unwrap_or_else(|| "the provider refused it".into())),
+                    link: Some("/admin/payments".into()),
+                    restaurant_id: r.restaurant_id.clone(),
+                },
+            });
+            plans
+        }
+        _ => vec![],
+    }
+}
+
 pub fn trust_plans(env: &EventEnvelope) -> Vec<Plan> {
     let owners = |r: &RestaurantRef, kind, title: String, body: String, link: &str| Plan {
         recipients: Recipients::OwnersOf(r.id.clone()),
@@ -505,8 +563,12 @@ pub fn trust_plans(env: &EventEnvelope) -> Vec<Plan> {
 impl Feast {
     /// Turn a domain event into notifications. Idempotent (keyed on event id).
     pub async fn project_notification(&self, env: &EventEnvelope) -> AppResult<usize> {
+        // A stored notification: push it to the user's phones.
+        if let DomainEvent::NotificationCreated { notification } = &env.event {
+            return self.deliver_push(notification).await;
+        }
         let mut sent = 0;
-        for plan in plan_for(env).into_iter().chain(trust_plans(env)) {
+        for plan in plan_for(env).into_iter().chain(trust_plans(env)).chain(refund_plans(env)) {
             let recipients: Vec<String> = match plan.recipients {
                 Recipients::OwnersOf(rid) => self.p.users.owners_of(&rid).await?.into_iter().map(|u| u.id).collect(),
                 Recipients::User(uid) => vec![uid],

@@ -1,8 +1,9 @@
 use async_trait::async_trait;
-use feast_application::ports::{BillingRepository, DealClaim};
+use feast_application::ports::{BillingRepository, DealClaim, Settled, SlotRoom};
 use feast_application::{AppError, AppResult};
 use feast_domain::deals::ClaimOutcome;
 use feast_domain::model::{Bill, BillPayment, Booking, PaymentIntent, PlatformPayment, SubscriptionRecord};
+use feast_domain::refunds::Refund;
 use feast_domain::EventEnvelope;
 use sqlx::{AnyConnection, Row};
 
@@ -160,12 +161,32 @@ impl BillingRepository for SqlStore {
         Ok(changed)
     }
 
-    async fn complete_bill_payment(&self, i: &PaymentIntent, bp: &BillPayment, events: &[EventEnvelope]) -> AppResult<bool> {
+    async fn complete_bill_payment(&self, i: &PaymentIntent, bp: &BillPayment, events: &[EventEnvelope]) -> AppResult<Settled> {
         let mut tx = self.pool().begin().await.map_err(db_err)?;
         if !update_intent_tx(&mut tx, i).await? {
-            return Ok(false); // already completed (webhook/confirm race)
+            return Ok(Settled::AlreadySettled); // already completed (webhook/confirm race)
         }
-        complete_bill_tx(&mut tx, i, bp).await?;
+        match complete_bill_tx(&mut tx, i, bp).await {
+            Ok(()) => {}
+            // Paid meanwhile by another payment (another card payment, or at the
+            // counter): this money can't count too. Nothing is written.
+            Err(e) if e.code == "ALREADY_PAID" => {
+                tx.rollback().await.map_err(db_err)?;
+                return Ok(Settled::NotApplied);
+            }
+            Err(e) => return Err(e),
+        }
+        insert_events(&mut tx, events).await?;
+        tx.commit().await.map_err(db_err)?;
+        Ok(Settled::Applied)
+    }
+
+    async fn record_unapplied_payment(&self, i: &PaymentIntent, refund: &Refund, events: &[EventEnvelope]) -> AppResult<bool> {
+        let mut tx = self.pool().begin().await.map_err(db_err)?;
+        if !update_intent_tx(&mut tx, i).await? {
+            return Ok(false);
+        }
+        super::refunds::insert_refund_tx(&mut tx, refund).await?;
         insert_events(&mut tx, events).await?;
         tx.commit().await.map_err(db_err)?;
         Ok(true)
@@ -280,12 +301,59 @@ impl BillingRepository for SqlStore {
         .get("n"))
     }
 
-    async fn complete_booking_payment(&self, i: &PaymentIntent, booking: &Booking, events: &[EventEnvelope]) -> AppResult<bool> {
+    async fn complete_booking_payment(&self, i: &PaymentIntent, booking: &Booking, room: &SlotRoom, events: &[EventEnvelope]) -> AppResult<Settled> {
         let mut tx = self.pool().begin().await.map_err(db_err)?;
         if !update_intent_tx(&mut tx, i).await? {
-            return Ok(false);
+            return Ok(Settled::AlreadySettled);
         }
-        sqlx::query("UPDATE bookings SET status = $1, data = $2, updated_at = $3 WHERE id = $4")
+        // Same slot lock as booking, so the table count below can't race a new booking.
+        sqlx::query("INSERT INTO slot_locks (restaurant_id, date, time, version) VALUES ($1, $2, $3, 0) ON CONFLICT DO NOTHING")
+            .bind(&booking.restaurant.id)
+            .bind(&booking.date)
+            .bind(&booking.time)
+            .execute(&mut *tx)
+            .await
+            .map_err(db_err)?;
+        sqlx::query("UPDATE slot_locks SET version = version + 1 WHERE restaurant_id = $1 AND date = $2 AND time = $3")
+            .bind(&booking.restaurant.id)
+            .bind(&booking.date)
+            .bind(&booking.time)
+            .execute(&mut *tx)
+            .await
+            .map_err(db_err)?;
+        let row = sqlx::query("SELECT status, created_at FROM bookings WHERE id = $1").bind(&booking.id).fetch_optional(&mut *tx).await.map_err(db_err)?;
+        let Some(row) = row else {
+            tx.rollback().await.map_err(db_err)?;
+            return Ok(Settled::NotApplied);
+        };
+        let status: String = row.get("status");
+        let created_at: String = row.get("created_at");
+        // Its table hold lapsed: confirm only if a table is still free (the
+        // count doesn't include this booking, whose hold no longer counts).
+        let hold_lapsed = created_at.as_str() < room.pending_since.as_str();
+        let table_free = if hold_lapsed {
+            let held: i64 = sqlx::query(&format!(
+                "SELECT COUNT(*) AS n FROM bookings WHERE restaurant_id = $1 AND date = $2 AND time = $3 AND id <> $4 AND {}",
+                super::bookings::holds_table(5)
+            ))
+            .bind(&booking.restaurant.id)
+            .bind(&booking.date)
+            .bind(&booking.time)
+            .bind(&booking.id)
+            .bind(&room.pending_since)
+            .fetch_one(&mut *tx)
+            .await
+            .map_err(db_err)?
+            .get("n");
+            held < room.tables
+        } else {
+            true
+        };
+        if !feast_domain::refunds::booking_payment_applies(&status, hold_lapsed, table_free) {
+            tx.rollback().await.map_err(db_err)?;
+            return Ok(Settled::NotApplied);
+        }
+        let res = sqlx::query("UPDATE bookings SET status = $1, data = $2, updated_at = $3 WHERE id = $4 AND status = 'PENDING_PAYMENT'")
             .bind(booking.status.as_str())
             .bind(to_json(booking)?)
             .bind(now_iso())
@@ -293,9 +361,13 @@ impl BillingRepository for SqlStore {
             .execute(&mut *tx)
             .await
             .map_err(db_err)?;
+        if res.rows_affected() != 1 {
+            tx.rollback().await.map_err(db_err)?;
+            return Ok(Settled::NotApplied);
+        }
         insert_events(&mut tx, events).await?;
         tx.commit().await.map_err(db_err)?;
-        Ok(true)
+        Ok(Settled::Applied)
     }
 
     async fn complete_subscription_payment(

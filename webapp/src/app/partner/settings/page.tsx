@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { History, LifeBuoy, PauseCircle, PlayCircle } from "lucide-react";
+import { DeleteAccountCard, PushSettingsCard } from "@/components/delete-account";
 import { PageHeader, Toggle } from "@/components/portal-shell";
 import { useToast } from "@/components/providers";
 import { Button, Card, Stepper } from "@/components/ui";
@@ -93,6 +94,8 @@ export default function PartnerSettings() {
       </fieldset>
 
       <SupportAccessCard />
+      <PushSettingsCard className="flex items-center gap-3 rounded-2xl bg-surface p-5 ring-1 ring-line" />
+      <DeleteAccountCard className="rounded-2xl bg-surface p-5 ring-1 ring-line" />
 
     </div>
   );

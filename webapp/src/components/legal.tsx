@@ -7,6 +7,7 @@ export const LEGAL_PAGES = [
   { href: "/legal/privacy", label: "Privacy policy" },
   { href: "/legal/refunds", label: "Refunds and cancellations" },
   { href: "/legal/contact", label: "Contact us" },
+  { href: "/account-deletion", label: "Delete your account" },
 ] as const;
 
 function fmtDate(iso: string) {

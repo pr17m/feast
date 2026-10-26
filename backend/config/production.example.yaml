@@ -25,6 +25,8 @@ auth:
   otp:
     provider: twilio       # FEAST__AUTH__OTP__TWILIO__ACCOUNT_SID / __AUTH_TOKEN / __SERVICE_SID
     show_hint: false
+    # App-store review account (Apple/Google reviewers sign in without SMS):
+    review_numbers: ["+61400000000"]   # set FEAST__AUTH__OTP__REVIEW_CODE (6+ digits, secret)
   oauth:
     google:
       mode: live
@@ -37,6 +39,9 @@ auth:
       mode: live
       client_ids: ["<facebook-app-id>"]
       # client_secret: set FEAST__AUTH__OAUTH__FACEBOOK__CLIENT_SECRET
+
+push:
+  provider: fcm            # set FEAST__PUSH__FCM__CREDENTIALS_JSON (Firebase service-account key)
 
 payments:
   force_provider: ""

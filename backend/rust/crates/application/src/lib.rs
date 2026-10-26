@@ -6,6 +6,7 @@
 //! the ports; delivery crates (HTTP gateway, gRPC services, workers) call the
 //! use cases on [`Feast`].
 
+pub mod account;
 pub mod actor;
 pub mod admin;
 pub mod audit_trail;
@@ -24,7 +25,9 @@ pub mod offline;
 pub mod partner;
 pub mod ports;
 pub mod processes;
+pub mod push;
 pub mod qr;
+pub mod refunds;
 pub mod subscriptions;
 pub mod trust;
 

@@ -5,7 +5,8 @@ import { CheckCircle2, AlertCircle } from "lucide-react";
 import { LiveProvider } from "./live";
 import { useLocalState } from "@/lib/hooks";
 import { getApi } from "@/lib/api/client";
-import { AUTH_EVENT, setToken } from "@/lib/api/token";
+import { AUTH_EVENT, getToken, setToken } from "@/lib/api/token";
+import { unregisterPush } from "@/lib/native";
 import { registerMarkets, setActiveCurrency } from "@/lib/format";
 import type { AuthSession, City, GeoResult, Market, Role, User } from "@/lib/api/types";
 
@@ -183,6 +184,8 @@ export function Providers({ children }: { children: ReactNode }) {
   }, []);
 
   const signOut = useCallback(async () => {
+    // In the iOS/Android apps: stop push notifications for this user on this device.
+    await unregisterPush(getToken());
     try {
       await (await getApi()).logout();
     } finally {

@@ -9,6 +9,7 @@ import { useToast } from "@/components/providers";
 import { SubscriptionBadge, daysLabel, shortDate } from "@/components/subscription-badge";
 import { Button, Card, Empty, ErrorState, Sheet, Skeleton } from "@/components/ui";
 import { useMutation, useQuery } from "@/lib/hooks";
+import { useIsNativeApp } from "@/lib/platform";
 import { money } from "@/lib/format";
 import type { PaymentIntent, PaymentMethod, PlanId, SubscriptionPlan } from "@/lib/api/types";
 import { usePartner } from "../partner-context";
@@ -31,6 +32,8 @@ export default function PartnerSubscription() {
   const [plan, setPlan] = useState<SubscriptionPlan | null>(null);
   const [intent, setIntent] = useState<PaymentIntent | null>(null);
   const start = useMutation((api, p: PlanId) => api.subscriptionCheckout(restaurant.id, p));
+  // In the store apps plans are bought on the website only (App Store / Google Play rules).
+  const native = useIsNativeApp();
 
   if (q.error) return <ErrorState error={q.error} onRetry={q.reload} />;
   if (!q.data) return <Skeleton className="h-96 w-full" />;
@@ -63,12 +66,12 @@ export default function PartnerSubscription() {
         {notLive && <p className="text-muted">Your free trial starts the day Feast approves your restaurant and it goes live.</p>}
         {s.status === "TRIAL" && (
           <p className="text-lg">
-            <b>{daysLabel(s)}</b> in your free trial — ends {shortDate(s.endsAt)}. Pick a plan any time; it starts when the trial ends.
+            <b>{daysLabel(s)}</b> in your free trial — ends {shortDate(s.endsAt)}.{native ? "" : " Pick a plan any time; it starts when the trial ends."}
           </p>
         )}
         {s.status === "ACTIVE" && (
           <p className="text-lg">
-            Listed until <b>{shortDate(s.endsAt)}</b> ({daysLabel(s)}). Renew early — new time is added to the end.
+            Listed until <b>{shortDate(s.endsAt)}</b> ({daysLabel(s)}).{native ? "" : " Renew early — new time is added to the end."}
           </p>
         )}
         {s.status === "PAST_DUE" && (
@@ -82,12 +85,20 @@ export default function PartnerSubscription() {
         {s.status === "EXPIRED" && (
           <p className="flex items-start gap-2 text-lg text-danger">
             <XCircle className="mt-1 h-5 w-5 shrink-0" aria-hidden />
-            <span>Your listing is hidden from diners since {shortDate(s.hiddenAfter)}. Choose a plan to appear again immediately.</span>
+            <span>
+              Your listing is hidden from diners since {shortDate(s.hiddenAfter)}.{native ? "" : " Choose a plan to appear again immediately."}
+            </span>
           </p>
         )}
         <p className="text-sm text-muted">After a period ends you have {rules.graceDays} days of grace before the listing is hidden.</p>
       </Card>
 
+      {native ? (
+        <Card>
+          <p className="font-semibold">Manage your plan on the Feast website</p>
+          <p className="text-sm text-muted">Plans and payments for your restaurant are handled on the website, not in the app.</p>
+        </Card>
+      ) : (
       <section aria-label="Plans">
         <h2 className="mb-3 font-bold">Plans</h2>
         <div className="grid gap-3 md:grid-cols-3">
@@ -111,6 +122,7 @@ export default function PartnerSubscription() {
           ))}
         </div>
       </section>
+      )}
 
       <section aria-label="Invoices">
         <h2 className="mb-3 flex items-center gap-2 font-bold">
@@ -166,7 +178,7 @@ export default function PartnerSubscription() {
       </section>
 
       <Sheet
-        open={!!plan && !intent}
+        open={!native && !!plan && !intent}
         onClose={start.pending ? () => {} : () => setPlan(null)}
         title={plan ? `${plan.name} plan` : ""}
         footer={
@@ -206,7 +218,7 @@ export default function PartnerSubscription() {
         )}
       </Sheet>
       <Checkout
-        open={!!intent}
+        open={!native && !!intent}
         intent={intent}
         title={plan ? `Feast ${plan.name.toLowerCase()} plan · ${restaurant.name}` : "Feast subscription"}
         onClose={() => {

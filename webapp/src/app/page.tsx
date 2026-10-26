@@ -4,6 +4,7 @@ import Link from "next/link";
 import { QrCode, Receipt, Search } from "lucide-react";
 import { useCity } from "@/components/providers";
 import { HomeSections } from "@/components/home-sections";
+import { ScanQrButton } from "@/components/native-app";
 import { ErrorState, Skeleton } from "@/components/ui";
 import { useQuery } from "@/lib/hooks";
 
@@ -41,6 +42,7 @@ export default function HomePage() {
           </span>
         </Link>
       </div>
+      <ScanQrButton className="w-full" variant="secondary" />
 
       {home.error && <ErrorState error={home.error} onRetry={home.reload} />}
       {!home.data && !home.error && (

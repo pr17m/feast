@@ -146,3 +146,49 @@ async fn demo_reset_restores_seed() {
     reset.reset().await.unwrap();
     assert_eq!(repos.restaurants.get("r_olive_ember").await.unwrap().unwrap().detail.name, "Olive & Ember");
 }
+
+#[tokio::test]
+async fn account_deletion_anonymises_and_push_tokens_round_trip() {
+    use feast_domain::push::{PushApp, PushPlatform, PushToken};
+    let (repos, _) = seeded_country("au", "Australia/Sydney").await;
+    // A seeded diner with bookings.
+    let users = repos.users.list().await.unwrap();
+    let diner = users.iter().find(|u| u.role == Role::Customer && u.phone.is_some()).unwrap().clone();
+    let bookings = repos.bookings.list_by_user(&diner.id).await.unwrap();
+    assert!(!bookings.is_empty(), "seeded diner has bookings");
+
+    // Push tokens and the switch.
+    let t = |tok: &str| PushToken {
+        token: tok.into(),
+        user_id: diner.id.clone(),
+        platform: PushPlatform::Android,
+        app: PushApp::Diner,
+        created_at: "2026-10-26T00:00:00Z".into(),
+        last_seen_at: "2026-10-26T00:00:00Z".into(),
+    };
+    repos.push_tokens.upsert_token(&t("tok_aaaaaaaaaaaaaaaa")).await.unwrap();
+    repos.push_tokens.upsert_token(&t("tok_aaaaaaaaaaaaaaaa")).await.unwrap(); // refresh, no duplicate
+    repos.push_tokens.upsert_token(&t("tok_bbbbbbbbbbbbbbbb")).await.unwrap();
+    assert_eq!(repos.push_tokens.tokens_for(&diner.id).await.unwrap().len(), 2);
+    assert!(!repos.push_tokens.delete_token("someone_else", "tok_bbbbbbbbbbbbbbbb").await.unwrap());
+    assert!(repos.push_tokens.delete_token(&diner.id, "tok_bbbbbbbbbbbbbbbb").await.unwrap());
+    assert!(repos.push_tokens.push_enabled(&diner.id).await.unwrap(), "on by default");
+    repos.push_tokens.set_push_enabled(&diner.id, false).await.unwrap();
+    assert!(!repos.push_tokens.push_enabled(&diner.id).await.unwrap());
+
+    repos.users.anonymise(&diner.id, "Former Feast diner", "2026-10-26T01:00:00Z").await.unwrap();
+    let u = repos.users.get(&diner.id).await.unwrap().unwrap();
+    assert_eq!(u.status, UserStatus::Deleted);
+    assert_eq!(u.name, "Former Feast diner");
+    assert!(u.phone.is_none() && u.email.is_none());
+    assert!(repos.users.find_by_phone(diner.phone.as_deref().unwrap()).await.unwrap().is_none());
+    assert!(repos.push_tokens.tokens_for(&diner.id).await.unwrap().is_empty());
+    for b in repos.bookings.list_by_user(&diner.id).await.unwrap() {
+        assert_eq!(b.contact.name, "Former Feast diner");
+        assert!(b.contact.phone.is_empty());
+        assert!(b.special_request.is_none());
+    }
+    for r in repos.reviews.reviews_by_user(&diner.id).await.unwrap() {
+        assert_eq!(r.author_name, "Former Feast diner");
+    }
+}

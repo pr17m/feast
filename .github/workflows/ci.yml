@@ -50,6 +50,11 @@ jobs:
           FEAST__NOTIFICATIONS__DATABASE_URL: postgres://feast:feast@127.0.0.1:5432/feast
           FEAST__BUS__KIND: redis
           FEAST__BUS__REDIS__URL: redis://127.0.0.1:6379/0
+          FEAST__PUSH__PROVIDER: log
+          FEAST__AUTH__OTP__REVIEW_NUMBERS: "+61400000999"
+          FEAST__AUTH__OTP__REVIEW_CODE: "246810"
+          FEAST_REVIEW_NUMBER: "+61400000999"
+          FEAST_REVIEW_CODE: "246810"
         run: |
           cargo build --locked -p feast-server
           sudo apt-get install -y -qq faketime
@@ -66,6 +71,8 @@ jobs:
           python3 ../spec/conformance/arrival_qr_flow.py http://localhost:8091 || (cat /tmp/api.log; exit 1)
           python3 ../spec/conformance/insights_flow.py http://localhost:8091 || (cat /tmp/api.log; exit 1)
           python3 ../spec/conformance/offline_audit_flow.py http://localhost:8091 || (cat /tmp/api.log; exit 1)
+          python3 ../spec/conformance/refunds_flow.py http://localhost:8091 || (cat /tmp/api.log; exit 1)
+          python3 ../spec/conformance/store_flow.py http://localhost:8091 || (cat /tmp/api.log; exit 1)   # last: pauses and re-opens a restaurant
 
   webapp:
     name: Web app (types, lint, build)
@@ -81,6 +88,22 @@ jobs:
       - run: npx tsc --noEmit
       - run: npx eslint src
       - run: npx next build
+
+  mobile:
+    name: Mobile apps (Capacitor config check)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: mobile/package-lock.json }
+      - run: npm ci
+      # Type-checks the Capacitor configs, copies the start page into both native
+      # projects and checks they match shared/configure-native.mjs. Native builds
+      # (Xcode, Gradle) run on a Mac / Android Studio — see mobile/README.md.
+      - run: npm run check
 
   e2e:
     name: Browser tests (India + Australia deployments)

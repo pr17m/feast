@@ -1,0 +1,5 @@
+{
+  "_comment": "Per-app settings shared by capacitor.config.ts and the start page. appId must match the bundle ID / application ID registered with Apple and Google.",
+  "diner": { "appId": "com.feast.diner", "appName": "Feast", "startPath": "/", "scheme": "feast", "tagline": "Book a table. Pay in the app. Save." },
+  "partner": { "appId": "com.feast.partner", "appName": "Feast Partner", "startPath": "/partner", "scheme": "feastpartner", "tagline": "Run your restaurant on Feast." }
+}

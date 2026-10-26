@@ -6,7 +6,7 @@ use std::time::Duration;
 
 use anyhow::{Context, Result};
 use feast_api::{router, ApiConfig, AppState, ReadinessCheck, RealtimeHub};
-use feast_application::processes::{run_notification_projector, run_outbox_relay, run_reminder_sweeper, RelayConfig};
+use feast_application::processes::{run_notification_projector, run_outbox_relay, run_reminder_sweeper, Lease, RelayConfig};
 use tokio::sync::watch;
 use tokio::task::JoinSet;
 use tracing_subscriber::EnvFilter;
@@ -176,10 +176,13 @@ pub async fn markets_sync(settings: Settings) -> Result<()> {
 
 fn spawn_worker(inf: &Infra, core: &wiring::Core, tasks: &mut JoinSet<Result<()>>, shutdown: watch::Receiver<bool>) {
     let s = &inf.settings;
+    // Unique per worker process: leases (relay, sweeper) are held by one at a time.
+    let holder = format!("{}-{}-{}", hostname(), std::process::id(), inf.ids.new_id("w"));
     let relay = run_outbox_relay(
         core.repos.outbox.clone(),
         inf.bus.clone(),
         RelayConfig { poll_interval: Duration::from_millis(s.outbox.poll_interval_ms), batch_size: s.outbox.batch_size },
+        Lease { store: core.repos.shared.clone(), clock: inf.clock.clone(), name: "outbox-relay", holder: holder.clone(), ttl: Duration::from_secs(15) },
         shutdown.clone(),
     );
     tasks.spawn(async move {
@@ -192,7 +195,7 @@ fn spawn_worker(inf: &Infra, core: &wiring::Core, tasks: &mut JoinSet<Result<()>
         projector.await;
         Ok(())
     });
-    let sweeper = run_reminder_sweeper(core.feast.clone(), Duration::from_secs(s.subscriptions.reminder_interval_secs.max(60)), shutdown);
+    let sweeper = run_reminder_sweeper(core.feast.clone(), Duration::from_secs(s.subscriptions.reminder_interval_secs.max(60)), holder, shutdown);
     tasks.spawn(async move {
         sweeper.await;
         Ok(())
@@ -216,7 +219,7 @@ async fn http_server(inf: Infra, core: wiring::Core, shutdown: watch::Receiver<b
         proxy_hops: s.http.proxy_hops,
         metrics: Arc::new(feast_api::Metrics::default()),
         metrics_token: Some(s.http.metrics_token.clone()).filter(|t| !t.is_empty()),
-        limiter: Arc::new(feast_api::RateLimiter::new(s.http.auth_rate_limit_per_minute)),
+        limiter: Arc::new(feast_api::RateLimiter::new(s.http.auth_rate_limit_per_minute, core.repos.shared.clone())),
     };
     let app = router(
         state,

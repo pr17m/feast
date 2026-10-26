@@ -35,6 +35,7 @@ export default function TermsPage() {
             "Diners sign in with a one-time code sent to their phone, or with Google, Apple or Facebook. Restaurant staff sign in with a password.",
             "Keep your sign-in details to yourself. You're responsible for what happens in your account.",
             "Give accurate details. We may suspend accounts used for fraud, abuse or repeated no-shows, and we tell you why.",
+            "You can delete your account at any time in the app. Upcoming bookings are cancelled; see the account deletion page for what we keep.",
           ]}
         />
       </Section>

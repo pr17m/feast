@@ -1,3 +1,7 @@
 # Development overrides (FEAST_ENV=development, the default).
 [app]
 env = "development"
+
+# Pushes are logged (no Firebase project needed); the apps still register tokens.
+[push]
+provider = "log"

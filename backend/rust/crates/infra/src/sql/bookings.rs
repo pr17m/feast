@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use async_trait::async_trait;
 use feast_application::ports::{BookingRepository, SlotRoom};
 use feast_application::{AppError, AppResult};
-use feast_domain::model::Booking;
+use feast_domain::model::{Booking, BookingStatus};
 use feast_domain::EventEnvelope;
 use sqlx::{AnyConnection, Row};
 
@@ -52,7 +52,7 @@ impl SqlStore {
 /// Bookings that occupy a table: confirmed/seated, or awaiting payment within
 /// the hold window (`$n` = the cutoff). Placeholders must appear in increasing
 /// order in every query (SQLite numbers `$n` by order of appearance).
-fn holds_table(n: u8) -> String {
+pub(super) fn holds_table(n: u8) -> String {
     format!("(status IN ('CONFIRMED', 'SEATED') OR (status = 'PENDING_PAYMENT' AND created_at >= ${n}))")
 }
 
@@ -125,6 +125,26 @@ impl BookingRepository for SqlStore {
             .map_err(db_err)?;
         insert_events(&mut tx, events).await?;
         tx.commit().await.map_err(db_err)
+    }
+
+    async fn update_if_status(&self, b: &Booking, expected: BookingStatus, events: &[EventEnvelope]) -> AppResult<bool> {
+        let mut tx = self.pool().begin().await.map_err(db_err)?;
+        let res = sqlx::query("UPDATE bookings SET status = $1, data = $2, updated_at = $3 WHERE id = $4 AND status = $5")
+            .bind(b.status.as_str())
+            .bind(to_json(b)?)
+            .bind(now_iso())
+            .bind(&b.id)
+            .bind(expected.as_str())
+            .execute(&mut *tx)
+            .await
+            .map_err(db_err)?;
+        if res.rows_affected() != 1 {
+            tx.rollback().await.map_err(db_err)?;
+            return Ok(false);
+        }
+        insert_events(&mut tx, events).await?;
+        tx.commit().await.map_err(db_err)?;
+        Ok(true)
     }
 
     async fn list_by_user(&self, user_id: &str) -> AppResult<Vec<Booking>> {

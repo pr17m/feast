@@ -12,7 +12,10 @@ mod compliance;
 mod markets;
 mod offline;
 mod outbox;
+mod push;
+mod refunds;
 mod restaurants;
+mod shared;
 mod subscriptions;
 mod trust;
 mod users;
@@ -72,7 +75,13 @@ impl SqlStore {
     pub async fn wipe(&self) -> AppResult<()> {
         let mut tx = self.pool.begin().await.map_err(db_err)?;
         for t in [
+            "refunds",
+            "rate_limit_hits",
+            "otp_challenges",
+            "leases",
+            "push_deliveries",
             "outbox",
+            "push_tokens",
             "audit_log",
             "audit_trail",
             "offline_payments",

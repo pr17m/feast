@@ -539,9 +539,28 @@ impl Feast {
             }
             _ => {}
         }
+        // A refund Feast decides is actually sent when the money went through
+        // Feast; a counter payment is refunded by the restaurant itself.
+        let paid_intent = match refund {
+            Some(_) => self.case_payment_intent(&c).await?,
+            None => None,
+        };
+        let how = match (&refund, &paid_intent) {
+            (Some(_), Some(i)) if i.provider != crate::offline::OFFLINE_PROVIDER => " Feast is refunding it to the diner's original payment method.",
+            (Some(_), Some(_)) => " This was paid at the counter, so the restaurant refunds the diner directly.",
+            (Some(_), None) => " There's no Feast payment to refund automatically; the restaurant refunds the diner directly.",
+            _ => "",
+        };
+        if let (Some(a), Some(i)) = (refund, &paid_intent) {
+            if i.provider != crate::offline::OFFLINE_PROVIDER {
+                // Validate before deciding, so a refund that can't happen doesn't close the case.
+                let left = feast_domain::refunds::refundable(i.amount, &self.p.refunds.refunds_for_intent(&i.id).await?);
+                feast_domain::refunds::check_amount(Some(a), left).map_err(|m| AppError::validation("INVALID_REFUND", m))?;
+            }
+        }
         let now = self.p.clock.now_iso();
         let text = match refund {
-            Some(a) => format!("Decision: {} ({}). {note}", req.decision.label(), crate::notifications::fmt_money(a, &c.currency)),
+            Some(a) => format!("Decision: {} ({}).{how} {note}", req.decision.label(), crate::notifications::fmt_money(a, &c.currency)),
             None => format!("Decision: {}. {note}", req.decision.label()),
         };
         c.messages.push(self.message(CaseRole::Feast, Self::author_name(CaseRole::Feast, &c, user), text, false, false));
@@ -551,7 +570,39 @@ impl Feast {
         c.outcome = Some(CaseOutcome { decision: req.decision, note, refund_amount: refund, decided_by: CaseRole::Feast, at: now });
         let ev = DomainEvent::CaseUpdated { case: c.reference(), change: CaseChange::Resolved, by: CaseRole::Feast };
         self.save_case(&mut c, vec![ev]).await?;
+        if let (Some(a), Some(i)) = (refund, paid_intent.filter(|i| i.provider != crate::offline::OFFLINE_PROVIDER)) {
+            let note = c.outcome.as_ref().map(|o| o.note.clone());
+            if let Err(e) = self
+                .start_refund(
+                    &i,
+                    Some(a),
+                    feast_domain::refunds::RefundReason::CaseDecision,
+                    format!("case:{}", c.id),
+                    note,
+                    Some(c.id.clone()),
+                    Some(user.id.clone()),
+                )
+                .await
+            {
+                tracing::error!(case = %c.id, error = %e.message, "couldn't start the refund Feast decided; refund it from the admin refunds page");
+            }
+        }
         Ok(c)
+    }
+
+    /// The Feast payment a case is about (its booking's upfront charge, or its bill payment).
+    async fn case_payment_intent(&self, c: &Case) -> AppResult<Option<PaymentIntent>> {
+        let intent_id = if let Some(bp) = &c.bill_payment_id {
+            self.p.billing.get_bill_payment(bp).await?.map(|p| p.payment.intent_id)
+        } else if let Some(b) = &c.booking_id {
+            self.p.bookings.get(b).await?.and_then(|b| b.payment).map(|p| p.intent_id)
+        } else {
+            None
+        };
+        match intent_id {
+            Some(id) => self.p.billing.get_intent(&id).await,
+            None => Ok(None),
+        }
     }
 
     /// A photo (JPG/PNG/WebP) supporting the case.

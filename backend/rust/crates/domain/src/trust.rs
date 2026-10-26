@@ -661,6 +661,10 @@ pub fn blended_rating(base: RatingBase, sum: i64, count: i64) -> (f64, i64) {
 
 /// "Kavya Rao" → "Kavya R."
 pub fn short_name(full: &str) -> String {
+    // Deleted accounts keep their placeholder name whole.
+    if full.starts_with("Former Feast ") {
+        return full.to_owned();
+    }
     let mut parts = full.split_whitespace();
     match (parts.next(), parts.last()) {
         (Some(first), Some(last)) => format!("{first} {}.", last.chars().next().unwrap_or_default().to_uppercase()),

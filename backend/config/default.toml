@@ -71,6 +71,11 @@ fixed_code = "123456"
 show_hint = true                          # return "Demo OTP: 123456" to the client
 ttl_secs = 300
 max_attempts = 5
+# App-store review accounts: these numbers sign in with review_code instead of
+# an SMS, in every environment (Apple/Google reviewers can't receive your SMS).
+# FEAST__AUTH__OTP__REVIEW_NUMBERS="+61400000000" and FEAST__AUTH__OTP__REVIEW_CODE (6+ digits, a secret).
+review_numbers = []
+review_code = ""
 
 [auth.otp.twilio]                         # Twilio Verify (https://www.twilio.com/verify) — India + Australia
 account_sid = ""                          # FEAST__AUTH__OTP__TWILIO__ACCOUNT_SID
@@ -149,6 +154,14 @@ local_dir = ""                            # empty = data/<country>/files
 # sas_token = ""
 # endpoint = ""                           # default https://<account>.blob.core.windows.net
 # prefix = ""
+
+# Push notifications to the phone apps (Feast, Feast Partner).
+[push]
+provider = ""                             # "" (off) | log (development: log each push) | fcm (Firebase Cloud Messaging; required for real phones)
+
+[push.fcm]
+credentials_json = ""                     # FEAST__PUSH__FCM__CREDENTIALS_JSON: the Firebase service-account JSON key
+credentials_file = ""                     # …or a path to it (mounted secret)
 
 # Visitor country detection for /v1/geo (show the right country / link to its deployment).
 [geo]

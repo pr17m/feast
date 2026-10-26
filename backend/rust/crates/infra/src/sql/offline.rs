@@ -86,6 +86,10 @@ impl OfflinePaymentRepository for SqlStore {
         self.offline_where(&format!("WHERE status = 'PENDING_APPROVAL' AND expires_at <= $1 ORDER BY expires_at LIMIT {}", limit.clamp(1, 500)), &[now]).await
     }
 
+    async fn pending_for_user(&self, user_id: &str) -> AppResult<Vec<OfflinePayment>> {
+        self.offline_where("WHERE user_id = $1 AND status = 'PENDING_APPROVAL' ORDER BY submitted_at DESC LIMIT 50", &[user_id]).await
+    }
+
     async fn approve_offline(&self, p: &OfflinePayment, intent: &PaymentIntent, bp: &BillPayment, events: &[EventEnvelope]) -> AppResult<bool> {
         let mut tx = self.pool().begin().await.map_err(db_err)?;
         if !decide_tx(&mut tx, p).await? {

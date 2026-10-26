@@ -1,7 +1,9 @@
 //! Long-running background processes (run by the `worker` role).
 //!
 //! - **Outbox relay**: reads events committed to the outbox table and publishes
-//!   them to the message bus, in order. At-least-once.
+//!   them to the message bus, in order. One relay publishes at a time (a
+//!   database lease), so several workers never publish the same rows twice in
+//!   the normal case; consumers are idempotent by event id for the rest.
 //! - **Notification projector**: consumes the bus as a competing-consumer group
 //!   and turns events into notifications (via the notification service).
 //!
@@ -13,7 +15,7 @@ use std::time::Duration;
 use tokio::sync::watch;
 
 use crate::context::Feast;
-use crate::ports::{MessageBus, OutboxRepository, SubscriptionMode};
+use crate::ports::{Clock, MessageBus, OutboxRepository, SharedStateRepository, SubscriptionMode};
 
 pub type Shutdown = watch::Receiver<bool>;
 
@@ -22,11 +24,51 @@ pub struct RelayConfig {
     pub batch_size: u32,
 }
 
-pub async fn run_outbox_relay(outbox: Arc<dyn OutboxRepository>, bus: Arc<dyn MessageBus>, cfg: RelayConfig, mut shutdown: Shutdown) {
-    tracing::info!("outbox relay started");
+/// A named lease in the shared database: at most one holder at a time across
+/// every worker process. The holder renews it on each tick; if it dies, the
+/// lease expires after `ttl` and another worker takes over.
+#[derive(Clone)]
+pub struct Lease {
+    pub store: Arc<dyn SharedStateRepository>,
+    pub clock: Arc<dyn Clock>,
+    pub name: &'static str,
+    pub holder: String,
+    pub ttl: Duration,
+}
+
+impl Lease {
+    /// Take or renew the lease. A database error counts as "not held" (fail
+    /// closed: better a short pause than two holders).
+    pub async fn hold(&self) -> bool {
+        let now = self.clock.now_ms();
+        match self.store.lease(self.name, &self.holder, now, now + self.ttl.as_millis() as i64).await {
+            Ok(held) => held,
+            Err(e) => {
+                tracing::warn!(lease = self.name, error = %e, "lease check failed");
+                false
+            }
+        }
+    }
+}
+
+pub async fn run_outbox_relay(outbox: Arc<dyn OutboxRepository>, bus: Arc<dyn MessageBus>, cfg: RelayConfig, lease: Lease, mut shutdown: Shutdown) {
+    tracing::info!(holder = %lease.holder, "outbox relay started");
+    let mut leader = false;
     loop {
         if *shutdown.borrow() {
             break;
+        }
+        let held = lease.hold().await;
+        if held != leader {
+            leader = held;
+            tracing::info!(holder = %lease.holder, leader, "outbox relay leadership changed");
+        }
+        if !held {
+            tokio::select! {
+                _ = tokio::time::sleep(cfg.poll_interval.max(Duration::from_millis(500))) => {}
+                _ = shutdown.changed() => {}
+            }
+            continue;
         }
         let mut published = 0usize;
         match outbox.fetch_pending(cfg.batch_size).await {
@@ -123,10 +165,15 @@ pub async fn run_notification_projector(feast: Arc<Feast>, bus: Arc<dyn MessageB
 /// Reminders: trial/subscription ending (7, 3, 1 days before) and licences
 /// expiring (30, 7, 1 days before). Runs periodically; each reminder's event
 /// id is deterministic, so re-runs (or several workers) never notify twice.
-pub async fn run_reminder_sweeper(feast: Arc<Feast>, every: Duration, mut shutdown: Shutdown) {
+pub async fn run_reminder_sweeper(feast: Arc<Feast>, every: Duration, holder: String, mut shutdown: Shutdown) {
     tracing::info!(?every, "reminder sweeper started");
+    let lease = Lease { store: feast.p.shared.clone(), clock: feast.p.clock.clone(), name: "sweeper", holder, ttl: every + Duration::from_secs(30) };
     loop {
-        crate::actor::scope(feast_domain::audit::Actor::system("sweeper"), sweep_once(&feast)).await;
+        // One worker sweeps at a time (each job is idempotent anyway; this
+        // keeps provider calls, e.g. refund retries, from doubling up).
+        if lease.hold().await {
+            crate::actor::scope(feast_domain::audit::Actor::system("sweeper"), sweep_once(&feast)).await;
+        }
         tokio::select! {
             _ = tokio::time::sleep(every) => {}
             _ = shutdown.changed() => break,
@@ -152,6 +199,21 @@ async fn sweep_once(feast: &Feast) {
             Ok(n) if n > 0 => tracing::info!(payments = n, "unconfirmed counter payments expired"),
             Ok(_) => {}
             Err(e) => tracing::warn!(error = %e, "counter payment sweep failed"),
+        }
+        match feast.sweep_refunds().await {
+            Ok(n) if n > 0 => tracing::info!(refunds = n, "pending refunds sent"),
+            Ok(_) => {}
+            Err(e) => tracing::warn!(error = %e, "refund sweep failed"),
+        }
+        match feast.retry_pushes().await {
+            Ok(n) if n > 0 => tracing::info!(pushes = n, "failed pushes sent on retry"),
+            Ok(_) => {}
+            Err(e) => tracing::warn!(error = %e, "push retry sweep failed"),
+        }
+        match feast.p.shared.purge_expired(feast.p.clock.now_ms()).await {
+            Ok(n) if n > 0 => tracing::debug!(rows = n, "expired rate-limit counters and codes removed"),
+            Ok(_) => {}
+            Err(e) => tracing::warn!(error = %e, "shared state cleanup failed"),
         }
         match feast.fill_missing_menu_photos().await {
             Ok(n) if n > 0 => tracing::info!(photos = n, "stock photos added to dishes without one"),

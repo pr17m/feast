@@ -9,9 +9,10 @@
 use std::collections::BTreeMap;
 
 use async_trait::async_trait;
-use feast_application::ports::{ChargeOutcome, CheckoutSession, PaymentGateway, WebhookEvent};
+use feast_application::ports::{ChargeOutcome, CheckoutSession, PaymentGateway, RefundOutcome, WebhookEvent};
 use feast_application::{AppError, AppResult};
 use feast_domain::model::{PaymentIntent, PaymentMethod, PaymentProviderInfo};
+use feast_domain::refunds::{Refund, RefundStatus};
 use hmac::{Hmac, Mac};
 use serde::Deserialize;
 use sha2::Sha256;
@@ -75,6 +76,23 @@ fn method_of(charge: Option<&serde_json::Value>) -> Option<PaymentMethod> {
     }
 }
 
+/// Stripe refund status: pending | requires_action | succeeded | failed | canceled.
+fn refund_status(s: &str) -> RefundStatus {
+    match s {
+        "succeeded" => RefundStatus::Succeeded,
+        "failed" | "canceled" => RefundStatus::Failed,
+        _ => RefundStatus::Pending,
+    }
+}
+
+#[derive(Deserialize)]
+struct StripeRefund {
+    id: String,
+    status: String,
+    #[serde(default)]
+    failure_reason: Option<String>,
+}
+
 #[derive(Deserialize)]
 struct Event {
     #[serde(rename = "type")]
@@ -125,6 +143,15 @@ impl StripeGateway {
         let e: Event = serde_json::from_slice(body).map_err(|err| AppError::validation("BAD_WEBHOOK", format!("stripe webhook: {err}")))?;
         let o = &e.data.object;
         let field = |k: &str| o.get(k).and_then(|v| v.as_str()).map(str::to_owned);
+        if matches!(e.kind.as_str(), "refund.created" | "refund.updated" | "refund.failed" | "charge.refund.updated") {
+            let Some(id) = field("id") else { return Ok(WebhookEvent::Ignored("refund event without id".into())) };
+            let status = if e.kind == "refund.failed" { RefundStatus::Failed } else { refund_status(&field("status").unwrap_or_default()) };
+            return Ok(WebhookEvent::Refund {
+                provider_refund_id: id,
+                status,
+                failure: (status == RefundStatus::Failed).then(|| field("failure_reason").unwrap_or_else(|| "Stripe couldn't process the refund".into())),
+            });
+        }
         let outcome = match e.kind.as_str() {
             "payment_intent.succeeded" => {
                 let method = o.pointer("/payment_method_types/0").and_then(|v| v.as_str()).and_then(|t| match t {
@@ -197,6 +224,47 @@ impl PaymentGateway for StripeGateway {
         })
     }
 
+    /// `POST /v1/refunds` against the PaymentIntent, with our refund id as
+    /// the `Idempotency-Key`, so a retry returns the same refund.
+    async fn refund(&self, intent: &PaymentIntent, refund: &Refund) -> AppResult<RefundOutcome> {
+        let pi = intent
+            .provider_ref
+            .as_deref()
+            .or(intent.provider_payment_id.as_deref())
+            .ok_or_else(|| provider_err("stripe", "refund: payment has no PaymentIntent"))?;
+        let form = [
+            ("payment_intent", pi.to_owned()),
+            ("amount", refund.amount.to_string()),
+            ("metadata[refund_id]", refund.id.clone()),
+            ("metadata[intent_id]", intent.id.clone()),
+            ("metadata[reason]", refund.reason.label().to_owned()),
+        ];
+        let res = self
+            .http
+            .post(format!("{}/v1/refunds", self.cfg.api_base))
+            .bearer_auth(&self.cfg.secret_key)
+            .header("Idempotency-Key", &refund.id)
+            .form(&form)
+            .send()
+            .await
+            .map_err(|e| provider_err("stripe", e))?;
+        let status = res.status();
+        if status.is_client_error() && status.as_u16() != 409 && status.as_u16() != 429 {
+            let text = res.text().await.unwrap_or_default();
+            let msg = serde_json::from_str::<serde_json::Value>(&text)
+                .ok()
+                .and_then(|v| v.pointer("/error/message").and_then(|d| d.as_str()).map(str::to_owned))
+                .unwrap_or_else(|| format!("Stripe refused the refund ({status})"));
+            return Ok(RefundOutcome { provider_refund_id: None, status: RefundStatus::Failed, failure: Some(msg) });
+        }
+        if !status.is_success() {
+            return Err(provider_err("stripe", format!("refund: {status}")));
+        }
+        let r: StripeRefund = res.json().await.map_err(|e| provider_err("stripe", e))?;
+        let st = refund_status(&r.status);
+        Ok(RefundOutcome { status: st, provider_refund_id: Some(r.id), failure: r.failure_reason.filter(|_| st == RefundStatus::Failed) })
+    }
+
     async fn charge(&self, intent: &PaymentIntent, _method: PaymentMethod, _simulate: bool, _payload: &BTreeMap<String, String>) -> AppResult<ChargeOutcome> {
         let Some(id) = &intent.provider_ref else { return Ok(ChargeOutcome::Failed("Payment wasn't started".into())) };
         let res = self
@@ -265,6 +333,29 @@ mod tests {
             g.webhook_at(&h(sign("whsec_test", now, failed)), failed, now).unwrap(),
             WebhookEvent::Payment { outcome: ChargeOutcome::Failed(m), .. } if m == "Your card was declined."
         ));
+    }
+
+    #[test]
+    fn refund_webhooks() {
+        let g = StripeGateway::new(StripeConfig {
+            secret_key: "sk_test".into(),
+            publishable_key: "pk_test".into(),
+            api_base: default_base(),
+            webhook_secret: "whsec_test".into(),
+        })
+        .unwrap();
+        let now = 1_800_000_000;
+        let h = |v: String| vec![("stripe-signature".to_owned(), v)];
+        let ok = br#"{"type":"refund.updated","data":{"object":{"id":"re_1","status":"succeeded","amount":3000,"payment_intent":"pi_123"}}}"#;
+        assert_eq!(
+            g.webhook_at(&h(sign("whsec_test", now, ok)), ok, now).unwrap(),
+            WebhookEvent::Refund { provider_refund_id: "re_1".into(), status: RefundStatus::Succeeded, failure: None }
+        );
+        let bad = br#"{"type":"refund.failed","data":{"object":{"id":"re_2","status":"failed","failure_reason":"expired_or_canceled_card"}}}"#;
+        assert_eq!(
+            g.webhook_at(&h(sign("whsec_test", now, bad)), bad, now).unwrap(),
+            WebhookEvent::Refund { provider_refund_id: "re_2".into(), status: RefundStatus::Failed, failure: Some("expired_or_canceled_card".into()) }
+        );
     }
 
     #[test]

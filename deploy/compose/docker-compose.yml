@@ -44,6 +44,12 @@ x-api: &api
     # Stock photos for dishes without an owner photo (empty = generated art). See .env example.
     FEAST__MEDIA__STOCK__PROVIDER: ${STOCK_PHOTOS_PROVIDER:-}
     FEAST__MEDIA__STOCK__ACCESS_KEY: ${UNSPLASH_ACCESS_KEY:-}
+    # Phone app push notifications (empty = off; "fcm" in production). See .env example.
+    FEAST__PUSH__PROVIDER: ${PUSH_PROVIDER:-}
+    FEAST__PUSH__FCM__CREDENTIALS_JSON: ${FCM_CREDENTIALS_JSON:-}
+    # App Store / Google Play review sign-in (empty = off). See deploy/STORE_RELEASE_CHECKLIST.md.
+    FEAST__AUTH__OTP__REVIEW_NUMBERS: ${REVIEW_NUMBERS:-}
+    FEAST__AUTH__OTP__REVIEW_CODE: ${REVIEW_CODE:-}
   extra_hosts:
     - "host.docker.internal:host-gateway"   # reach a Postgres running on this machine
   volumes:
@@ -120,6 +126,9 @@ services:
       FEAST_GOVERNING_LAW: ${FEAST_GOVERNING_LAW:-}
       FEAST_LEGAL_UPDATED: ${FEAST_LEGAL_UPDATED:-}
       FEAST_LEGAL_REVIEWED: ${FEAST_LEGAL_REVIEWED:-false}
+      # Phone app links (/.well-known/*); see webapp/src/lib/app-links.ts.
+      FEAST_IOS_APP_IDS: ${FEAST_IOS_APP_IDS:-}
+      FEAST_ANDROID_APPS: ${FEAST_ANDROID_APPS:-}
     ports:
       - "${PORT:-8080}:3000"
     depends_on: [api]

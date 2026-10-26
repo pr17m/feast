@@ -12,6 +12,12 @@ it, what changed, from which status to which, for how much, and when.
   in that same transaction, so the trail can't miss a committed change or keep
   one that rolled back, and a replayed event can't duplicate a record
   (record id = `<event id>#<n>`).
+* **Money going back:** a payment that couldn't be applied (`payment.not_applied`),
+  and every refund step (`refund.requested`, `refund.succeeded`,
+  `refund.failed`; entity `refund`, with the reason, payment and booking/bill
+  in the note). Admin refunds and case decisions are by the admin; automatic
+  ones by the diner/restaurant who cancelled, the provider's webhook or
+  `Feast · sweeper`.
 * **Directly, for changes without an event:** owner/staff content and settings
   edits, admin user and restaurant status changes, documents uploaded (`Feast::audit_direct`).
 * **Append-only:** `AuditTrailRepository` has only `append` and `query`; nothing

@@ -14,7 +14,33 @@ impl Feast {
         if !self.is_valid_phone(phone).await? {
             return Err(AppError::validation("INVALID_PHONE", "Enter a valid mobile number"));
         }
+        if self.is_review_number(phone) {
+            // App-store reviewers sign in with the fixed review code: no SMS.
+            return Ok(None);
+        }
         self.p.otp.send(phone).await
+    }
+
+    /// One of the configured app-store review numbers (review sign-in is on).
+    fn is_review_number(&self, phone: &str) -> bool {
+        !self.settings.review_code.is_empty() && self.settings.review_numbers.iter().any(|n| n == phone)
+    }
+
+    /// Check a sign-in code: the review code for review numbers, the OTP
+    /// provider for everyone else. A review sign-in is recorded in the audit trail.
+    pub(crate) async fn check_otp(&self, phone: &str, code: &str) -> AppResult<bool> {
+        if self.is_review_number(phone) {
+            let ok = constant_time_eq(code.trim().as_bytes(), self.settings.review_code.as_bytes());
+            if ok {
+                let tail: String = phone.chars().rev().take(3).collect::<Vec<_>>().into_iter().rev().collect();
+                self.audit_direct(None, "auth", "review_sign_in", "auth.review_sign_in", |a| {
+                    a.note = Some(format!("App-store review number …{tail} signed in with the review code"));
+                })
+                .await?;
+            }
+            return Ok(ok);
+        }
+        self.p.otp.verify(phone, code).await
     }
 
     /// Verify an OTP and sign in, creating a CUSTOMER account on first sign-in.
@@ -22,7 +48,7 @@ impl Feast {
         if !self.is_valid_phone(phone).await? {
             return Err(AppError::validation("INVALID_PHONE", "Enter a valid mobile number"));
         }
-        if !self.p.otp.verify(phone, otp).await? {
+        if !self.check_otp(phone, otp).await? {
             return Err(AppError::new(crate::error::ErrorKind::Unauthenticated, "BAD_OTP", "That OTP is incorrect"));
         }
         let user = match self.p.users.find_by_phone(phone).await? {
@@ -70,6 +96,7 @@ impl Feast {
                 crate::actor::set_user(&u);
                 Ok(u)
             }
+            Some(u) if u.status == UserStatus::Deleted => Err(AppError::unauthenticated("This account was deleted")),
             Some(_) => Err(AppError::new(crate::error::ErrorKind::Forbidden, "BLOCKED", "This account has been blocked")),
             None => Err(AppError::unauthenticated("Please sign in again")),
         }
@@ -162,4 +189,8 @@ fn display_name(ext: &ExternalIdentity, req: &OAuthLoginRequest) -> String {
         .map(|n| n.chars().take(80).collect())
         .or_else(|| ext.email.as_deref().and_then(|e| e.split('@').next()).filter(|s| !s.is_empty()).map(str::to_owned))
         .unwrap_or_else(|| "Feast diner".to_owned())
+}
+
+fn constant_time_eq(a: &[u8], b: &[u8]) -> bool {
+    a.len() == b.len() && a.iter().zip(b).fold(0u8, |acc, (x, y)| acc | (x ^ y)) == 0
 }

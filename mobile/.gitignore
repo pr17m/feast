@@ -1,0 +1,8 @@
+node_modules/
+# Generated from shared/www by `npm run build`
+diner/www/
+partner/www/
+# Copies of shared/assets made by `npm run assets`
+diner/assets/
+partner/assets/
+.DS_Store

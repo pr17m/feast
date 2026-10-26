@@ -7,6 +7,7 @@ import { money } from "@/lib/format";
 import { useMutation } from "@/lib/hooks";
 import { TestCheckout } from "./test-checkout";
 import { Button, Sheet } from "./ui";
+import { paymentApplied } from "@/components/refunds";
 
 /**
  * Pays a PaymentIntent with whatever provider the country's market uses. The
@@ -63,7 +64,7 @@ function RazorpayCheckout({ open, intent, title, onClose, onSuccess }: Props) {
           description: title,
           handler: async (r: Record<string, string>) => {
             const res = await confirm.run({ razorpay_payment_id: r.razorpay_payment_id, razorpay_order_id: r.razorpay_order_id, razorpay_signature: r.razorpay_signature });
-            if (res?.status === "SUCCEEDED") onSuccess(res);
+            if (res && paymentApplied(res)) onSuccess(res);
             else setError(res?.failureReason ?? "Payment couldn't be verified");
           },
           modal: { ondismiss: () => onClose() },
@@ -134,7 +135,7 @@ function StripeCheckout({ open, intent, title, onClose, onSuccess }: Props) {
     }
     const res = await confirm.run({ payment_intent_id: r.paymentIntent?.id ?? "" });
     setPaying(false);
-    if (res?.status === "SUCCEEDED") onSuccess(res);
+    if (res && paymentApplied(res)) onSuccess(res);
     else setError(res?.failureReason ?? "Payment couldn't be verified");
   };
 

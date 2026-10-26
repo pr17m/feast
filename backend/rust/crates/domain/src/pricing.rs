@@ -54,6 +54,19 @@ pub fn fmt_pct(p: f64) -> String {
     }
 }
 
+/// The diner types the restaurant's final bill total, taxes included (GST in
+/// Australia, where menu prices include it; GST in India, where the restaurant
+/// adds it on its bill). Feast never adds tax on top, and a deal applies to
+/// that total unless an offer says otherwise. The bill line says so.
+pub fn bill_total_label(tax_name: &str) -> String {
+    let tax = tax_name.trim();
+    if tax.is_empty() {
+        "Bill total (incl. taxes)".to_owned()
+    } else {
+        format!("Bill total (incl. {tax})")
+    }
+}
+
 pub fn payable_for(bill_amount: Paise, discount: Paise, tip: Paise) -> Paise {
     (bill_amount - discount + tip).max(0)
 }
@@ -81,6 +94,15 @@ mod tests {
     use super::*;
     use crate::market::tests::{australia, india};
     use crate::model::OfferScope;
+
+    #[test]
+    fn typed_bill_total_includes_tax() {
+        // Nothing is added on top of what the diner typed, in either country.
+        assert_eq!(bill_total_label(&australia().tax_name), "Bill total (incl. GST)");
+        assert_eq!(bill_total_label(&india().tax_name), "Bill total (incl. GST)");
+        assert_eq!(bill_total_label(""), "Bill total (incl. taxes)");
+        assert_eq!(payable_for(10_000, 1_500, 0), 8_500, "the deal applies to the typed total");
+    }
 
     fn pct(p: i64, max: Option<Paise>) -> Offer {
         Offer {

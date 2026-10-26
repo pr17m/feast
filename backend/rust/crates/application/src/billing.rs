@@ -11,7 +11,8 @@ use feast_domain::{DomainEvent, EventEnvelope};
 
 use crate::context::Feast;
 use crate::error::{AppError, AppResult, ErrorKind};
-use crate::ports::{ChargeOutcome, DealClaim, WebhookEvent};
+use crate::ports::{ChargeOutcome, DealClaim, Settled, SlotRoom, WebhookEvent};
+use feast_domain::refunds::RefundReason;
 
 /// What a webhook did (the HTTP layer answers 200 in every case, so the
 /// provider stops retrying).
@@ -88,7 +89,8 @@ impl Feast {
         }
         let discount = chosen.as_ref().map(|(_, d)| *d).unwrap_or(0);
 
-        let mut lines = vec![BillLine { label: "Bill amount".into(), amount, kind: BillLineKind::ItemTotal }];
+        // The typed amount already includes taxes: no tax line is added.
+        let mut lines = vec![BillLine { label: feast_domain::pricing::bill_total_label(&market.tax_name), amount, kind: BillLineKind::ItemTotal }];
         if let Some((o, d)) = &chosen {
             if *d > 0 {
                 lines.push(BillLine { label: o.title.clone(), amount: -d, kind: BillLineKind::Discount });
@@ -279,6 +281,7 @@ impl Feast {
             status: PaymentStatus::Created,
             result_ref: None,
             failure_reason: None,
+            provider_payment_id: None,
         };
         let session = gateway.create_order(&intent).await?;
         let mut checkout = session.checkout;
@@ -329,8 +332,13 @@ impl Feast {
         crate::actor::set_webhook(provider);
         let gateway = self.p.payments.get(provider).filter(|g| g.info().id == provider).ok_or_else(|| AppError::not_found("Payment provider"))?;
         let event = gateway.parse_webhook(headers, body)?;
-        let WebhookEvent::Payment { provider_ref, outcome, amount, currency } = event else {
-            return Ok(WebhookAck::Ignored);
+        let (provider_ref, outcome, amount, currency) = match event {
+            WebhookEvent::Payment { provider_ref, outcome, amount, currency } => (provider_ref, outcome, amount, currency),
+            WebhookEvent::Refund { provider_refund_id, status, failure } => {
+                let changed = self.apply_refund_webhook(provider, &provider_refund_id, status, failure).await?;
+                return Ok(if changed { WebhookAck::Settled } else { WebhookAck::Ignored });
+            }
+            WebhookEvent::Ignored(_) => return Ok(WebhookAck::Ignored),
         };
         let Some(intent) = self.p.billing.find_intent_by_provider_ref(provider, &provider_ref).await? else {
             tracing::warn!(provider, %provider_ref, "webhook for an unknown payment; ignoring");
@@ -392,11 +400,14 @@ impl Feast {
                 }
                 self.p.billing.get_intent(&intent.id).await?.ok_or_else(|| AppError::not_found("Payment"))
             }
-            ChargeOutcome::Succeeded { method: reported, .. } => {
+            ChargeOutcome::Succeeded { method: reported, provider_payment_id } => {
                 let method = reported.unwrap_or(method);
                 let payer = intent.user_id.clone().unwrap_or_default();
                 intent.status = PaymentStatus::Succeeded;
                 intent.failure_reason = None;
+                if provider_payment_id.is_some() {
+                    intent.provider_payment_id = provider_payment_id;
+                }
                 let paid = PaymentRef {
                     intent_id: intent.id.clone(),
                     method,
@@ -406,13 +417,14 @@ impl Feast {
                     paid_at: self.p.clock.now_iso(),
                     settlement: Settlement::Online,
                 };
-                let claimed = match intent.purpose {
+                let settled = match intent.purpose {
                     PaymentPurpose::Booking => {
                         let mut b = self.p.bookings.get(&intent.reference_id).await?.ok_or_else(|| AppError::not_found("Booking"))?;
-                        if b.status != BookingStatus::PendingPayment {
-                            // Cancelled meanwhile (or already confirmed): keep the record; refunds are handled by support.
-                            tracing::warn!(booking = %b.id, status = ?b.status, intent = %intent.id, "payment for a booking that is no longer awaiting payment");
-                        }
+                        let r = self.p.restaurants.get(&b.restaurant.id).await?.ok_or_else(|| AppError::not_found("Restaurant"))?;
+                        // The booking is confirmed only if it still awaits payment and
+                        // (when its hold lapsed) a table is still free — checked again
+                        // under the slot lock. A cancelled booking is never brought back.
+                        let room = SlotRoom { tables: feast_domain::slots::feast_tables(&r, &b.date, &b.time), pending_since: self.hold_cutoff() };
                         b.status = BookingStatus::Confirmed;
                         b.payment = Some(paid);
                         intent.result_ref = Some(b.id.clone());
@@ -431,7 +443,18 @@ impl Feast {
                                 },
                             ),
                         ];
-                        self.p.billing.complete_booking_payment(&intent, &b, &events).await?
+                        match self.p.billing.complete_booking_payment(&intent, &b, &room, &events).await? {
+                            Settled::NotApplied => {
+                                return self
+                                    .payment_not_applied(
+                                        intent,
+                                        RefundReason::PaidAfterCancellation,
+                                        "The booking was no longer waiting for this payment (cancelled, expired or its table taken).",
+                                    )
+                                    .await
+                            }
+                            other => other,
+                        }
                     }
                     PaymentPurpose::Bill => {
                         let bill = self.p.billing.get_bill(&intent.reference_id).await?.ok_or_else(|| AppError::not_found("Bill"))?;
@@ -445,11 +468,22 @@ impl Feast {
                         };
                         intent.result_ref = Some(bp.id.clone());
                         let events = self.bill_paid_events(&bill, &bp, &payer);
-                        self.p.billing.complete_bill_payment(&intent, &bp, &events).await?
+                        match self.p.billing.complete_bill_payment(&intent, &bp, &events).await? {
+                            Settled::NotApplied => {
+                                return self.payment_not_applied(intent, RefundReason::AlreadyPaid, "The bill was already paid by another payment.").await
+                            }
+                            other => other,
+                        }
                     }
-                    PaymentPurpose::Subscription => self.subscription_paid(&payer, &mut intent, method).await?,
+                    PaymentPurpose::Subscription => {
+                        if self.subscription_paid(&payer, &mut intent, method).await? {
+                            Settled::Applied
+                        } else {
+                            Settled::AlreadySettled
+                        }
+                    }
                 };
-                if !claimed {
+                if settled == Settled::AlreadySettled {
                     tracing::info!(intent = %intent.id, "payment was already settled (confirm/webhook race); nothing applied twice");
                 }
                 self.p.billing.get_intent(&intent.id).await?.ok_or_else(|| AppError::not_found("Payment"))

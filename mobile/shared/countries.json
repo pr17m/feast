@@ -1,0 +1,8 @@
+{
+  "_comment": "One entry per country deployment. Replace the example URLs with your live sites (https only) before building the apps. Order = order on the picker.",
+  "countries": [
+    { "code": "au", "name": "Australia", "flag": "🇦🇺", "url": "https://au.feast.example" },
+    { "code": "in", "name": "India", "flag": "🇮🇳", "url": "https://in.feast.example" }
+  ],
+  "extraNavigationHosts": ["*.stripe.com", "*.stripe.network", "*.razorpay.com"]
+}

@@ -2,18 +2,18 @@
 //!
 //! - [`FixedOtpService`]: every phone accepts one configured code (demo/dev).
 //! - [`LogOtpService`]: random 6-digit codes with expiry and attempt limits,
-//!   "delivered" by logging them. Replace the log line with an SMS provider
-//!   (MSG91, Twilio…) to go live; storage moves to Redis when running several
-//!   gateway instances.
+//!   "delivered" by logging them. Challenges (a hash of the code, attempts,
+//!   expiry) live in the shared database, so any gateway instance can check a
+//!   code another one issued.
 
-use std::collections::HashMap;
-use std::sync::Mutex;
-use std::time::{Duration, Instant};
+use std::sync::Arc;
+use std::time::Duration;
 
 use async_trait::async_trait;
-use feast_application::ports::OtpService;
+use feast_application::ports::{OtpService, SharedStateRepository};
 use feast_application::{AppError, AppResult};
 use rand::Rng;
+use sha2::{Digest, Sha256};
 
 pub struct FixedOtpService {
     code: String,
@@ -36,48 +36,38 @@ impl OtpService for FixedOtpService {
     }
 }
 
-struct Pending {
-    code: String,
-    expires: Instant,
-    attempts: u8,
-}
-
 pub struct LogOtpService {
     ttl: Duration,
     max_attempts: u8,
-    codes: Mutex<HashMap<String, Pending>>,
+    store: Arc<dyn SharedStateRepository>,
 }
 
 impl LogOtpService {
-    pub fn new(ttl: Duration, max_attempts: u8) -> Self {
-        Self { ttl, max_attempts, codes: Mutex::new(HashMap::new()) }
+    pub fn new(ttl: Duration, max_attempts: u8, store: Arc<dyn SharedStateRepository>) -> Self {
+        Self { ttl, max_attempts, store }
     }
+}
+
+/// Codes are never stored in clear: sha256(phone|code).
+fn code_hash(phone: &str, code: &str) -> String {
+    hex::encode(Sha256::digest(format!("{phone}|{code}").as_bytes()))
+}
+
+fn now_ms() -> i64 {
+    chrono::Utc::now().timestamp_millis()
 }
 
 #[async_trait]
 impl OtpService for LogOtpService {
     async fn send(&self, phone: &str) -> AppResult<Option<String>> {
         let code = format!("{:06}", rand::thread_rng().gen_range(0..1_000_000));
+        self.store.otp_put(phone, &code_hash(phone, &code), now_ms() + self.ttl.as_millis() as i64).await?;
         tracing::info!(phone, %code, "OTP issued (log delivery — wire an SMS provider for production)");
-        let mut codes = self.codes.lock().map_err(AppError::internal)?;
-        codes.retain(|_, p| p.expires > Instant::now());
-        codes.insert(phone.to_owned(), Pending { code, expires: Instant::now() + self.ttl, attempts: 0 });
         Ok(None)
     }
 
     async fn verify(&self, phone: &str, code: &str) -> AppResult<bool> {
-        let mut codes = self.codes.lock().map_err(AppError::internal)?;
-        let Some(p) = codes.get_mut(phone) else { return Ok(false) };
-        if p.expires <= Instant::now() || p.attempts >= self.max_attempts {
-            codes.remove(phone);
-            return Ok(false);
-        }
-        p.attempts += 1;
-        let ok = p.code == code;
-        if ok {
-            codes.remove(phone);
-        }
-        Ok(ok)
+        self.store.otp_check(phone, &code_hash(phone, code), now_ms(), i64::from(self.max_attempts)).await
     }
 }
 
@@ -153,19 +143,48 @@ impl OtpService for TwilioVerifyOtpService {
 mod tests {
     use super::*;
 
+    async fn store() -> Arc<dyn SharedStateRepository> {
+        Arc::new(crate::sql::SqlStore::connect("sqlite::memory:", 1).await.unwrap())
+    }
+
+    /// Issue a code (send() stores a random one and only logs it), then
+    /// replace it with a known one so the test can type it.
+    async fn issued(s: &Arc<dyn SharedStateRepository>, otp: &LogOtpService, phone: &str) -> String {
+        otp.send(phone).await.unwrap();
+        let code = "424242".to_owned();
+        s.otp_put(phone, &code_hash(phone, &code), now_ms() + 60_000).await.unwrap();
+        code
+    }
+
     #[tokio::test]
     async fn log_otp_single_use_and_attempt_limit() {
-        let s = LogOtpService::new(Duration::from_secs(60), 2);
-        s.send("9876543210").await.unwrap();
-        let code = s.codes.lock().unwrap().get("9876543210").unwrap().code.clone();
+        let st = store().await;
+        let s = LogOtpService::new(Duration::from_secs(60), 2, st.clone());
+        let code = issued(&st, &s, "9876543210").await;
         assert!(s.verify("9876543210", &code).await.unwrap());
         assert!(!s.verify("9876543210", &code).await.unwrap(), "codes are single-use");
 
-        s.send("9876543210").await.unwrap();
-        let code = s.codes.lock().unwrap().get("9876543210").unwrap().code.clone();
-        let wrong = if code == "000000" { "111111" } else { "000000" };
-        assert!(!s.verify("9876543210", wrong).await.unwrap());
-        assert!(!s.verify("9876543210", wrong).await.unwrap());
+        let code = issued(&st, &s, "9876543210").await;
+        assert!(!s.verify("9876543210", "000000").await.unwrap());
+        assert!(!s.verify("9876543210", "111111").await.unwrap());
         assert!(!s.verify("9876543210", &code).await.unwrap(), "locked after max attempts");
+    }
+
+    #[tokio::test]
+    async fn a_code_issued_by_one_instance_verifies_on_another() {
+        let st = store().await;
+        let a = LogOtpService::new(Duration::from_secs(60), 5, st.clone());
+        let b = LogOtpService::new(Duration::from_secs(60), 5, st.clone());
+        let code = issued(&st, &a, "+61400000001").await;
+        assert!(b.verify("+61400000001", &code).await.unwrap(), "instance B checks what instance A issued");
+        assert!(!a.verify("+61400000001", &code).await.unwrap(), "and it's used up for everyone");
+    }
+
+    #[tokio::test]
+    async fn expired_codes_fail() {
+        let st = store().await;
+        let s = LogOtpService::new(Duration::from_secs(60), 5, st.clone());
+        st.otp_put("+1", &code_hash("+1", "123456"), now_ms() - 1).await.unwrap();
+        assert!(!s.verify("+1", "123456").await.unwrap());
     }
 }

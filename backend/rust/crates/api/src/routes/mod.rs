@@ -12,10 +12,11 @@ mod media;
 mod offline;
 mod onboarding;
 mod partner;
+mod refunds;
 mod trust;
 mod webhooks;
 
-use axum::routing::{get, patch, post, put};
+use axum::routing::{delete, get, patch, post, put};
 use axum::Router;
 
 use crate::AppState;
@@ -25,7 +26,10 @@ pub fn api() -> Router<AppState> {
         // auth
         .route("/v1/auth/logout", post(auth::logout))
         .route("/v1/auth/providers", get(auth::providers))
-        .route("/v1/me", get(me::me))
+        .route("/v1/me", get(me::me).delete(me::delete_account))
+        .route("/v1/me/push-tokens", post(me::register_push_token))
+        .route("/v1/me/push-tokens/{token}", delete(me::unregister_push_token))
+        .route("/v1/me/push-settings", get(me::push_settings).put(me::set_push_settings))
         .route("/v1/me/identities", get(me::identities))
         .route("/v1/me/bookings", get(customer::my_bookings))
         .route("/v1/me/insights", get(insights::diner))
@@ -52,6 +56,7 @@ pub fn api() -> Router<AppState> {
         .route("/v1/bills/quote", post(customer::quote_bill))
         .route("/v1/payments/intents", post(customer::create_intent))
         .route("/v1/payments/intents/{id}/confirm", post(customer::confirm_payment))
+        .route("/v1/payments/intents/{id}/refunds", get(refunds::for_intent))
         .route("/v1/bill-payments/{id}", get(customer::bill_payment))
         .route("/v1/bill-payments/{id}/history", get(offline::bill_payment_history))
         .route("/v1/bills/{id}/offline-payment", get(offline::for_bill).post(offline::submit))
@@ -95,6 +100,7 @@ pub fn api() -> Router<AppState> {
         .route("/v1/admin/users/{id}", patch(admin::update_user))
         .route("/v1/admin/bookings", get(admin::bookings))
         .route("/v1/admin/payments", get(admin::payments))
+        .route("/v1/admin/refunds", get(refunds::admin_list).post(refunds::admin_create))
         .route("/v1/admin/demo/reset", post(admin::reset_demo))
         .route("/v1/admin/approvals", get(onboarding::approvals))
         .route("/v1/admin/documents/{id}/review", post(onboarding::review_document))

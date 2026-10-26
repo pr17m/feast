@@ -191,7 +191,18 @@ impl Feast {
         let mut updated = b;
         updated.status = BookingStatus::Cancelled;
         let ev = self.event(Some(&updated.restaurant.id), Some(&updated.user_id), DomainEvent::BookingCancelled { booking: updated.clone(), by });
-        self.p.bookings.update(&updated, &[ev]).await?;
+        // Only from CONFIRMED, and only once: of two cancellations (or a
+        // cancellation racing a check-in) one wins; the other changes nothing,
+        // so there is one event, one notification, one audit record and one refund.
+        if !self.p.bookings.update_if_status(&updated, BookingStatus::Confirmed, &[ev]).await? {
+            return Err(AppError::conflict("NOT_CANCELLABLE", "This booking was just changed and can no longer be cancelled"));
+        }
+        // An upfront table charge goes back per the refunds policy (in time, or
+        // cancelled by the restaurant/Feast). A refund that can't be sent right
+        // now is retried by the sweeper; it never undoes the cancellation.
+        if let Err(e) = self.refund_cancelled_booking(&updated, by, false).await {
+            tracing::error!(booking = %updated.id, error = %e.message, "couldn't start the refund for a cancelled booking");
+        }
         Ok(updated)
     }
 }

@@ -1,9 +1,73 @@
 "use client";
 
+import { useState } from "react";
 import { PageHeader, Stat } from "@/components/portal-shell";
-import { Empty, ErrorState, Skeleton } from "@/components/ui";
-import { useQuery } from "@/lib/hooks";
+import { Button, Card, Empty, ErrorState, Skeleton } from "@/components/ui";
+import { useMutation, useQuery } from "@/lib/hooks";
 import { money } from "@/lib/format";
+import { useToast } from "@/components/providers";
+import { RefundRow } from "@/components/refunds";
+
+const field = "h-10 w-full rounded-lg bg-canvas px-3 text-sm ring-1 ring-line outline-none focus:ring-2 focus:ring-brand";
+
+/** Refund (part of) an online payment by hand: never more than what's left, always with a
+ *  note (it is in the audit trail). Counter payments are refused: the restaurant refunds those. */
+function Refunds() {
+  const toast = useToast();
+  const list = useQuery("adminRefunds", (api) => api.adminRefunds());
+  const [intentId, setIntentId] = useState("");
+  const [amount, setAmount] = useState("");
+  const [note, setNote] = useState("");
+  const refund = useMutation((api) =>
+    api.adminRefund({ intentId: intentId.trim(), note: note.trim(), amount: amount.trim() ? Math.round(Number(amount) * 100) : undefined }),
+  );
+  const failed = (list.data ?? []).filter((r) => r.status === "FAILED").length;
+  return (
+    <Card className="space-y-4">
+      <div>
+        <h2 className="font-bold">Refunds</h2>
+        <p className="text-sm text-muted">
+          Cancellations, late or double payments and complaint decisions are refunded automatically. Refund by hand here; the amount can&apos;t exceed what&apos;s
+          left of the payment.{failed > 0 && <span className="font-semibold text-danger"> {failed} failed — follow up with the diner.</span>}
+        </p>
+      </div>
+      <form
+        className="grid gap-2 md:grid-cols-[1.4fr_0.6fr_2fr_auto]"
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const r = await refund.run();
+          if (r) {
+            toast(`Refund of ${money(r.amount, r.currency)} ${r.status === "FAILED" ? "failed" : "started"}`);
+            setIntentId("");
+            setAmount("");
+            setNote("");
+            list.reload();
+          }
+        }}
+      >
+        <input className={field} placeholder="Payment reference (pi_…)" value={intentId} onChange={(e) => setIntentId(e.target.value)} aria-label="Payment reference" required />
+        <input className={field} placeholder="Amount (all)" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} aria-label="Amount" />
+        <input className={field} placeholder="Why (shown in the audit trail)" value={note} onChange={(e) => setNote(e.target.value)} aria-label="Note" minLength={10} required />
+        <Button type="submit" loading={refund.pending}>
+          Refund
+        </Button>
+      </form>
+      {refund.error && <p role="alert" className="text-sm text-danger">{refund.error.message}</p>}
+      <div className="space-y-3">
+        {(list.data ?? []).slice(0, 20).map((r) => (
+          <div key={r.id} className="border-t border-line pt-3">
+            <RefundRow r={r} />
+            <p className="font-mono text-xs text-muted">
+              {r.intentId} · {r.purpose.toLowerCase()} {r.referenceId}
+              {r.note ? ` · ${r.note}` : ""}
+            </p>
+          </div>
+        ))}
+        {list.data && list.data.length === 0 && <p className="text-sm text-muted">No refunds yet.</p>}
+      </div>
+    </Card>
+  );
+}
 
 export default function AdminPayments() {
   const list = useQuery("adminPayments", (api) => api.adminPayments());
@@ -23,6 +87,7 @@ export default function AdminPayments() {
         <Stat label="Diner savings" value={money(savings)} />
         <Stat label="Top method" value={Object.entries(byMethod).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "—"} />
       </div>
+      <Refunds />
       {rows.length === 0 && <Empty title="No payments yet" />}
       {rows.length > 0 && (
         <>

@@ -30,6 +30,7 @@ pub mod media;
 pub mod oauth;
 pub mod otp;
 pub mod payments;
+pub mod push;
 pub mod seed;
 #[cfg(feature = "sql")]
 pub mod sql;

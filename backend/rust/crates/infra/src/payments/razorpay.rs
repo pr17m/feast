@@ -10,9 +10,10 @@
 use std::collections::BTreeMap;
 
 use async_trait::async_trait;
-use feast_application::ports::{ChargeOutcome, CheckoutSession, PaymentGateway, WebhookEvent};
+use feast_application::ports::{ChargeOutcome, CheckoutSession, PaymentGateway, RefundOutcome, WebhookEvent};
 use feast_application::{AppError, AppResult};
 use feast_domain::model::{PaymentIntent, PaymentMethod, PaymentProviderInfo};
+use feast_domain::refunds::{Refund, RefundStatus};
 use hmac::{Hmac, Mac};
 use serde::Deserialize;
 use sha2::Sha256;
@@ -51,6 +52,27 @@ impl RazorpayGateway {
             return Err(AppError::internal("payments.providers.razorpay: key_id and key_secret are required"));
         }
         Ok(Self { http: http_client()?, cfg })
+    }
+
+    /// The captured payment of an order (for intents settled before payment ids were stored).
+    async fn captured_payment_of(&self, intent: &PaymentIntent) -> AppResult<String> {
+        let order = intent.provider_ref.as_deref().ok_or_else(|| provider_err("razorpay", "refund: payment has no order"))?;
+        let res = self
+            .http
+            .get(format!("{}/v1/orders/{order}/payments", self.cfg.api_base))
+            .basic_auth(&self.cfg.key_id, Some(&self.cfg.key_secret))
+            .send()
+            .await
+            .map_err(|e| provider_err("razorpay", e))?;
+        if !res.status().is_success() {
+            return Err(provider_err("razorpay", format!("order payments: {}", res.status())));
+        }
+        let list: PaymentList = res.json().await.map_err(|e| provider_err("razorpay", e))?;
+        list.items
+            .into_iter()
+            .find(|p| p.status == "captured")
+            .and_then(|p| p.id)
+            .ok_or_else(|| provider_err("razorpay", "refund: no captured payment on the order"))
     }
 
     fn signature_ok(&self, order_id: &str, payment_id: &str, signature: &str) -> bool {
@@ -97,6 +119,34 @@ struct Webhook {
 #[derive(Deserialize)]
 struct WebhookPayload {
     payment: Option<Wrapped<Payment>>,
+    refund: Option<Wrapped<RefundEntity>>,
+}
+
+/// A Razorpay refund (`rfnd_…`): status pending | processed | failed.
+#[derive(Deserialize)]
+struct RefundEntity {
+    id: String,
+    status: String,
+    #[serde(default)]
+    receipt: Option<String>,
+}
+
+#[derive(Deserialize)]
+struct RefundList {
+    items: Vec<RefundEntity>,
+}
+
+#[derive(Deserialize)]
+struct PaymentList {
+    items: Vec<Payment>,
+}
+
+fn refund_status(s: &str) -> RefundStatus {
+    match s {
+        "processed" => RefundStatus::Succeeded,
+        "failed" => RefundStatus::Failed,
+        _ => RefundStatus::Pending,
+    }
 }
 
 #[derive(Deserialize)]
@@ -123,6 +173,17 @@ impl PaymentGateway for RazorpayGateway {
             return Err(AppError::new(feast_application::ErrorKind::Unauthenticated, "BAD_SIGNATURE", "Webhook signature doesn't match"));
         }
         let w: Webhook = serde_json::from_slice(body).map_err(|e| AppError::validation("BAD_WEBHOOK", format!("razorpay webhook: {e}")))?;
+        if w.event.starts_with("refund.") {
+            // refund.created / refund.processed / refund.failed (payload also carries the payment).
+            return Ok(match w.payload.refund.map(|r| r.entity) {
+                Some(r) => WebhookEvent::Refund {
+                    status: refund_status(&r.status),
+                    failure: (r.status == "failed").then(|| "Razorpay couldn't process the refund".to_owned()),
+                    provider_refund_id: r.id,
+                },
+                None => WebhookEvent::Ignored(w.event),
+            });
+        }
         let Some(p) = w.payload.payment.map(|p| p.entity) else { return Ok(WebhookEvent::Ignored(w.event)) };
         let Some(order_id) = p.order_id.clone() else { return Ok(WebhookEvent::Ignored("payment without order".into())) };
         let outcome = match w.event.as_str() {
@@ -175,6 +236,60 @@ impl PaymentGateway for RazorpayGateway {
                 ("name".into(), self.cfg.merchant_name.clone()),
             ]),
         })
+    }
+
+    /// `POST /v1/payments/{id}/refund` with `receipt` = our refund id. Before
+    /// sending, look for a refund with that receipt (a retry after a lost
+    /// answer), so the same refund is never made twice.
+    async fn refund(&self, intent: &PaymentIntent, refund: &Refund) -> AppResult<RefundOutcome> {
+        let payment_id = match &intent.provider_payment_id {
+            Some(id) => id.clone(),
+            None => self.captured_payment_of(intent).await?,
+        };
+        let auth = (&self.cfg.key_id, Some(&self.cfg.key_secret));
+        let res = self
+            .http
+            .get(format!("{}/v1/payments/{payment_id}/refunds", self.cfg.api_base))
+            .basic_auth(auth.0, auth.1)
+            .send()
+            .await
+            .map_err(|e| provider_err("razorpay", e))?;
+        if res.status().is_success() {
+            if let Ok(list) = res.json::<RefundList>().await {
+                if let Some(r) = list.items.into_iter().find(|r| r.receipt.as_deref() == Some(refund.id.as_str())) {
+                    return Ok(RefundOutcome { status: refund_status(&r.status), provider_refund_id: Some(r.id), failure: None });
+                }
+            }
+        }
+        let body = serde_json::json!({
+            "amount": refund.amount,
+            "speed": "normal",
+            "receipt": refund.id,
+            "notes": { "feast_refund_id": refund.id, "intent_id": intent.id, "reason": refund.reason.label() },
+        });
+        let res = self
+            .http
+            .post(format!("{}/v1/payments/{payment_id}/refund", self.cfg.api_base))
+            .basic_auth(auth.0, auth.1)
+            .json(&body)
+            .send()
+            .await
+            .map_err(|e| provider_err("razorpay", e))?;
+        let status = res.status();
+        if status.is_client_error() {
+            // Refused (e.g. amount above what's left): final.
+            let text = res.text().await.unwrap_or_default();
+            let msg = serde_json::from_str::<serde_json::Value>(&text)
+                .ok()
+                .and_then(|v| v.pointer("/error/description").and_then(|d| d.as_str()).map(str::to_owned))
+                .unwrap_or_else(|| format!("Razorpay refused the refund ({status})"));
+            return Ok(RefundOutcome { provider_refund_id: None, status: RefundStatus::Failed, failure: Some(msg) });
+        }
+        if !status.is_success() {
+            return Err(provider_err("razorpay", format!("refund: {status}")));
+        }
+        let r: RefundEntity = res.json().await.map_err(|e| provider_err("razorpay", e))?;
+        Ok(RefundOutcome { status: refund_status(&r.status), provider_refund_id: Some(r.id), failure: None })
     }
 
     async fn charge(&self, intent: &PaymentIntent, _method: PaymentMethod, _simulate: bool, payload: &BTreeMap<String, String>) -> AppResult<ChargeOutcome> {
@@ -246,6 +361,13 @@ mod tests {
         );
         let other = br#"{"event":"refund.created","payload":{}}"#;
         assert!(matches!(g.parse_webhook(&h(&hmac_hex("whsec_rzp_test", other)), other).unwrap(), WebhookEvent::Ignored(_)));
+        let refunded = br#"{"event":"refund.processed","payload":{"refund":{"entity":{"id":"rfnd_1","payment_id":"pay_9","amount":5000,"status":"processed"}},"payment":{"entity":{"id":"pay_9","order_id":"order_1","amount":120000,"currency":"INR","status":"refunded"}}}}"#;
+        assert_eq!(
+            g.parse_webhook(&h(&hmac_hex("whsec_rzp_test", refunded)), refunded).unwrap(),
+            WebhookEvent::Refund { provider_refund_id: "rfnd_1".into(), status: RefundStatus::Succeeded, failure: None }
+        );
+        let rfail = br#"{"event":"refund.failed","payload":{"refund":{"entity":{"id":"rfnd_2","status":"failed"}}}}"#;
+        assert!(matches!(g.parse_webhook(&h(&hmac_hex("whsec_rzp_test", rfail)), rfail).unwrap(), WebhookEvent::Refund { status: RefundStatus::Failed, .. }));
 
         // Deploy placeholders ("-" for an unset secret) never verify anything.
         for placeholder in ["", "-", " - ", "short"] {

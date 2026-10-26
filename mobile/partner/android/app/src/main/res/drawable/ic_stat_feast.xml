@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Notification icon: the Feast "f." mark, white on transparent (Android tints it). -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <path
+        android:pathData="M616,300 Q616,236 548,236 Q466,236 466,326 L466,780"
+        android:strokeWidth="112"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M362,452 L604,452"
+        android:strokeWidth="100"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M598,730 a62,62 0,1 1,124 0 a62,62 0,1 1,-124 0"
+        android:fillColor="#FFFFFFFF" />
+</vector>

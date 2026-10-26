@@ -912,6 +912,10 @@ pub struct PaymentIntent {
     pub status: PaymentStatus,
     pub result_ref: Option<String>,
     pub failure_reason: Option<String>,
+    /// The provider's id for the captured payment (Razorpay `pay_…`, Stripe
+    /// PaymentIntent id): what a refund is made against.
+    #[serde(default)]
+    pub provider_payment_id: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -972,6 +976,8 @@ impl Role {
 pub enum UserStatus {
     Active,
     Blocked,
+    /// The user deleted their account: personal data removed, sign-in refused.
+    Deleted,
 }
 
 #[skip_serializing_none]

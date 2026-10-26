@@ -24,6 +24,8 @@ export default function RefundsPage() {
             "Bookings without an upfront charge: cancel any time before your booking in the app. There's no fee.",
             "Bookings with an upfront charge: cancel at least 2 hours before your booking time and the charge is refunded in full. If you cancel later or don't turn up, the restaurant keeps it.",
             "If the restaurant cancels your booking, any upfront charge is refunded in full.",
+            "Deleting your account cancels your upcoming bookings; their upfront charges are refunded on the same 2-hour rule.",
+            "If a payment reaches us after your booking was cancelled or had expired, or you're charged twice for the same booking or bill, we refund it in full automatically.",
             "Refunds go back to the card or payment method you used. Your bank usually shows them within 5 to 10 business days.",
           ]}
         />
@@ -36,7 +38,8 @@ export default function RefundsPage() {
           within 72 hours and tell you both. If we decide you should get money back, the refund goes to your original payment method.
         </p>
         <p>
-          Bills paid at the restaurant&apos;s till rather than on Feast are between you and the restaurant, but you can still tell us about the problem.
+          Bills paid at the restaurant&apos;s till, including bills you chose to pay at the counter in the app, never pass through Feast, so any refund for
+          them comes from the restaurant, not Feast. You can still tell us about the problem.
         </p>
       </Section>
 

@@ -494,6 +494,50 @@ export interface PaymentIntent {
   userId?: string;
 }
 
+export type RefundStatus = "PENDING" | "SUCCEEDED" | "FAILED";
+export type RefundReason =
+  | "CANCELLED_IN_TIME"
+  | "CANCELLED_BY_RESTAURANT"
+  | "ACCOUNT_DELETED"
+  | "PAID_AFTER_CANCELLATION"
+  | "ALREADY_PAID"
+  | "CASE_DECISION"
+  | "MANUAL";
+
+/** Money Feast sends back for (part of) an online payment. Counter payments are never refunded by Feast. */
+export interface Refund {
+  id: string;
+  intentId: string;
+  purpose: PaymentPurpose;
+  /** Booking or bill the payment was for. */
+  referenceId: string;
+  userId?: string;
+  restaurantId?: string;
+  amount: Paise;
+  currency: string;
+  provider: string;
+  providerRefundId?: string;
+  status: RefundStatus;
+  reason: RefundReason;
+  idempotencyKey: string;
+  note?: string;
+  caseId?: string;
+  requestedBy?: string;
+  /** Why the provider refused it (FAILED), or why it hasn't been sent yet. */
+  failure?: string;
+  attempts: number;
+  createdAt: ISODateTime;
+  updatedAt: ISODateTime;
+}
+
+/** Admin: refund (part of) an online payment. `amount` omitted = everything still refundable. */
+export interface RefundRequest {
+  intentId: string;
+  amount?: Paise;
+  note: string;
+  caseId?: string;
+}
+
 export interface PaymentRef {
   intentId: string;
   method: PaymentMethod;
@@ -626,13 +670,57 @@ export interface User {
   email?: string;
   role: Role;
   restaurantIds: string[]; // OWNER only
-  status: "ACTIVE" | "BLOCKED";
+  /** DELETED: the user deleted their account (personal data removed). */
+  status: "ACTIVE" | "BLOCKED" | "DELETED";
   createdAt: ISODateTime;
 }
 
 export interface AuthSession {
   token: string;
   user: User;
+}
+
+// ---------- Account deletion & push (phone apps) ----------
+
+/** `DELETE /v1/me`. Diners who sign in by phone send a fresh `otp`; owners their `password`. */
+export interface DeleteAccountRequest {
+  /** Must be "DELETE". */
+  confirm: string;
+  otp?: string;
+  password?: string;
+}
+
+export interface DeleteAccountResult {
+  deleted: boolean;
+  /** Upcoming bookings that were cancelled. */
+  cancelledBookings: number;
+  /** Names of the restaurants paused because this was their only owner. */
+  pausedRestaurants: string[];
+}
+
+export type PushPlatform = "ios" | "android";
+/** diner = the "Feast" app; partner = "Feast Partner". */
+export type PushApp = "diner" | "partner";
+
+/** `POST /v1/me/push-tokens` */
+export interface PushTokenRequest {
+  platform: PushPlatform;
+  token: string;
+  app: PushApp;
+}
+
+export interface PushToken {
+  token: string;
+  userId: string;
+  platform: PushPlatform;
+  app: PushApp;
+  createdAt: ISODateTime;
+  lastSeenAt: ISODateTime;
+}
+
+/** `GET|PUT /v1/me/push-settings` */
+export interface PushSettings {
+  enabled: boolean;
 }
 
 // ---------- Partner (owner) portal ----------

@@ -2,12 +2,26 @@ use async_trait::async_trait;
 use feast_application::ports::{ExternalIdentity, UserRepository};
 use feast_application::AppResult;
 use feast_domain::model::{AuthProvider, Role, User, UserStatus};
+use serde_json::Value;
 use sqlx::any::AnyRow;
 use sqlx::{AnyConnection, Row};
 
 use super::{db_err, now_iso, SqlStore};
 
-const COLS: &str = "id, name, phone, email, role, status, created_at, password_hash";
+/// Rewrite the JSON `data` of every row in `table` where `key_col` = `user_id`.
+async fn scrub_rows(conn: &mut AnyConnection, table: &str, key_col: &str, user_id: &str, edit: impl Fn(&mut Value)) -> AppResult<()> {
+    let rows = sqlx::query(&format!("SELECT id, data FROM {table} WHERE {key_col} = $1")).bind(user_id).fetch_all(&mut *conn).await.map_err(db_err)?;
+    for r in rows {
+        let id: String = r.get("id");
+        let data: String = r.get("data");
+        let Ok(mut v) = serde_json::from_str::<Value>(&data) else { continue };
+        edit(&mut v);
+        sqlx::query(&format!("UPDATE {table} SET data = $1 WHERE id = $2")).bind(v.to_string()).bind(&id).execute(&mut *conn).await.map_err(db_err)?;
+    }
+    Ok(())
+}
+
+const COLS: &str = "id, name, phone, email, role, status, created_at, password_hash, deleted_at";
 
 fn row_to_user(r: &AnyRow, restaurant_ids: Vec<String>) -> User {
     User {
@@ -17,7 +31,13 @@ fn row_to_user(r: &AnyRow, restaurant_ids: Vec<String>) -> User {
         email: r.get("email"),
         role: Role::parse(r.get::<String, _>("role").as_str()).unwrap_or(Role::Customer),
         restaurant_ids,
-        status: if r.get::<String, _>("status") == "BLOCKED" { UserStatus::Blocked } else { UserStatus::Active },
+        status: if r.get::<Option<String>, _>("deleted_at").is_some() {
+            UserStatus::Deleted
+        } else if r.get::<String, _>("status") == "BLOCKED" {
+            UserStatus::Blocked
+        } else {
+            UserStatus::Active
+        },
         created_at: r.get("created_at"),
     }
 }
@@ -128,6 +148,60 @@ impl UserRepository for SqlStore {
             .await
             .map_err(db_err)?;
         write_links(&mut tx, user).await?;
+        tx.commit().await.map_err(db_err)
+    }
+
+    async fn anonymise(&self, user_id: &str, display_name: &str, at: &str) -> AppResult<()> {
+        let mut tx = self.pool().begin().await.map_err(db_err)?;
+        sqlx::query(
+            "UPDATE users SET name = $1, phone = NULL, email = NULL, password_hash = NULL, status = 'BLOCKED', deleted_at = $2, push_enabled = 0 WHERE id = $3",
+        )
+        .bind(display_name)
+        .bind(at)
+        .bind(user_id)
+        .execute(&mut *tx)
+        .await
+        .map_err(db_err)?;
+        for t in ["user_identities", "user_restaurants", "push_tokens"] {
+            sqlx::query(&format!("DELETE FROM {t} WHERE user_id = $1")).bind(user_id).execute(&mut *tx).await.map_err(db_err)?;
+        }
+        let name = Value::String(display_name.to_owned());
+        // Kept records: the restaurant still sees the visit, not the person.
+        scrub_rows(&mut tx, "bookings", "user_id", user_id, |v| {
+            if let Some(c) = v.get_mut("contact").and_then(Value::as_object_mut) {
+                c.insert("name".into(), name.clone());
+                c.insert("phone".into(), Value::String(String::new()));
+            }
+            if let Some(o) = v.as_object_mut() {
+                o.remove("specialRequest");
+            }
+        })
+        .await?;
+        scrub_rows(&mut tx, "offline_payments", "user_id", user_id, |v| {
+            if let Some(o) = v.as_object_mut() {
+                o.insert("dinerName".into(), name.clone());
+            }
+        })
+        .await?;
+        scrub_rows(&mut tx, "reviews", "user_id", user_id, |v| {
+            if let Some(o) = v.as_object_mut() {
+                o.insert("authorName".into(), name.clone());
+            }
+        })
+        .await?;
+        scrub_rows(&mut tx, "cases", "customer_id", user_id, |v| {
+            if let Some(c) = v.get_mut("customer").and_then(Value::as_object_mut) {
+                c.insert("name".into(), name.clone());
+            }
+            if let Some(msgs) = v.get_mut("messages").and_then(Value::as_array_mut) {
+                for m in msgs.iter_mut().filter(|m| m.get("author").and_then(Value::as_str) == Some("CUSTOMER")) {
+                    if let Some(o) = m.as_object_mut() {
+                        o.insert("authorName".into(), name.clone());
+                    }
+                }
+            }
+        })
+        .await?;
         tx.commit().await.map_err(db_err)
     }
 

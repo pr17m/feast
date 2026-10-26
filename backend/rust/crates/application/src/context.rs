@@ -35,6 +35,14 @@ pub struct Ports {
     /// Photos for dishes the owner hasn't photographed (stock search; no-op when unconfigured).
     pub dish_images: Arc<dyn DishImageFinder>,
     pub geo: Arc<dyn GeoLocator>,
+    /// Phones registered for push notifications.
+    pub push_tokens: Arc<dyn PushTokenRepository>,
+    /// Refunds sent through the payment providers.
+    pub refunds: Arc<dyn RefundRepository>,
+    /// Rate limits, one-time-code challenges and leases shared by every instance.
+    pub shared: Arc<dyn SharedStateRepository>,
+    /// Push delivery (FCM; `NoPush` when not configured).
+    pub push: Arc<dyn PushSender>,
     pub demo: Option<Arc<dyn DemoDataPort>>,
     pub notifications: Arc<dyn NotificationGateway>,
     /// Payment providers; each market names the one it uses.
@@ -63,6 +71,11 @@ pub struct AppSettings {
     /// Initial password for partner/admin accounts created by an admin (demo).
     /// Production should replace this with an invite/reset-link flow.
     pub initial_partner_password: String,
+    /// App-store review phone numbers (E.164) that sign in with `review_code`
+    /// instead of an SMS, in every environment. Empty = none.
+    pub review_numbers: Vec<String>,
+    /// The fixed code for `review_numbers` (empty = review sign-in off).
+    pub review_code: String,
 }
 
 #[derive(Clone)]

@@ -7,6 +7,7 @@ import type { PaymentIntent, PaymentMethod } from "@/lib/api/types";
 import { money } from "@/lib/format";
 import { useMutation } from "@/lib/hooks";
 import { Button, Sheet } from "./ui";
+import { paymentApplied } from "@/components/refunds";
 
 const METHODS: { id: PaymentMethod; label: string; hint: string; icon: typeof Smartphone }[] = [
   { id: "UPI", label: "UPI", hint: "Any UPI app", icon: Smartphone },
@@ -50,7 +51,7 @@ export function TestCheckout({
     setFailed(null);
     const res = await pay.run(intent.id, method, simulateFailure ? "failure" : "success");
     if (!res) return;
-    if (res.status === "SUCCEEDED") onSuccess(res);
+    if (res && paymentApplied(res)) onSuccess(res);
     else setFailed(res.failureReason ?? "Payment failed");
   };
 

@@ -20,6 +20,7 @@ use feast_infra::media::{UnsplashConfig, UnsplashFinder};
 use feast_infra::oauth::{self, OAuthMode, OAuthProviderConfig};
 use feast_infra::otp::{FixedOtpService, LogOtpService, TwilioVerifyOtpService};
 use feast_infra::payments::PaymentRegistry;
+use feast_infra::push::{FcmPushSender, LogPushSender, ServiceAccount};
 use feast_infra::seed::{ensure_market, CountryFile, DemoReset, DemoSeed, Seeder};
 use feast_infra::storage::{AzureBlobConfig, AzureBlobStorage, LocalDiskStorage, S3Config, S3Storage};
 use feast_notification::{GrpcNotificationGateway, NotificationService, SqlNotificationStore};
@@ -130,7 +131,7 @@ pub async fn core(inf: &Infra, caller: &str) -> Result<Core> {
     let notifications = notifications(inf, caller).await?;
 
     let otp: Arc<dyn OtpService> = match s.auth.otp.provider.as_str() {
-        "log" => Arc::new(LogOtpService::new(Duration::from_secs(s.auth.otp.ttl_secs), s.auth.otp.max_attempts)),
+        "log" => Arc::new(LogOtpService::new(Duration::from_secs(s.auth.otp.ttl_secs), s.auth.otp.max_attempts, repos.shared.clone())),
         "twilio" => {
             let t = &s.auth.otp.twilio;
             Arc::new(TwilioVerifyOtpService::new(&t.account_sid, &t.auth_token, &t.service_sid, None).map_err(|e| anyhow::anyhow!("{e}"))?)
@@ -173,6 +174,15 @@ pub async fn core(inf: &Infra, caller: &str) -> Result<Core> {
         }
         other => bail!("media.stock.provider '{other}' is not supported (use \"unsplash\" or leave empty)"),
     };
+    let push: Arc<dyn PushSender> = match s.push.provider.as_str() {
+        "fcm" => {
+            let account = ServiceAccount::load(&s.push.fcm.credentials_json, &s.push.fcm.credentials_file).map_err(|e| anyhow::anyhow!("{e}"))?;
+            tracing::info!(project = %account.project_id, "push notifications via Firebase Cloud Messaging");
+            Arc::new(FcmPushSender::new(account, None).map_err(|e| anyhow::anyhow!("{e}"))?)
+        }
+        "log" => Arc::new(LogPushSender),
+        _ => Arc::new(NoPush),
+    };
     let identity = oauth::build(&oauth_configs(s)).map_err(|e| anyhow::anyhow!("{e}"))?;
     let demo: Option<Arc<dyn DemoDataPort>> =
         s.app.demo_mode.then(|| Arc::new(DemoReset { seeder: seeder(inf, &repos, passwords.clone(), s.app.seed_history) }) as Arc<dyn DemoDataPort>);
@@ -194,6 +204,10 @@ pub async fn core(inf: &Infra, caller: &str) -> Result<Core> {
         files: inf.files.clone(),
         dish_images,
         geo,
+        push_tokens: repos.push_tokens.clone(),
+        refunds: repos.refunds.clone(),
+        shared: repos.shared.clone(),
+        push,
         demo,
         notifications: notifications.gateway(),
         payments: Arc::new(payments),
@@ -211,6 +225,8 @@ pub async fn core(inf: &Infra, caller: &str) -> Result<Core> {
         subscription_rules: feast_domain::subscription::Rules { trial_days: s.subscriptions.trial_days, grace_days: s.subscriptions.grace_days },
         max_upload_bytes: s.http.max_upload_bytes,
         initial_partner_password: s.app.initial_partner_password.clone(),
+        review_numbers: s.auth.otp.review_numbers.iter().map(|n| n.trim().to_owned()).filter(|n| !n.is_empty()).collect(),
+        review_code: s.auth.otp.review_code.trim().to_owned(),
     };
     Ok(Core { feast: Arc::new(Feast::new(ports, settings)), repos, notifications })
 }

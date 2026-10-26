@@ -8,6 +8,7 @@ import { Eye, LogOut } from "lucide-react";
 import { Logo } from "./app-shell";
 import { NotificationBell } from "./notification-bell";
 import { useAuth } from "./providers";
+import { ChangeCountryButton } from "./native-app";
 
 export interface PortalNavItem {
   href: string;
@@ -26,6 +27,7 @@ export function PortalShell({
   nav,
   switcher,
   preview,
+  sidebarExtra,
   children,
 }: {
   title: string;
@@ -33,6 +35,8 @@ export function PortalShell({
   switcher?: ReactNode;
   /** "View as customer" link to the selected restaurant's public page. `href: null` = not public yet. */
   preview?: { href: string | null; note?: string };
+  /** Extra sidebar entry above the account row (the partner app's "Install app"). */
+  sidebarExtra?: ReactNode;
   children: ReactNode;
 }) {
   const path = usePathname();
@@ -87,6 +91,7 @@ export function PortalShell({
                 <Eye className="mt-0.5 h-4 w-4 shrink-0" aria-hidden /> {preview.note ?? "Not visible to customers yet"}
               </p>
             ))}
+          {sidebarExtra}
           <div className="flex items-center gap-3 rounded-xl px-3 py-2">
             <span className="grid h-8 w-8 place-items-center rounded-full bg-brand-soft text-sm font-bold text-brand-strong">{user?.name.slice(0, 1)}</span>
             <span className="min-w-0 flex-1">
@@ -97,6 +102,7 @@ export function PortalShell({
               <LogOut className="h-4 w-4" />
             </button>
           </div>
+          <ChangeCountryButton className="rounded-xl px-3 py-2 text-sm font-medium text-muted hover:text-ink" />
         </div>
       </aside>
 
@@ -111,6 +117,7 @@ export function PortalShell({
               <Eye className="h-5 w-5" aria-hidden />
             </Link>
           )}
+          <ChangeCountryButton compact className="grid h-9 w-9 place-items-center rounded-lg text-muted" />
           <button onClick={out} className="grid h-9 w-9 place-items-center rounded-lg text-muted" aria-label="Sign out">
             <LogOut className="h-5 w-5" />
           </button>

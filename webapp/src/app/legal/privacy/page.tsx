@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Bullets, LegalPage, Mail, Section } from "@/components/legal";
 import { legalInfo } from "@/lib/legal";
 
@@ -41,6 +42,11 @@ export default function PrivacyPage() {
               used, kept for security and to fix problems. The app stores your sign-in session and a few preferences in your browser&apos;s local storage; we
               don&apos;t use advertising cookies.
             </>,
+            <>
+              <b>Phone apps:</b> if you use the Feast or Feast Partner app and allow notifications, a push token for your phone (from Apple or Google, via
+              Firebase Cloud Messaging) so we can send you the same notifications you see in the app. If you scan a restaurant&apos;s QR code, the app uses
+              the camera only while you scan.
+            </>,
           ]}
         />
       </Section>
@@ -67,7 +73,7 @@ export default function PrivacyPage() {
           items={[
             "The restaurant you book or pay: your name, phone number, booking and payment details, and any complaint or review about that visit.",
             "Payment providers (Stripe in Australia, Razorpay in India) to process payments and refunds.",
-            "Service providers who host and run Feast for us (cloud hosting, messaging and email, stock photo search), under contracts that require them to protect your information.",
+            "Service providers who host and run Feast for us (cloud hosting, text messages and email, push notifications through Google Firebase and Apple, stock photo search), under contracts that require them to protect your information.",
             "Professional advisers, and authorities or courts when the law requires it.",
           ]}
         />
@@ -86,14 +92,23 @@ export default function PrivacyPage() {
           We keep your information while your account is active and for as long as we need it for the purposes above. Payment and tax records are kept for
           the period the law requires. When we no longer need information, we delete or anonymise it.
         </p>
+        <p>
+          When you delete your account, we remove your name, phone number, email, sign-in links and push tokens straight away and cancel your upcoming
+          bookings. Receipts, past bookings, reviews and dispute records are kept without your name where the law requires us to keep them.{" "}
+          <Link href="/account-deletion" className="font-semibold text-brand hover:underline">
+            How to delete your account
+          </Link>
+          .
+        </p>
       </Section>
 
       <Section title="Your choices and rights">
         <Bullets
           items={[
             "See and update most of your details in the app.",
-            "Ask us for a copy of your information, to correct it, or to delete your account.",
-            "Turn off notifications you don't want.",
+            "Delete your account yourself in the app (Account, or Settings in Feast Partner), or ask us to.",
+            "Ask us for a copy of your information or to correct it.",
+            "Turn phone notifications off in your account, or in your phone's settings.",
             india ? "Withdraw consent, nominate someone to act for you, and complain to the Data Protection Board of India." : "Complain to us, and if you're not satisfied, to the regulator.",
           ]}
         />

@@ -7,6 +7,7 @@ import clsx from "clsx";
 import { Building2, Smartphone } from "lucide-react";
 import { homeFor, useAuth, useCity, useMarkets } from "@/components/providers";
 import { Logo } from "@/components/app-shell";
+import { useIsNativeApp } from "@/components/native-app";
 import { PhoneField, phoneE164, type PhoneValue } from "@/components/phone-field";
 import { Button, Sheet, Skeleton } from "@/components/ui";
 import { useMutation, useQuery } from "@/lib/hooks";
@@ -84,6 +85,10 @@ function LoginInner() {
   const phoneValue = phone.country ? phone : { ...phone, country: defaultCountry };
   const e164 = phoneE164(markets, phoneValue);
   const providers = useQuery("authProviders", (api) => api.authProviders());
+  // Google and Facebook refuse sign-in inside an app's web view, so the iOS/Android
+  // apps offer phone sign-in only (native social sign-in is a later step).
+  const native = useIsNativeApp();
+  const socialProviders = native ? [] : (providers.data ?? []);
   const [demoProvider, setDemoProvider] = useState<AuthProvider | null>(null);
   const [socialError, setSocialError] = useState<string | null>(null);
   const [otp, setOtp] = useState("");
@@ -198,12 +203,12 @@ function LoginInner() {
             <Button type="submit" size="lg" className="w-full" loading={sendOtp.pending || verify.pending} disabled={!e164 || (!!otpSent && otp.length !== 6)}>
               {otpSent ? "Verify & sign in" : "Get OTP"}
             </Button>
-            {!!providers.data?.length && (
+            {socialProviders.length > 0 && (
               <div className="space-y-2 pt-1">
                 <p className="flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-faint">
                   <span className="h-px flex-1 bg-line" /> or <span className="h-px flex-1 bg-line" />
                 </p>
-                {providers.data.map((p) => (
+                {socialProviders.map((p) => (
                   <Button key={p.provider} type="button" variant="secondary" size="lg" className="w-full" disabled={oauth.pending} onClick={() => social(p)}>
                     <ProviderIcon p={p.provider} /> Continue with {PROVIDER_LABEL[p.provider]}
                   </Button>

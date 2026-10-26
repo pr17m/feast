@@ -241,7 +241,7 @@ function PayInner() {
         <Card className={clsx("space-y-1.5", quoting && "opacity-60")}>
           <h2 className="mb-1 font-bold">Summary</h2>
           <div className="flex justify-between text-sm">
-            <span className="text-muted">Bill amount</span>
+            <span className="text-muted">{bill.lines.find((l) => l.kind === "ITEM_TOTAL")?.label ?? "Bill total (incl. taxes)"}</span>
             <span>{money(bill.billAmount)}</span>
           </div>
           {bill.lines

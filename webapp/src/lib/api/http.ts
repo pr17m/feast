@@ -3,6 +3,8 @@ import { getToken } from "./token";
 import {
   ApiError,
   type AuditFilter,
+  type Refund,
+  type RefundRequest,
   type AuditPage,
   type OfflineMethod,
   type OfflinePayment,
@@ -13,6 +15,11 @@ import {
   type DinerInsights,
   type OwnerInsights,
   type AuthSession,
+  type DeleteAccountRequest,
+  type DeleteAccountResult,
+  type PushSettings,
+  type PushToken,
+  type PushTokenRequest,
   type Bill,
   type BillPayment,
   type Booking,
@@ -149,6 +156,21 @@ export class HttpFeastApi implements FeastApi {
   logout() {
     return this.req<void>("POST", "/v1/auth/logout");
   }
+  deleteAccount(req: DeleteAccountRequest) {
+    return this.req<DeleteAccountResult>("DELETE", "/v1/me", req);
+  }
+  registerPushToken(req: PushTokenRequest) {
+    return this.req<PushToken>("POST", "/v1/me/push-tokens", req);
+  }
+  unregisterPushToken(token: string) {
+    return this.req<void>("DELETE", `/v1/me/push-tokens/${encodeURIComponent(token)}`);
+  }
+  getPushSettings() {
+    return this.req<PushSettings>("GET", "/v1/me/push-settings");
+  }
+  setPushSettings(s: PushSettings) {
+    return this.req<PushSettings>("PUT", "/v1/me/push-settings", s);
+  }
 
   // Discovery
   listCities() {
@@ -207,6 +229,9 @@ export class HttpFeastApi implements FeastApi {
   }
   confirmPayment(intentId: string, method: PaymentMethod, simulate?: "success" | "failure", providerPayload?: Record<string, string>) {
     return this.req<PaymentIntent>("POST", `/v1/payments/intents/${intentId}/confirm`, { method, simulate, providerPayload });
+  }
+  paymentRefunds(intentId: string) {
+    return this.req<Refund[]>("GET", `/v1/payments/intents/${intentId}/refunds`);
   }
   getBillPayment(id: string) {
     return this.req<BillPayment>("GET", `/v1/bill-payments/${id}`);
@@ -357,6 +382,12 @@ export class HttpFeastApi implements FeastApi {
   }
   adminPayments() {
     return this.req<BillPayment[]>("GET", "/v1/admin/payments");
+  }
+  adminRefunds() {
+    return this.req<Refund[]>("GET", "/v1/admin/refunds");
+  }
+  adminRefund(req: RefundRequest) {
+    return this.req<Refund>("POST", "/v1/admin/refunds", req);
   }
   approvalQueue() {
     return this.req<ApprovalQueueItem[]>("GET", "/v1/admin/approvals");

@@ -6,6 +6,7 @@
 //! Runs on SQLite always, and on Postgres when FEAST_TEST_POSTGRES_URL is set:
 //!   FEAST_TEST_POSTGRES_URL=postgres://feast:feast@127.0.0.1:5433/feast_test cargo test -p feast-infra --test offline_payments
 
+use feast_application::ports::Settled;
 use feast_domain::audit::{Actor, ActorKind, AuditQuery};
 use feast_domain::model::*;
 use feast_domain::{DomainEvent, EventEnvelope};
@@ -59,6 +60,7 @@ fn intent(id: &str, bill_id: &str, provider: &str) -> PaymentIntent {
         status: PaymentStatus::Created,
         result_ref: None,
         failure_reason: None,
+        provider_payment_id: None,
     }
 }
 
@@ -142,7 +144,7 @@ async fn race(url: &str) {
     let mut offline_wins = 0;
     for t in tasks {
         let (online, counter) = t.await.unwrap();
-        let online_ok = matches!(online, Ok(true));
+        let online_ok = matches!(online, Ok(Settled::Applied));
         let counter_ok = matches!(counter, Ok(true));
         assert!(online_ok ^ counter_ok, "exactly one payment may count: online={online:?} counter={counter:?}");
         if online_ok {
@@ -150,7 +152,9 @@ async fn race(url: &str) {
             assert_eq!(counter.unwrap_err().code, "ALREADY_PAID");
         } else {
             offline_wins += 1;
-            assert_eq!(online.unwrap_err().code, "ALREADY_PAID");
+            // The card payment arrived for a bill already paid at the counter:
+            // not applied (the application layer refunds it).
+            assert!(matches!(online, Ok(Settled::NotApplied)), "online={online:?}");
         }
     }
     let pays = a.billing.payments_by_restaurant(&rid).await.unwrap();

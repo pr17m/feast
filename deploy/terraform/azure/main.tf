@@ -158,6 +158,8 @@ locals {
     "stripe-webhook"  = { env = ["FEAST__PAYMENTS__PROVIDERS__STRIPE__WEBHOOK_SECRET"], value = var.stripe_webhook_secret }
     "razorpay-webhook" = { env = ["FEAST__PAYMENTS__PROVIDERS__RAZORPAY__WEBHOOK_SECRET"], value = var.razorpay_webhook_secret }
     "twilio-token"    = { env = ["FEAST__AUTH__OTP__TWILIO__AUTH_TOKEN"], value = var.twilio_auth_token }
+    "fcm-credentials" = { env = ["FEAST__PUSH__FCM__CREDENTIALS_JSON"], value = var.fcm_credentials_json }
+    "review-code"     = { env = ["FEAST__AUTH__OTP__REVIEW_CODE"], value = var.review_code }
   }
   secret_env = flatten([for name, s in local.secrets : [for e in s.env : { name = e, secret = name }]])
   api_env = {
@@ -179,6 +181,13 @@ locals {
     FEAST__AUTH__OTP__PROVIDER                          = var.twilio_account_sid != "" ? "twilio" : "fixed"
     FEAST__AUTH__OTP__TWILIO__ACCOUNT_SID               = var.twilio_account_sid
     FEAST__AUTH__OTP__TWILIO__SERVICE_SID               = var.twilio_service_sid
+    FEAST__PUSH__PROVIDER                               = var.fcm_credentials_json != "" ? "fcm" : ""
+    FEAST__AUTH__OTP__REVIEW_NUMBERS                    = join(",", var.review_numbers)
+  }
+  # Phone app links (/.well-known/*), read by the web app.
+  web_app_links = {
+    FEAST_IOS_APP_IDS  = join(",", var.ios_app_ids)
+    FEAST_ANDROID_APPS = join(",", var.android_apps)
   }
 }
 
@@ -264,7 +273,7 @@ resource "azurerm_container_app" "app" {
         value = var.country
       }
       dynamic "env" {
-        for_each = var.legal
+        for_each = merge(var.legal, local.web_app_links)
         content {
           name  = env.key
           value = env.value

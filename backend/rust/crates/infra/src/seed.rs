@@ -435,6 +435,7 @@ impl Seeder {
                             status: PaymentStatus::Created,
                             result_ref: None,
                             failure_reason: None,
+                            provider_payment_id: None,
                         };
                         self.repos.billing.insert_intent(&intent, &[]).await?;
                         // Completing flips it to SUCCEEDED (the same claim real payments use).

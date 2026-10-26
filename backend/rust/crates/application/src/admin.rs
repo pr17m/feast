@@ -386,6 +386,12 @@ impl Feast {
         self.require_role(user, &[Role::Admin])?;
         let mut u = self.p.users.get(user_id).await?.ok_or_else(|| AppError::not_found("User"))?;
         let before = u.clone();
+        if u.status == UserStatus::Deleted {
+            return Err(AppError::conflict("ACCOUNT_DELETED", "This account was deleted by its owner and can't be changed"));
+        }
+        if patch.status == Some(UserStatus::Deleted) {
+            return Err(AppError::validation("INVALID_STATUS", "Accounts are deleted by their owners from the app"));
+        }
         if u.id == user.id && (patch.role.is_some_and(|r| r != Role::Admin) || patch.status == Some(UserStatus::Blocked)) {
             return Err(AppError::validation("SELF_LOCKOUT", "You can't remove your own admin access"));
         }

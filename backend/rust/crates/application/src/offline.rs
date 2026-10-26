@@ -64,6 +64,7 @@ impl Feast {
             status: PaymentStatus::Created,
             result_ref: None,
             failure_reason: None,
+            provider_payment_id: None,
         };
         let payment = OfflinePayment {
             id: self.p.ids.new_id("op"),

@@ -1,22 +1,52 @@
 use std::convert::Infallible;
 use std::time::Duration;
 
+use axum::extract::Path;
 use axum::extract::State;
+use axum::http::StatusCode;
 use axum::response::sse::{Event, KeepAlive, Sse};
 use axum::Json;
+use feast_domain::account::{DeleteAccountRequest, DeleteAccountResult};
 use feast_domain::model::{AuthProvider, NotificationList, User};
+use feast_domain::push::{PushSettings, PushToken, PushTokenRequest};
 use futures::stream::{self, Stream, StreamExt};
 use serde::Deserialize;
 use serde_json::{json, Value};
 use tokio_stream::wrappers::BroadcastStream;
 
 use crate::error::{ApiError, ApiResult};
-use crate::extract::{Caller, OptBody, Q};
+use crate::extract::{Body, Caller, OptBody, Q};
 use crate::realtime::{route_for, LiveEvent};
 use crate::AppState;
 
 pub async fn me(Caller(u): Caller) -> Json<User> {
     Json(u)
+}
+
+/// `DELETE /v1/me` — delete the caller's account (App Store / Google Play
+/// requirement). Diners confirm with a fresh OTP (if they sign in by phone),
+/// owners with their password; both type "DELETE".
+pub async fn delete_account(State(s): State<AppState>, Caller(u): Caller, Body(r): Body<DeleteAccountRequest>) -> ApiResult<Json<DeleteAccountResult>> {
+    Ok(Json(s.feast.delete_account(&u, &r).await?))
+}
+
+/// `POST /v1/me/push-tokens` — the phone app registers this device for push.
+pub async fn register_push_token(State(s): State<AppState>, Caller(u): Caller, Body(r): Body<PushTokenRequest>) -> ApiResult<(StatusCode, Json<PushToken>)> {
+    Ok((StatusCode::CREATED, Json(s.feast.register_push_token(&u, &r).await?)))
+}
+
+/// `DELETE /v1/me/push-tokens/{token}` — on sign-out. Idempotent.
+pub async fn unregister_push_token(State(s): State<AppState>, Caller(u): Caller, Path(token): Path<String>) -> ApiResult<StatusCode> {
+    s.feast.unregister_push_token(&u, &token).await?;
+    Ok(StatusCode::NO_CONTENT)
+}
+
+pub async fn push_settings(State(s): State<AppState>, Caller(u): Caller) -> ApiResult<Json<PushSettings>> {
+    Ok(Json(s.feast.push_settings(&u).await?))
+}
+
+pub async fn set_push_settings(State(s): State<AppState>, Caller(u): Caller, Body(r): Body<PushSettings>) -> ApiResult<Json<PushSettings>> {
+    Ok(Json(s.feast.set_push_settings(&u, &r).await?))
 }
 
 pub async fn identities(State(s): State<AppState>, Caller(u): Caller) -> ApiResult<Json<Vec<AuthProvider>>> {

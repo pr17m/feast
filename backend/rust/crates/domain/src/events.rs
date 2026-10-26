@@ -19,6 +19,7 @@ use crate::model::{
     Booking, BookingStatus, CaseChange, CaseRef, CaseRole, ComplianceDocument, ContentKind, IsoDateTime, Notification, OfflinePayment, Paise, PaymentPurpose,
     PlatformPayment, RestaurantRef,
 };
+use crate::refunds::Refund;
 
 /// Typed domain events. `type` names are stable API — never rename them.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -209,6 +210,28 @@ pub enum DomainEvent {
         intent_id: String,
         reason: String,
     },
+    /// A payment succeeded but couldn't be applied (its booking was cancelled
+    /// or its table gone, or the bill was already paid): it is refunded.
+    #[serde(rename = "payment.not_applied")]
+    PaymentNotApplied {
+        #[serde(rename = "intentId")]
+        intent_id: String,
+        purpose: PaymentPurpose,
+        #[serde(rename = "referenceId")]
+        reference_id: String,
+        amount: Paise,
+        currency: String,
+        reason: String,
+    },
+    /// Feast asked the payment provider to send money back.
+    #[serde(rename = "refund.requested")]
+    RefundRequested { refund: Refund },
+    /// The provider confirmed the refund.
+    #[serde(rename = "refund.succeeded")]
+    RefundSucceeded { refund: Refund },
+    /// The provider refused the refund (support follows up).
+    #[serde(rename = "refund.failed")]
+    RefundFailed { refund: Refund },
 }
 
 fn default_currency() -> String {
@@ -258,6 +281,10 @@ impl DomainEvent {
             Self::DealClaimed { .. } => "deal.claimed",
             Self::DealUsed { .. } => "deal.used",
             Self::DealReleased { .. } => "deal.released",
+            Self::PaymentNotApplied { .. } => "payment.not_applied",
+            Self::RefundRequested { .. } => "refund.requested",
+            Self::RefundSucceeded { .. } => "refund.succeeded",
+            Self::RefundFailed { .. } => "refund.failed",
         }
     }
 }

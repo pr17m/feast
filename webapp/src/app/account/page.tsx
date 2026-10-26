@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronRight, LogOut, MapPin, UserRound } from "lucide-react";
 import { Avatar, RoleBadge, accountLinks, contactLine } from "@/components/account";
+import { DeleteAccountCard, PushSettingsCard } from "@/components/delete-account";
 import { useAuth, useCity } from "@/components/providers";
 import { Button, LinkButton, Skeleton } from "@/components/ui";
 import { useQuery } from "@/lib/hooks";
@@ -83,6 +84,8 @@ export default function AccountPage() {
         </div>
       </section>
 
+      <PushSettingsCard />
+
       <Button
         variant="secondary"
         size="lg"
@@ -94,6 +97,8 @@ export default function AccountPage() {
       >
         <LogOut className="h-5 w-5" aria-hidden /> Sign out
       </Button>
+
+      <DeleteAccountCard />
     </div>
   );
 }

@@ -38,6 +38,12 @@ pub trait UserRepository: Send + Sync {
     async fn link_identity(&self, user_id: &str, identity: &ExternalIdentity) -> AppResult<()>;
     /// Providers linked to a user.
     async fn identities_of(&self, user_id: &str) -> AppResult<Vec<AuthProvider>>;
+    /// Account deletion, in ONE transaction: mark the user DELETED (sign-in
+    /// refused), clear name/phone/email/password, drop social identities,
+    /// restaurant links and push tokens, and replace the person's name/phone on
+    /// the records that are kept (bookings, counter payments, reviews, dispute
+    /// threads) with `display_name`.
+    async fn anonymise(&self, user_id: &str, display_name: &str, at: &str) -> AppResult<()>;
 }
 
 #[async_trait]
@@ -90,6 +96,9 @@ pub trait BookingRepository: Send + Sync {
     async fn find_by_idempotency_key(&self, user_id: &str, key: &str) -> AppResult<Option<Booking>>;
     async fn get(&self, id: &str) -> AppResult<Option<Booking>>;
     async fn update(&self, b: &Booking, events: &[EventEnvelope]) -> AppResult<()>;
+    /// Store `b` (+ events) only if the booking is still in `expected` status:
+    /// one winner when several requests change the same booking at once.
+    async fn update_if_status(&self, b: &Booking, expected: BookingStatus, events: &[EventEnvelope]) -> AppResult<bool>;
     async fn list_by_user(&self, user_id: &str) -> AppResult<Vec<Booking>>;
     async fn list_by_restaurant_between(&self, restaurant_id: &str, from: &str, to: &str) -> AppResult<Vec<Booking>>;
     /// Tables held per slot time on a date: CONFIRMED/SEATED, plus PENDING_PAYMENT created at/after `pending_since`.
@@ -119,8 +128,17 @@ pub trait BillingRepository: Send + Sync {
     // false when someone else (the browser confirm or a provider webhook)
     // completed it first — then nothing is applied twice.
 
-    async fn complete_bill_payment(&self, i: &PaymentIntent, bp: &BillPayment, events: &[EventEnvelope]) -> AppResult<bool>;
-    async fn complete_booking_payment(&self, i: &PaymentIntent, booking: &Booking, events: &[EventEnvelope]) -> AppResult<bool>;
+    /// Returns `NotApplied` (nothing written) when the bill was already paid by
+    /// another payment (online or at the counter).
+    async fn complete_bill_payment(&self, i: &PaymentIntent, bp: &BillPayment, events: &[EventEnvelope]) -> AppResult<Settled>;
+    /// Confirm the paid booking — but only if it is still PENDING_PAYMENT and,
+    /// when its table hold lapsed, a table is still free at its slot (checked
+    /// under the same slot lock as booking). Otherwise `NotApplied`, nothing written.
+    async fn complete_booking_payment(&self, i: &PaymentIntent, booking: &Booking, room: &SlotRoom, events: &[EventEnvelope]) -> AppResult<Settled>;
+    /// A payment the provider took but that can't be applied: claim the intent
+    /// (SUCCEEDED, so it is never applied later) and record its refund, in one
+    /// transaction. False when someone else settled the intent first.
+    async fn record_unapplied_payment(&self, i: &PaymentIntent, refund: &feast_domain::refunds::Refund, events: &[EventEnvelope]) -> AppResult<bool>;
     async fn complete_subscription_payment(
         &self,
         i: &PaymentIntent,
@@ -364,11 +382,32 @@ pub enum ChargeOutcome {
     Failed(String),
 }
 
+/// What completing a payment did.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Settled {
+    /// This call applied it.
+    Applied,
+    /// Someone else (browser confirm or webhook) settled the intent first.
+    AlreadySettled,
+    /// The money arrived but there is nothing left to apply it to: refund it.
+    NotApplied,
+}
+
+/// The provider's answer to a refund request.
+#[derive(Debug, Clone, PartialEq)]
+pub struct RefundOutcome {
+    pub provider_refund_id: Option<String>,
+    pub status: feast_domain::refunds::RefundStatus,
+    pub failure: Option<String>,
+}
+
 /// A verified notification from a payment provider.
 #[derive(Debug, Clone, PartialEq)]
 pub enum WebhookEvent {
     /// Authentic but not about a payment we track (or an event type we don't use).
     Ignored(String),
+    /// A refund changed status at the provider.
+    Refund { provider_refund_id: String, status: feast_domain::refunds::RefundStatus, failure: Option<String> },
     Payment {
         /// The provider's order / payment-intent id (`PaymentIntent::provider_ref`).
         provider_ref: String,
@@ -408,6 +447,11 @@ pub trait PaymentGateway: Send + Sync {
         simulate_failure: bool,
         payload: &BTreeMap<String, String>,
     ) -> AppResult<ChargeOutcome>;
+    /// Send `refund.amount` back for an intent that SUCCEEDED. `refund.id` is
+    /// the idempotency key: retrying the same refund never pays twice.
+    async fn refund(&self, _intent: &PaymentIntent, _refund: &feast_domain::refunds::Refund) -> AppResult<RefundOutcome> {
+        Err(AppError::new(crate::error::ErrorKind::Unavailable, "REFUNDS_UNAVAILABLE", "This payment provider can't refund automatically"))
+    }
     /// Verify a webhook's signature (headers lower-cased) and read it. Providers
     /// without webhooks keep the default.
     fn parse_webhook(&self, _headers: &[(String, String)], _body: &[u8]) -> AppResult<WebhookEvent> {
@@ -552,6 +596,8 @@ pub trait OfflinePaymentRepository: Send + Sync {
     async fn offline_for_restaurant(&self, restaurant_id: &str, status: Option<OfflinePaymentStatus>, limit: u32) -> AppResult<Vec<OfflinePayment>>;
     /// Still pending with `expires_at` <= `now`.
     async fn expired_pending(&self, now: &str, limit: u32) -> AppResult<Vec<OfflinePayment>>;
+    /// A diner's counter payments still waiting for the restaurant.
+    async fn pending_for_user(&self, user_id: &str) -> AppResult<Vec<OfflinePayment>>;
     /// Approve: in ONE transaction flip the payment PENDING_APPROVAL → APPROVED
     /// (false if someone decided first), claim its intent, insert the bill
     /// payment (fails ALREADY_PAID if the bill was paid meanwhile, e.g. online),
@@ -572,4 +618,104 @@ pub trait AuditTrailRepository: Send + Sync {
     async fn append(&self, r: &feast_domain::audit::AuditRecord) -> AppResult<()>;
     /// Newest first, keyset-paginated.
     async fn query(&self, q: &feast_domain::audit::AuditQuery) -> AppResult<feast_domain::audit::AuditPage>;
+}
+
+// ============================================================ push notifications
+
+/// Phones registered for push, and each user's on/off switch.
+#[async_trait]
+pub trait PushTokenRepository: Send + Sync {
+    /// Register or refresh a token (a token moves to the user who registered it last).
+    async fn upsert_token(&self, t: &feast_domain::push::PushToken) -> AppResult<()>;
+    /// Remove the caller's token; false if it wasn't theirs/registered.
+    async fn delete_token(&self, user_id: &str, token: &str) -> AppResult<bool>;
+    /// Forget a token the push service says is gone.
+    async fn forget_token(&self, token: &str) -> AppResult<()>;
+    async fn tokens_for(&self, user_id: &str) -> AppResult<Vec<feast_domain::push::PushToken>>;
+    /// Default true.
+    async fn push_enabled(&self, user_id: &str) -> AppResult<bool>;
+    async fn set_push_enabled(&self, user_id: &str, enabled: bool) -> AppResult<()>;
+    /// Claim the right to push notification `n` to phone `token`: true exactly
+    /// once per (notification, token), however many workers see its
+    /// `notification.created`. The claim (SENDING) lasts until `lease_until_ms`.
+    async fn claim_push(&self, n: &Notification, token: &str, lease_until_ms: i64) -> AppResult<bool>;
+    /// Record how a claimed send went: SENT, RETRY (at `next_at_ms`), FAILED,
+    /// GAVE_UP or DROPPED.
+    async fn finish_push(&self, notification_id: &str, token: &str, status: &str, next_at_ms: i64, error: Option<&str>) -> AppResult<()>;
+    /// Claim pushes due for another try (RETRY whose time has come, or SENDING
+    /// whose worker died): each is handed to one caller only, attempts + 1.
+    async fn claim_due_pushes(&self, now_ms: i64, lease_until_ms: i64, limit: u32) -> AppResult<Vec<DuePush>>;
+}
+
+/// A push to send again (see `PushTokenRepository::claim_due_pushes`).
+#[derive(Debug, Clone)]
+pub struct DuePush {
+    pub notification: Notification,
+    pub token: String,
+    /// Including this one.
+    pub attempts: i64,
+}
+
+/// Refunds of online payments (`feast_domain::refunds`).
+#[async_trait]
+pub trait RefundRepository: Send + Sync {
+    /// Insert a PENDING refund (+ events) unless one with the same
+    /// `idempotency_key` exists; returns the stored one and whether it is new.
+    async fn insert_refund(&self, r: &feast_domain::refunds::Refund, events: &[EventEnvelope]) -> AppResult<(feast_domain::refunds::Refund, bool)>;
+    /// Save provider progress. Only a PENDING refund changes; returns whether it did.
+    async fn update_refund(&self, r: &feast_domain::refunds::Refund, events: &[EventEnvelope]) -> AppResult<bool>;
+    async fn get_refund(&self, id: &str) -> AppResult<Option<feast_domain::refunds::Refund>>;
+    async fn find_refund_by_provider_id(&self, provider: &str, provider_refund_id: &str) -> AppResult<Option<feast_domain::refunds::Refund>>;
+    async fn refunds_for_intent(&self, intent_id: &str) -> AppResult<Vec<feast_domain::refunds::Refund>>;
+    /// PENDING refunds the provider hasn't accepted yet (no provider id), oldest first.
+    async fn unsent_refunds(&self, limit: u32) -> AppResult<Vec<feast_domain::refunds::Refund>>;
+    async fn list_refunds(&self, limit: u32) -> AppResult<Vec<feast_domain::refunds::Refund>>;
+}
+
+/// State every API instance and worker must share (not process memory):
+/// rate-limit counters, one-time-code challenges and short leases.
+#[async_trait]
+pub trait SharedStateRepository: Send + Sync {
+    /// Count one hit for `key` in the fixed window `window` (window index);
+    /// returns the hits so far in that window.
+    async fn rate_hit(&self, key: &str, window: i64, expires_ms: i64) -> AppResult<i64>;
+    /// Store a code challenge (replacing any earlier one for `subject`).
+    async fn otp_put(&self, subject: &str, code_hash: &str, expires_ms: i64) -> AppResult<()>;
+    /// Check a code: counts one attempt atomically; true (and the challenge is
+    /// consumed) only for the right code within the expiry and attempt limit.
+    async fn otp_check(&self, subject: &str, code_hash: &str, now_ms: i64, max_attempts: i64) -> AppResult<bool>;
+    /// Take or renew `name` for `holder` until `until_ms` (when free, expired or
+    /// already ours). Only one holder at a time, across all processes.
+    async fn lease(&self, name: &str, holder: &str, now_ms: i64, until_ms: i64) -> AppResult<bool>;
+    /// Drop expired counters and challenges. Returns rows removed.
+    async fn purge_expired(&self, now_ms: i64) -> AppResult<u64>;
+}
+
+/// Delivers a push to one phone (Firebase Cloud Messaging today).
+/// Delivers a push to one phone (Firebase Cloud Messaging today).
+#[async_trait]
+pub trait PushSender: Send + Sync {
+    /// "fcm", "log" or "off" (for logs and health).
+    fn name(&self) -> &'static str;
+    /// False when push is switched off: tokens are still kept.
+    fn enabled(&self) -> bool {
+        true
+    }
+    async fn send(&self, to: &feast_domain::push::PushToken, msg: &feast_domain::push::PushMessage) -> feast_domain::push::PushOutcome;
+}
+
+/// Push switched off (no provider configured).
+pub struct NoPush;
+
+#[async_trait]
+impl PushSender for NoPush {
+    fn name(&self) -> &'static str {
+        "off"
+    }
+    fn enabled(&self) -> bool {
+        false
+    }
+    async fn send(&self, _to: &feast_domain::push::PushToken, _msg: &feast_domain::push::PushMessage) -> feast_domain::push::PushOutcome {
+        feast_domain::push::PushOutcome::Failed("push is off".into())
+    }
 }

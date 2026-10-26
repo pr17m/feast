@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Feast Partner</string>
+    <string name="title_activity_main">Feast Partner</string>
+    <string name="package_name">com.feast.partner</string>
+    <string name="custom_url_scheme">com.feast.partner</string>
+</resources>

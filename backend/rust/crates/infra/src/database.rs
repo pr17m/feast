@@ -27,6 +27,11 @@ pub struct Repositories {
     pub audit: Arc<dyn AuditRepository>,
     pub trail: Arc<dyn AuditTrailRepository>,
     pub offline: Arc<dyn OfflinePaymentRepository>,
+    /// Phones registered for push notifications.
+    pub push_tokens: Arc<dyn PushTokenRepository>,
+    pub refunds: Arc<dyn RefundRepository>,
+    /// Rate limits, code challenges and leases shared across instances.
+    pub shared: Arc<dyn SharedStateRepository>,
     /// Admin-level operations that aren't business ports.
     pub admin: Arc<dyn DatabaseAdmin>,
 }
@@ -69,6 +74,9 @@ pub async fn connect(cfg: &DatabaseConfig) -> AppResult<Repositories> {
                 audit: store.clone(),
                 trail: store.clone(),
                 offline: store.clone(),
+                push_tokens: store.clone(),
+                refunds: store.clone(),
+                shared: store.clone(),
                 admin: store,
             })
         }

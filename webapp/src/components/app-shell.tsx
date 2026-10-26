@@ -1,6 +1,7 @@
 "use client";
 
 import { LEGAL_PAGES } from "./legal";
+import { ChangeCountryButton } from "./native-app";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
@@ -191,7 +192,7 @@ function AccountMenu() {
  * "customer preview" to see exactly what diners see of their listing.
  */
 function staffRoute(path: string): "portal" | "preview" | "allowed" {
-  if (path.startsWith("/partner") || path.startsWith("/admin") || path.startsWith("/login") || path.startsWith("/join") || path.startsWith("/legal"))
+  if (path.startsWith("/partner") || path.startsWith("/admin") || path.startsWith("/login") || path.startsWith("/join") || path.startsWith("/legal") || path.startsWith("/account-deletion") || path.startsWith("/offline"))
     return "allowed";
   if (path.startsWith("/restaurants/")) return "preview";
   return "portal";
@@ -333,6 +334,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <Link href="/join" className="hover:text-ink">
             List your restaurant
           </Link>
+          <ChangeCountryButton className="hover:text-ink" />
         </div>
       </footer>
 

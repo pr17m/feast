@@ -1,5 +1,6 @@
 "use client";
 
+import { InstallAppCard } from "@/components/pwa";
 import Link from "next/link";
 import { Suspense, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
@@ -13,6 +14,7 @@ import { longDate, money, time12 } from "@/lib/format";
 import { STATUS_STYLE } from "@/lib/status";
 import { VisitActions } from "@/components/visit-actions";
 import { HistoryCard } from "@/components/audit";
+import { RefundsCard } from "@/components/refunds";
 
 function icsFor(b: { restaurant: { name: string; area: string }; date: string; time: string; guests: number; code: string }) {
   const start = `${b.date.replace(/-/g, "")}T${b.time.replace(":", "")}00`;
@@ -123,6 +125,8 @@ function BookingInner() {
         )}
       </Card>
 
+      <RefundsCard payment={bk.payment} version={bk.status} />
+
       {confirmed && (
         <div className="grid grid-cols-2 gap-3">
           <a
@@ -218,8 +222,20 @@ function BookingInner() {
           Your table at {bk.restaurant.name} on {longDate(bk.date)}, {time12(bk.time)} will be released
           {bk.deal ? ` and you'll lose the ${bk.deal.title.toLowerCase()} deal` : ""}.
         </p>
+        {bk.payment && bk.payment.settlement !== "OFFLINE" && (
+          <p className="mt-2 text-sm text-muted">
+            The upfront charge of {money(bk.payment.amount, bk.payment.currency)} is refunded in full if you cancel at least 2 hours before your booking.
+            Later than that, the restaurant keeps it.{" "}
+            <Link href="/legal/refunds" className="font-semibold text-brand hover:underline">
+              Refunds policy
+            </Link>
+          </p>
+        )}
         {cancel.error && <p className="mt-2 text-sm text-danger">{cancel.error.message}</p>}
       </Sheet>
+
+      {/* After a booking: offer the home-screen app (web only; hidden once installed). */}
+      {confirmed && <InstallAppCard app="diner" />}
     </div>
   );
 }

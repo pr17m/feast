@@ -1,4 +1,11 @@
 import type {
+  DeleteAccountRequest,
+  Refund,
+  RefundRequest,
+  DeleteAccountResult,
+  PushSettings,
+  PushToken,
+  PushTokenRequest,
   AuditFilter,
   AuditPage,
   OfflineMethod,
@@ -101,6 +108,11 @@ export interface FeastApi {
   listNotifications(unreadOnly?: boolean, limit?: number): Promise<NotificationList>; // GET  /v1/me/notifications?unreadOnly=&limit=
   markNotificationsRead(ids?: string[]): Promise<{ updated: number; unread: number }>; // POST /v1/me/notifications/read   (no ids = all)
   logout(): Promise<void>; // POST /v1/auth/logout
+  deleteAccount(req: DeleteAccountRequest): Promise<DeleteAccountResult>; // DELETE /v1/me   (App Store / Google Play account deletion)
+  registerPushToken(req: PushTokenRequest): Promise<PushToken>; // POST /v1/me/push-tokens   (phone apps)
+  unregisterPushToken(token: string): Promise<void>; // DELETE /v1/me/push-tokens/{token}
+  getPushSettings(): Promise<PushSettings>; // GET  /v1/me/push-settings
+  setPushSettings(s: PushSettings): Promise<PushSettings>; // PUT  /v1/me/push-settings
 
   // ---- Discovery (public) ----
   listCities(): Promise<City[]>; // GET  /v1/cities
@@ -126,6 +138,7 @@ export interface FeastApi {
   createPaymentIntent(purpose: PaymentIntent["purpose"], referenceId: string): Promise<PaymentIntent>; // POST /v1/payments/intents
   confirmPayment(intentId: string, method: PaymentMethod, simulate?: "success" | "failure", providerPayload?: Record<string, string>): Promise<PaymentIntent>; // POST /v1/payments/intents/{id}/confirm
   getBillPayment(id: string): Promise<BillPayment>; // GET  /v1/bill-payments/{id}
+  paymentRefunds(intentId: string): Promise<Refund[]>; // GET  /v1/payments/intents/{id}/refunds   payer, the restaurant or an admin
   listBillPayments(): Promise<BillPayment[]>; // GET  /v1/me/bill-payments
   billPaymentHistory(id: string): Promise<AuditPage>; // GET  /v1/bill-payments/{id}/history
   submitOfflinePayment(billId: string, method: OfflineMethod): Promise<OfflinePayment>; // POST /v1/bills/{id}/offline-payment
@@ -174,6 +187,8 @@ export interface FeastApi {
   updateUser(userId: string, patch: UserPatch): Promise<User>; // PATCH /v1/admin/users/{id}
   adminBookings(): Promise<Booking[]>; // GET   /v1/admin/bookings
   adminPayments(): Promise<BillPayment[]>; // GET   /v1/admin/payments
+  adminRefunds(): Promise<Refund[]>; // GET   /v1/admin/refunds
+  adminRefund(req: RefundRequest): Promise<Refund>; // POST  /v1/admin/refunds   never more than what's left; note required
   approvalQueue(): Promise<ApprovalQueueItem[]>; // GET   /v1/admin/approvals
   reviewDocument(documentId: string, decision: Exclude<DocumentStatus, "SUBMITTED">, note?: string): Promise<ComplianceStatus>; // POST  /v1/admin/documents/{id}/review
   requestChanges(restaurantId: string, note: string): Promise<ComplianceStatus>; // POST  /v1/admin/restaurants/{id}/request-changes

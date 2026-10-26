@@ -1,5 +1,6 @@
 "use client";
 
+import { InstallAppCard } from "@/components/pwa";
 import Link from "next/link";
 import clsx from "clsx";
 import { ArrowRight, Bell, PauseCircle, PlayCircle } from "lucide-react";
@@ -57,6 +58,8 @@ export default function PartnerDashboard() {
         <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900">Your documents are with Feast for review. Set up your menu and offers meanwhile.</p>
       )}
       {status === "SUSPENDED" && <p className="rounded-xl bg-red-50 p-3 text-sm text-danger">Your listing is suspended. Contact your Feast account manager.</p>}
+
+      <InstallAppCard app="partner" />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat label="Bookings today" value={d.bookingsToday} hint={`${d.coversToday} covers`} />

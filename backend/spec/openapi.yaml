@@ -1491,6 +1491,38 @@ components:
       - dealsUsed
       - discountsGiven
       type: object
+    DeleteAccountRequest:
+      additionalProperties: false
+      description: '`DELETE /v1/me`. Diners who sign in by phone send a fresh `otp`; owners their `password`.'
+      properties:
+        confirm:
+          description: Must be "DELETE".
+          type: string
+        otp:
+          type: string
+        password:
+          type: string
+      required:
+      - confirm
+      type: object
+    DeleteAccountResult:
+      additionalProperties: false
+      properties:
+        cancelledBookings:
+          description: Upcoming bookings that were cancelled.
+          type: number
+        deleted:
+          type: boolean
+        pausedRestaurants:
+          description: Names of the restaurants paused because this was their only owner.
+          items:
+            type: string
+          type: array
+      required:
+      - deleted
+      - cancelledBookings
+      - pausedRestaurants
+      type: object
     DinerInsights:
       additionalProperties: false
       properties:
@@ -2974,6 +3006,64 @@ components:
       - 3
       - 4
       type: number
+    PushApp:
+      description: diner = the "Feast" app; partner = "Feast Partner".
+      enum:
+      - diner
+      - partner
+      type: string
+    PushPlatform:
+      enum:
+      - ios
+      - android
+      type: string
+    PushSettings:
+      additionalProperties: false
+      description: '`GET|PUT /v1/me/push-settings`'
+      properties:
+        enabled:
+          type: boolean
+      required:
+      - enabled
+      type: object
+    PushToken:
+      additionalProperties: false
+      properties:
+        app:
+          $ref: '#/components/schemas/PushApp'
+        createdAt:
+          $ref: '#/components/schemas/ISODateTime'
+        lastSeenAt:
+          $ref: '#/components/schemas/ISODateTime'
+        platform:
+          $ref: '#/components/schemas/PushPlatform'
+        token:
+          type: string
+        userId:
+          type: string
+      required:
+      - token
+      - userId
+      - platform
+      - app
+      - createdAt
+      - lastSeenAt
+      type: object
+    PushTokenRequest:
+      additionalProperties: false
+      description: '`POST /v1/me/push-tokens`'
+      properties:
+        app:
+          $ref: '#/components/schemas/PushApp'
+        platform:
+          $ref: '#/components/schemas/PushPlatform'
+        token:
+          type: string
+      required:
+      - platform
+      - token
+      - app
+      type: object
     QuoteBillRequest:
       additionalProperties: false
       properties:
@@ -2992,6 +3082,99 @@ components:
       - restaurantId
       - billAmount
       type: object
+    Refund:
+      additionalProperties: false
+      description: Money Feast sends back for (part of) an online payment. Counter payments are never refunded by Feast.
+      properties:
+        amount:
+          $ref: '#/components/schemas/Paise'
+        attempts:
+          type: number
+        caseId:
+          type: string
+        createdAt:
+          $ref: '#/components/schemas/ISODateTime'
+        currency:
+          type: string
+        failure:
+          description: Why the provider refused it (FAILED), or why it hasn't been sent yet.
+          type: string
+        id:
+          type: string
+        idempotencyKey:
+          type: string
+        intentId:
+          type: string
+        note:
+          type: string
+        provider:
+          type: string
+        providerRefundId:
+          type: string
+        purpose:
+          $ref: '#/components/schemas/PaymentPurpose'
+        reason:
+          $ref: '#/components/schemas/RefundReason'
+        referenceId:
+          description: Booking or bill the payment was for.
+          type: string
+        requestedBy:
+          type: string
+        restaurantId:
+          type: string
+        status:
+          $ref: '#/components/schemas/RefundStatus'
+        updatedAt:
+          $ref: '#/components/schemas/ISODateTime'
+        userId:
+          type: string
+      required:
+      - id
+      - intentId
+      - purpose
+      - referenceId
+      - amount
+      - currency
+      - provider
+      - status
+      - reason
+      - idempotencyKey
+      - attempts
+      - createdAt
+      - updatedAt
+      type: object
+    RefundReason:
+      enum:
+      - CANCELLED_IN_TIME
+      - CANCELLED_BY_RESTAURANT
+      - ACCOUNT_DELETED
+      - PAID_AFTER_CANCELLATION
+      - ALREADY_PAID
+      - CASE_DECISION
+      - MANUAL
+      type: string
+    RefundRequest:
+      additionalProperties: false
+      description: 'Admin: refund (part of) an online payment. `amount` omitted = everything still refundable.'
+      properties:
+        amount:
+          $ref: '#/components/schemas/Paise'
+        caseId:
+          type: string
+        intentId:
+          type: string
+        note:
+          type: string
+      required:
+      - intentId
+      - note
+      type: object
+    RefundStatus:
+      enum:
+      - PENDING
+      - SUCCEEDED
+      - FAILED
+      type: string
     ReportReviewRequest:
       additionalProperties: false
       properties:
@@ -3810,9 +3993,11 @@ components:
         role:
           $ref: '#/components/schemas/Role'
         status:
+          description: 'DELETED: the user deleted their account (personal data removed).'
           enum:
           - ACTIVE
           - BLOCKED
+          - DELETED
           type: string
       required:
       - id
@@ -3834,9 +4019,11 @@ components:
         role:
           $ref: '#/components/schemas/Role'
         status:
+          description: 'DELETED: the user deleted their account (personal data removed).'
           enum:
           - ACTIVE
           - BLOCKED
+          - DELETED
           type: string
       type: object
     Error:
@@ -4247,6 +4434,53 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/PlatformPayment'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/admin/refunds:
+    get:
+      operationId: admin_list
+      tags:
+      - refunds
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Refund'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      operationId: admin_create
+      tags:
+      - refunds
+      security:
+      - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundRequest'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Refund'
         default:
           description: Error
           content:
@@ -5383,6 +5617,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    delete:
+      operationId: delete_account
+      tags:
+      - me
+      security:
+      - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteAccountRequest'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteAccountResult'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /v1/me/bill-payments:
     get:
       operationId: my_bill_payments
@@ -5577,6 +5836,99 @@ paths:
             application/json:
               schema:
                 type: object
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/me/push-settings:
+    get:
+      operationId: push_settings
+      tags:
+      - me
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PushSettings'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      operationId: set_push_settings
+      tags:
+      - me
+      security:
+      - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushSettings'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PushSettings'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/me/push-tokens:
+    post:
+      operationId: register_push_token
+      tags:
+      - me
+      security:
+      - bearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushTokenRequest'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PushToken'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/me/push-tokens/{token}:
+    delete:
+      operationId: unregister_push_token
+      tags:
+      - me
+      parameters:
+      - name: token
+        in: path
+        required: true
+        schema:
+          type: string
+      security:
+      - bearer: []
+      responses:
+        '204':
+          description: OK
         default:
           description: Error
           content:
@@ -6702,6 +7054,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PaymentIntent'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/payments/intents/{id}/refunds:
+    get:
+      operationId: for_intent
+      tags:
+      - refunds
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      security:
+      - bearer: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Refund'
         default:
           description: Error
           content:
