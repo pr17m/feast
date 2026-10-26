@@ -44,6 +44,7 @@ subscription. Admins onboard restaurants per country and run the platform.
 
 | Goal                          | How                                                                                       |
 |-------------------------------|-------------------------------------------------------------------------------------------|
+| First time? Run it locally    | [`LOCAL_DEPLOYMENT.md`](LOCAL_DEPLOYMENT.md): step-by-step Docker guide for Linux, Windows and macOS |
 | Try it on your machine        | `deploy/compose/README.md`: Docker, one command, optional public share link               |
 | Deploy to AWS / Azure / GCP   | `deploy/README.md`: `./deploy.sh au` per country                                          |
 | Develop the backend           | `cd backend/rust && FEAST_COUNTRY=in cargo run` (SQLite + in-memory bus, demo data)       |

@@ -1,0 +1,9 @@
+# Keep Linux (LF) line endings in the working copy on every OS, including
+# Windows. Shell scripts, Dockerfiles, configs and migrations are used inside
+# Linux containers and break with Windows (CRLF) line endings.
+* text=auto eol=lf
+
+# Windows-only scripts keep the line endings they were committed with.
+*.bat -text
+*.cmd -text
+*.ps1 -text

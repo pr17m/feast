@@ -1,5 +1,8 @@
 # Run Feast for one country with Docker
 
+> First time running Feast? Follow the step-by-step guide for Linux, Windows
+> and macOS in [`LOCAL_DEPLOYMENT.md`](../../LOCAL_DEPLOYMENT.md).
+
 This runs the whole stack for one country on one machine: your Mac, or any VM
 on AWS, Azure or GCP. It starts:
 
@@ -66,10 +69,16 @@ curl -s localhost:8081/v1/markets   # API answers through the web app
 
 ## 4. Share it (e.g. with someone in Australia)
 
+Add `share` to the profiles in `au.env` (`COMPOSE_PROFILES=db,share`, or just
+`share` with your own Postgres), then:
+
 ```sh
-docker compose --env-file au.env --profile share up -d
+docker compose --env-file au.env up -d
 ./share-url.sh au.env        # → https://something-random.trycloudflare.com
 ```
+
+Don't use `--profile share` on the command line: it replaces `COMPOSE_PROFILES`,
+so the bundled database would be left out.
 
 Send that link. It works from anywhere, over HTTPS, as long as your machine is
 on and Docker is running.

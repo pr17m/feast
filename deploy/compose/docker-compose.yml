@@ -2,11 +2,14 @@
 #
 #   cp au.env.example au.env        # then edit the passwords
 #   docker compose --env-file au.env up -d --build
-#   open http://localhost:8080
+#   open http://localhost:8081        # PORT in the env file (au 8081, in 8082)
 #
 # Share it on the internet (free Cloudflare quick tunnel, no account needed):
-#   docker compose --env-file au.env --profile share up -d
+#   set COMPOSE_PROFILES=db,share in au.env, then
+#   docker compose --env-file au.env up -d
 #   ./share-url.sh au.env           # prints https://<random>.trycloudflare.com
+#
+# First time? See LOCAL_DEPLOYMENT.md at the repository root.
 #
 # Each country is its own stack (own database, Redis, files): run in.env and
 # au.env side by side with different PORTs. Same images for every country.
