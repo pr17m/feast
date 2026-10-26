@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+// Notification service: stores in-app notifications and fans them out to
+// delivery channels (in-app realtime today; push/SMS/email/WhatsApp later).
+//
+// Callers:
+//   - worker  -> Publish     (turns domain events into notifications)
+//   - gateway -> List, MarkRead, UnreadCount (on behalf of the signed-in user)
+//
+// The service owns its own database. Publish is idempotent on
+// (event_id, user_id), so at-least-once event delivery never duplicates.
+package feast.notification.v1;
+
+import "feast/common/v1/common.proto";
+
+option go_package = "github.com/feast/backend/gen/go/feast/notification/v1;notificationv1";
+
+service NotificationService {
+  // Create notifications for one or more recipients of a domain event.
+  rpc Publish(PublishRequest) returns (PublishResponse);
+  // A user's notifications, newest first.
+  rpc List(ListRequest) returns (ListResponse);
+  // Mark some (or all) of a user's notifications as read.
+  rpc MarkRead(MarkReadRequest) returns (MarkReadResponse);
+  // Unread badge count.
+  rpc UnreadCount(UnreadCountRequest) returns (UnreadCountResponse);
+}
+
+enum NotificationKind {
+  NOTIFICATION_KIND_UNSPECIFIED = 0;
+  NOTIFICATION_KIND_BOOKING_CREATED = 1;
+  NOTIFICATION_KIND_BOOKING_CANCELLED = 2;
+  NOTIFICATION_KIND_BOOKING_UPDATED = 3;
+  // 4–6 were table-ordering kinds (order placed/updated, service requested), removed Oct 2026.
+  reserved 4 to 6;
+  reserved "NOTIFICATION_KIND_ORDER_PLACED", "NOTIFICATION_KIND_ORDER_UPDATED", "NOTIFICATION_KIND_SERVICE_REQUESTED";
+  NOTIFICATION_KIND_PAYMENT_RECEIVED = 7;
+  NOTIFICATION_KIND_SUBSCRIPTION_PAID = 8;
+  NOTIFICATION_KIND_SUBSCRIPTION_EXPIRING = 9;
+  NOTIFICATION_KIND_APPLICATION_SUBMITTED = 10;
+  NOTIFICATION_KIND_DOCUMENT_REVIEWED = 11;
+  NOTIFICATION_KIND_RESTAURANT_APPROVED = 12;
+  NOTIFICATION_KIND_DOCUMENT_EXPIRING = 13;
+  NOTIFICATION_KIND_CASE_UPDATED = 14;
+  NOTIFICATION_KIND_REVIEW_UPDATED = 15;
+  NOTIFICATION_KIND_CONTENT_MODERATED = 16;
+}
+
+// What to tell someone. One draft fans out to many recipients.
+message NotificationDraft {
+  NotificationKind kind = 1;
+  string title = 2;
+  string body = 3;
+  // App route to open, e.g. "/partner/bookings".
+  string link = 4;
+  // Restaurant this is about (optional).
+  string restaurant_id = 5;
+}
+
+message Notification {
+  string id = 1;
+  string user_id = 2;
+  string restaurant_id = 3;
+  NotificationKind kind = 4;
+  string title = 5;
+  string body = 6;
+  string link = 7;
+  string event_id = 8;
+  // RFC 3339 UTC, millisecond precision.
+  string created_at = 9;
+  // Empty when unread.
+  string read_at = 10;
+}
+
+message PublishRequest {
+  feast.common.v1.Caller caller = 1;
+  // Domain event id — the idempotency key (with user id).
+  string event_id = 2;
+  // Domain event type, e.g. "booking.created" (for auditing/metrics).
+  string event_type = 3;
+  repeated string recipient_user_ids = 4;
+  NotificationDraft draft = 5;
+}
+
+message PublishResponse {
+  // Notifications created by this call (duplicates are skipped, not returned).
+  repeated Notification created = 1;
+}
+
+message ListRequest {
+  feast.common.v1.Caller caller = 1;
+  string user_id = 2;
+  bool unread_only = 3;
+  feast.common.v1.PageRequest page = 4;
+}
+
+message ListResponse {
+  repeated Notification items = 1;
+  int64 unread = 2;
+  feast.common.v1.PageInfo page = 3;
+}
+
+message MarkReadRequest {
+  feast.common.v1.Caller caller = 1;
+  string user_id = 2;
+  // Empty = mark all as read.
+  repeated string notification_ids = 3;
+}
+
+message MarkReadResponse {
+  int64 updated = 1;
+  int64 unread = 2;
+}
+
+message UnreadCountRequest {
+  feast.common.v1.Caller caller = 1;
+  string user_id = 2;
+}
+
+message UnreadCountResponse {
+  int64 unread = 1;
+}

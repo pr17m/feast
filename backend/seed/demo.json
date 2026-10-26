@@ -1,0 +1,6714 @@
+{
+ "cities": [
+  {
+   "id": "blr",
+   "name": "Bengaluru",
+   "countryCode": "IN",
+   "timezone": "Asia/Kolkata",
+   "areas": [
+    "Indiranagar",
+    "Koramangala",
+    "HSR Layout",
+    "Whitefield",
+    "MG Road",
+    "Jayanagar"
+   ],
+   "lat": 12.9716,
+   "lng": 77.5946
+  },
+  {
+   "id": "bom",
+   "name": "Mumbai",
+   "countryCode": "IN",
+   "timezone": "Asia/Kolkata",
+   "areas": [
+    "Bandra West",
+    "Lower Parel",
+    "Colaba",
+    "Juhu",
+    "Andheri West"
+   ],
+   "lat": 19.076,
+   "lng": 72.8777
+  },
+  {
+   "id": "syd",
+   "name": "Sydney",
+   "countryCode": "AU",
+   "timezone": "Australia/Sydney",
+   "areas": [
+    "Circular Quay",
+    "Surry Hills",
+    "Bondi",
+    "Newtown",
+    "Parramatta"
+   ],
+   "lat": -33.8688,
+   "lng": 151.2093
+  },
+  {
+   "id": "mel",
+   "name": "Melbourne",
+   "countryCode": "AU",
+   "timezone": "Australia/Melbourne",
+   "areas": [
+    "CBD",
+    "Fitzroy",
+    "St Kilda",
+    "Southbank",
+    "Richmond"
+   ],
+   "lat": -37.8136,
+   "lng": 144.9631
+  },
+  {
+   "id": "bne",
+   "name": "Brisbane",
+   "countryCode": "AU",
+   "timezone": "Australia/Brisbane",
+   "areas": [
+    "Fortitude Valley",
+    "South Bank",
+    "West End",
+    "New Farm"
+   ],
+   "lat": -27.4698,
+   "lng": 153.0251
+  },
+  {
+   "id": "per",
+   "name": "Perth",
+   "countryCode": "AU",
+   "timezone": "Australia/Perth",
+   "areas": [
+    "Perth CBD",
+    "Northbridge",
+    "Fremantle",
+    "Subiaco"
+   ],
+   "lat": -31.9523,
+   "lng": 115.8613
+  }
+ ],
+ "users": [
+  {
+   "id": "u_admin",
+   "name": "Asha Iyer",
+   "email": "admin@feast.demo",
+   "role": "ADMIN",
+   "restaurantIds": [],
+   "status": "ACTIVE",
+   "createdAt": "2026-01-05T09:00:00.000Z"
+  },
+  {
+   "id": "u_owner_blr",
+   "name": "Rohan Mehta",
+   "email": "owner@feast.demo",
+   "phone": "+919811111111",
+   "role": "OWNER",
+   "restaurantIds": [
+    "r_olive_ember",
+    "r_hops_republic"
+   ],
+   "status": "ACTIVE",
+   "createdAt": "2026-02-11T09:00:00.000Z"
+  },
+  {
+   "id": "u_owner_bom",
+   "name": "Priya Nair",
+   "email": "owner.mumbai@feast.demo",
+   "phone": "+919822222222",
+   "role": "OWNER",
+   "restaurantIds": [
+    "r_bombay_monsoon",
+    "r_salt_water"
+   ],
+   "status": "ACTIVE",
+   "createdAt": "2026-03-02T09:00:00.000Z"
+  },
+  {
+   "id": "u_kavya",
+   "name": "Kavya Rao",
+   "phone": "+919876543210",
+   "role": "CUSTOMER",
+   "restaurantIds": [],
+   "status": "ACTIVE",
+   "createdAt": "2026-04-18T09:00:00.000Z"
+  },
+  {
+   "id": "u_owner_au",
+   "name": "Chloe Nguyen",
+   "email": "owner.au@feast.demo",
+   "phone": "+61412000111",
+   "role": "OWNER",
+   "restaurantIds": [
+    "r_harbour_vine",
+    "r_fitzroy_fire"
+   ],
+   "status": "ACTIVE",
+   "createdAt": "2026-05-04T09:00:00.000Z"
+  },
+  {
+   "id": "u_jack",
+   "name": "Jack Wilson",
+   "phone": "+61412345678",
+   "role": "CUSTOMER",
+   "restaurantIds": [],
+   "status": "ACTIVE",
+   "createdAt": "2026-07-01T09:00:00.000Z"
+  },
+  {
+   "id": "u_arjun",
+   "name": "Arjun Shah",
+   "phone": "+919898989898",
+   "role": "CUSTOMER",
+   "restaurantIds": [],
+   "status": "ACTIVE",
+   "createdAt": "2026-06-21T09:00:00.000Z"
+  }
+ ],
+ "demoOtp": "123456",
+ "demoPassword": "feast123",
+ "restaurants": [
+  {
+   "detail": {
+    "id": "r_olive_ember",
+    "slug": "olive-and-ember",
+    "name": "Olive & Ember",
+    "cityId": "blr",
+    "area": "Indiranagar",
+    "cuisines": [
+     "Italian",
+     "Pizza",
+     "Continental"
+    ],
+    "rating": 4.5,
+    "ratingCount": 2840,
+    "costForTwo": 180000,
+    "priceBand": 3,
+    "currency": "INR",
+    "countryCode": "IN",
+    "distanceKm": 1.2,
+    "isPureVeg": false,
+    "tags": [
+     "Rooftop",
+     "Live music",
+     "Date night"
+    ],
+    "art": {
+     "hue": 18,
+     "motif": "pizza",
+     "image": "https://images.unsplash.com/photo-1621275471769-e6aa344546d5?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @brandsandpeople"
+    },
+    "headlineOffer": "Flat 30% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "10, 1st Main, Indiranagar, Bengaluru",
+    "about": "Wood-fired pizzas and handmade pasta on a breezy rooftop, with acoustic sets every Friday and Saturday.",
+    "phone": "+91 9845000000",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Tue",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Wed",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Thu",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Fri",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sat",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sun",
+      "open": "12:00",
+      "close": "23:30"
+     }
+    ],
+    "highlights": [
+     "Wood-fired oven",
+     "Rooftop seating",
+     "Live acoustic music on weekends",
+     "Craft cocktails"
+    ],
+    "offers": [
+     {
+      "id": "r_olive_ember_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 30% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 30,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_olive_ember_bill",
+      "scope": "BILL",
+      "title": "15% off",
+      "subtitle": "on bill payment, up to ₹750",
+      "percentOff": 15,
+      "maxDiscount": 75000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount ₹750"
+      ]
+     },
+     {
+      "id": "r_olive_ember_flat",
+      "scope": "BILL",
+      "title": "Flat ₹150 off",
+      "subtitle": "on bills above ₹1080",
+      "flatOff": 15000,
+      "minBill": 108000,
+      "terms": [
+       "Minimum bill ₹1080",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_olive_ember_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to ₹500 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 50000,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_olive_ember_p0",
+      "caption": "Interiors",
+      "hue": 18,
+      "url": "https://images.unsplash.com/photo-1544490875-c46cb12f6fbe?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @ianjbattaglia"
+     },
+     {
+      "id": "r_olive_ember_p1",
+      "caption": "Signature dish",
+      "hue": 55,
+      "url": "https://images.unsplash.com/photo-1579751626657-72bc17010498?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @nik_owens"
+     },
+     {
+      "id": "r_olive_ember_p2",
+      "caption": "Bar",
+      "hue": 92,
+      "url": "https://images.unsplash.com/photo-1558383738-8e44bbf6b093?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @kellysikkema"
+     },
+     {
+      "id": "r_olive_ember_p3",
+      "caption": "Seating",
+      "hue": 129,
+      "url": "https://images.unsplash.com/photo-1721673378282-29ab91cf4c93?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @traveleroohlala"
+     },
+     {
+      "id": "r_olive_ember_p4",
+      "caption": "Dessert",
+      "hue": 166,
+      "url": "https://images.unsplash.com/photo-1724116379273-ba32b70d112c?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @ginasauckland"
+     },
+     {
+      "id": "r_olive_ember_p5",
+      "caption": "Chef's special",
+      "hue": 203,
+      "url": "https://images.unsplash.com/photo-1597393353365-9d4366392fe9?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @heydivani"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_olive_ember_i0",
+      "name": "Burrata & heirloom tomato",
+      "description": "Creamy burrata, basil oil, toasted sourdough",
+      "price": 54500,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     },
+     {
+      "id": "r_olive_ember_i3",
+      "name": "Margherita",
+      "description": "San Marzano tomato, fior di latte, basil",
+      "price": 44500,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true,
+      "variants": [
+       {
+        "id": "r",
+        "name": "Regular 10\"",
+        "price": 0
+       },
+       {
+        "id": "l",
+        "name": "Large 13\"",
+        "price": 22000
+       }
+      ]
+     },
+     {
+      "id": "r_olive_ember_i8",
+      "name": "Tiramisu",
+      "description": "Mascarpone, espresso, cocoa",
+      "price": 39500,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_olive_ember_c0",
+     "name": "Small plates",
+     "items": [
+      {
+       "id": "r_olive_ember_i0",
+       "name": "Burrata & heirloom tomato",
+       "description": "Creamy burrata, basil oil, toasted sourdough",
+       "price": 54500,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1555072930-714bba1d24e2?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @pinarimsi"
+      },
+      {
+       "id": "r_olive_ember_i1",
+       "name": "Garlic bread with cheese",
+       "description": "Herb butter, mozzarella, chilli flakes",
+       "price": 29500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1619535860434-ba1d8fa12536?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @jaygajjar"
+      },
+      {
+       "id": "r_olive_ember_i2",
+       "name": "Calamari fritti",
+       "description": "Lemon aioli, pickled chilli",
+       "price": 49500,
+       "isVeg": false,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1682264895449-f75b342cbab6?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @joaniesimon"
+      }
+     ]
+    },
+    {
+     "id": "r_olive_ember_c1",
+     "name": "Wood-fired pizza",
+     "items": [
+      {
+       "id": "r_olive_ember_i3",
+       "name": "Margherita",
+       "description": "San Marzano tomato, fior di latte, basil",
+       "price": 44500,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "variants": [
+        {
+         "id": "r",
+         "name": "Regular 10\"",
+         "price": 0
+        },
+        {
+         "id": "l",
+         "name": "Large 13\"",
+         "price": 22000
+        }
+       ],
+       "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @iavnt"
+      },
+      {
+       "id": "r_olive_ember_i4",
+       "name": "Truffle mushroom",
+       "description": "Wild mushrooms, truffle oil, parmesan",
+       "price": 64500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1590947132387-155cc02f3212?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @v_uk_europe"
+      },
+      {
+       "id": "r_olive_ember_i5",
+       "name": "Spicy pepperoni",
+       "description": "Pepperoni, hot honey, mozzarella",
+       "price": 69500,
+       "isVeg": false,
+       "available": true,
+       "spiceLevel": 2,
+       "image": "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @shouravsheikh"
+      }
+     ]
+    },
+    {
+     "id": "r_olive_ember_c2",
+     "name": "Pasta",
+     "items": [
+      {
+       "id": "r_olive_ember_i6",
+       "name": "Cacio e pepe",
+       "description": "Tonnarelli, pecorino, cracked pepper",
+       "price": 52500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1588013273468-315fd88ea34c?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @fresh_studio"
+      },
+      {
+       "id": "r_olive_ember_i7",
+       "name": "Prawn aglio olio",
+       "description": "Garlic, chilli, parsley",
+       "price": 64500,
+       "isVeg": false,
+       "available": true,
+       "spiceLevel": 1,
+       "image": "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @islandsandsunsets"
+      }
+     ]
+    },
+    {
+     "id": "r_olive_ember_c3",
+     "name": "Desserts",
+     "items": [
+      {
+       "id": "r_olive_ember_i8",
+       "name": "Tiramisu",
+       "description": "Mascarpone, espresso, cocoa",
+       "price": 39500,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1782458786741-eb404fea310a?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @smuggrin"
+      }
+     ]
+    }
+   ],
+   "breakfast": false,
+   "shortCode": "OAE1"
+  },
+  {
+   "detail": {
+    "id": "r_saffron_courtyard",
+    "slug": "saffron-courtyard",
+    "name": "Saffron Courtyard",
+    "cityId": "blr",
+    "area": "Koramangala",
+    "cuisines": [
+     "North Indian",
+     "Mughlai",
+     "Kebabs"
+    ],
+    "rating": 4.3,
+    "ratingCount": 5120,
+    "costForTwo": 150000,
+    "priceBand": 3,
+    "currency": "INR",
+    "countryCode": "IN",
+    "distanceKm": 3.4,
+    "isPureVeg": false,
+    "tags": [
+     "Family friendly",
+     "Large groups"
+    ],
+    "art": {
+     "hue": 35,
+     "motif": "curry",
+     "image": "https://images.unsplash.com/photo-1697155406055-2db32d47ca07?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @rashpalsingh"
+    },
+    "headlineOffer": "Flat 25% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "17, Church Street, Koramangala, Bengaluru",
+    "about": "Slow-cooked dum biryanis, tandoor kebabs and rich curries served in a lantern-lit courtyard.",
+    "phone": "+91 9846234567",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Tue",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Wed",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Thu",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Fri",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sat",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sun",
+      "open": "12:00",
+      "close": "23:30"
+     }
+    ],
+    "highlights": [
+     "Private dining room for 20",
+     "Tandoor specialities",
+     "Kids menu"
+    ],
+    "offers": [
+     {
+      "id": "r_saffron_courtyard_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 25% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 25,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_saffron_courtyard_bill",
+      "scope": "BILL",
+      "title": "15% off",
+      "subtitle": "on bill payment, up to ₹600",
+      "percentOff": 15,
+      "maxDiscount": 60000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount ₹600"
+      ]
+     },
+     {
+      "id": "r_saffron_courtyard_flat",
+      "scope": "BILL",
+      "title": "Flat ₹150 off",
+      "subtitle": "on bills above ₹900",
+      "flatOff": 15000,
+      "minBill": 90000,
+      "terms": [
+       "Minimum bill ₹900",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_saffron_courtyard_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to ₹500 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 50000,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_saffron_courtyard_p0",
+      "caption": "Interiors",
+      "hue": 35,
+      "url": "https://images.unsplash.com/photo-1781078693283-3811465556fb?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @aizerd"
+     },
+     {
+      "id": "r_saffron_courtyard_p1",
+      "caption": "Signature dish",
+      "hue": 72,
+      "url": "https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @chefmariii"
+     },
+     {
+      "id": "r_saffron_courtyard_p2",
+      "caption": "Bar",
+      "hue": 109,
+      "url": "https://images.unsplash.com/photo-1759568558828-22b68dce2388?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @msounak_"
+     },
+     {
+      "id": "r_saffron_courtyard_p3",
+      "caption": "Seating",
+      "hue": 146,
+      "url": "https://images.unsplash.com/photo-1682778418768-16081e4470a1?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @prithiviraj"
+     },
+     {
+      "id": "r_saffron_courtyard_p4",
+      "caption": "Dessert",
+      "hue": 183,
+      "url": "https://images.unsplash.com/photo-1666190092159-3171cf0fbb12?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @umairaliasad"
+     },
+     {
+      "id": "r_saffron_courtyard_p5",
+      "caption": "Chef's special",
+      "hue": 220,
+      "url": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @victoriakosmo"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_saffron_courtyard_i0",
+      "name": "Paneer tikka",
+      "description": "Charred cottage cheese, mint chutney",
+      "price": 39500,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true,
+      "spiceLevel": 1
+     },
+     {
+      "id": "r_saffron_courtyard_i3",
+      "name": "Dal makhani",
+      "description": "Slow-cooked overnight, white butter",
+      "price": 34500,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     },
+     {
+      "id": "r_saffron_courtyard_i4",
+      "name": "Butter chicken",
+      "description": "Smoked tomato makhani gravy",
+      "price": 49500,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_saffron_courtyard_c0",
+     "name": "Starters",
+     "items": [
+      {
+       "id": "r_saffron_courtyard_i0",
+       "name": "Paneer tikka",
+       "description": "Charred cottage cheese, mint chutney",
+       "price": 39500,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "spiceLevel": 1,
+       "image": "https://images.unsplash.com/photo-1666001120694-3ebe8fd207be?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @rupa_venketa_vardhan"
+      },
+      {
+       "id": "r_saffron_courtyard_i1",
+       "name": "Galouti kebab",
+       "description": "Melt-in-mouth mutton kebab on ulte tawa paratha",
+       "price": 54500,
+       "isVeg": false,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1532636875304-0c89119d9b4d?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @suadkamardeen"
+      },
+      {
+       "id": "r_saffron_courtyard_i2",
+       "name": "Dahi ke kebab",
+       "description": "Hung curd patties, beetroot chutney",
+       "price": 34500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1707592357743-5e25b277ca36?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @sanaumer"
+      }
+     ]
+    },
+    {
+     "id": "r_saffron_courtyard_c1",
+     "name": "Mains",
+     "items": [
+      {
+       "id": "r_saffron_courtyard_i3",
+       "name": "Dal makhani",
+       "description": "Slow-cooked overnight, white butter",
+       "price": 34500,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1697155406121-85aac6236000?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @rashpalsingh"
+      },
+      {
+       "id": "r_saffron_courtyard_i4",
+       "name": "Butter chicken",
+       "description": "Smoked tomato makhani gravy",
+       "price": 49500,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1772730064970-a7b2735c93b9?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @dischef"
+      },
+      {
+       "id": "r_saffron_courtyard_i5",
+       "name": "Lucknowi dum biryani",
+       "description": "Mutton, saffron, kewra",
+       "price": 54500,
+       "isVeg": false,
+       "available": true,
+       "variants": [
+        {
+         "id": "h",
+         "name": "Half",
+         "price": 0
+        },
+        {
+         "id": "f",
+         "name": "Full",
+         "price": 25000
+        }
+       ],
+       "image": "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @shreyaksingh"
+      }
+     ]
+    },
+    {
+     "id": "r_saffron_courtyard_c2",
+     "name": "Breads",
+     "items": [
+      {
+       "id": "r_saffron_courtyard_i6",
+       "name": "Butter naan",
+       "description": "From the tandoor",
+       "price": 9500,
+       "isVeg": true,
+       "available": true,
+       "addons": [
+        {
+         "id": "garlic",
+         "name": "Garlic",
+         "price": 2000
+        },
+        {
+         "id": "cheese",
+         "name": "Cheese",
+         "price": 6000
+        }
+       ],
+       "image": "https://images.unsplash.com/photo-1559561724-4ea348cd867f?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @how_it_feel"
+      },
+      {
+       "id": "r_saffron_courtyard_i7",
+       "name": "Laccha paratha",
+       "description": "Layered whole-wheat bread",
+       "price": 11000,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1683533743190-89c9b19f9ea6?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @ananthan8110"
+      }
+     ]
+    },
+    {
+     "id": "r_saffron_courtyard_c3",
+     "name": "Desserts",
+     "items": [
+      {
+       "id": "r_saffron_courtyard_i8",
+       "name": "Gulab jamun",
+       "description": "Warm, with rabri",
+       "price": 19500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1593701461250-d7b22dfd3a77?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @magictype"
+      }
+     ]
+    }
+   ],
+   "breakfast": false,
+   "shortCode": "SC2"
+  },
+  {
+   "detail": {
+    "id": "r_bamboo_lane",
+    "slug": "bamboo-lane",
+    "name": "Bamboo Lane",
+    "cityId": "blr",
+    "area": "HSR Layout",
+    "cuisines": [
+     "Asian",
+     "Japanese",
+     "Thai"
+    ],
+    "rating": 4.4,
+    "ratingCount": 1980,
+    "costForTwo": 140000,
+    "priceBand": 2,
+    "currency": "INR",
+    "countryCode": "IN",
+    "distanceKm": 5.1,
+    "isPureVeg": false,
+    "tags": [
+     "Sushi bar",
+     "Quick bites"
+    ],
+    "art": {
+     "hue": 150,
+     "motif": "noodles",
+     "image": "https://images.unsplash.com/photo-1709201759685-459d11d53d93?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @innasafa"
+    },
+    "headlineOffer": "Flat 25% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "24, 100 Feet Road, HSR Layout, Bengaluru",
+    "about": "Ramen, robata grills and sushi rolls in a warm, minimal space wrapped in bamboo.",
+    "phone": "+91 9847469134",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Tue",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Wed",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Thu",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Fri",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sat",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sun",
+      "open": "12:00",
+      "close": "23:30"
+     }
+    ],
+    "highlights": [
+     "Live sushi counter",
+     "Vegan ramen",
+     "Matcha desserts"
+    ],
+    "offers": [
+     {
+      "id": "r_bamboo_lane_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 25% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 25,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_bamboo_lane_bill",
+      "scope": "BILL",
+      "title": "10% off",
+      "subtitle": "on bill payment, up to ₹500",
+      "percentOff": 10,
+      "maxDiscount": 50000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount ₹500"
+      ]
+     },
+     {
+      "id": "r_bamboo_lane_flat",
+      "scope": "BILL",
+      "title": "Flat ₹150 off",
+      "subtitle": "on bills above ₹840",
+      "flatOff": 15000,
+      "minBill": 84000,
+      "terms": [
+       "Minimum bill ₹840",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_bamboo_lane_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to ₹500 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 50000,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_bamboo_lane_p0",
+      "caption": "Interiors",
+      "hue": 150,
+      "url": "https://images.unsplash.com/photo-1622140739492-f82f386260b5?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @brandsandpeople"
+     },
+     {
+      "id": "r_bamboo_lane_p1",
+      "caption": "Signature dish",
+      "hue": 187,
+      "url": "https://images.unsplash.com/photo-1553621042-f6e147245754?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @deram31"
+     },
+     {
+      "id": "r_bamboo_lane_p2",
+      "caption": "Bar",
+      "hue": 224,
+      "url": "https://images.unsplash.com/photo-1664711414381-b0768d979223?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @nichiyoshi"
+     },
+     {
+      "id": "r_bamboo_lane_p3",
+      "caption": "Seating",
+      "hue": 261,
+      "url": "https://images.unsplash.com/photo-1776891326990-44f302f134cb?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @epartner"
+     },
+     {
+      "id": "r_bamboo_lane_p4",
+      "caption": "Dessert",
+      "hue": 298,
+      "url": "https://images.unsplash.com/photo-1722478347636-5f50cb76abf3?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @ep_petrus"
+     },
+     {
+      "id": "r_bamboo_lane_p5",
+      "caption": "Chef's special",
+      "hue": 335,
+      "url": "https://images.unsplash.com/photo-1727281970324-4bda7bab3073?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @ja024"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_bamboo_lane_i0",
+      "name": "Edamame truffle dumplings",
+      "description": "Steamed, chilli oil",
+      "price": 42500,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     },
+     {
+      "id": "r_bamboo_lane_i2",
+      "name": "Shoyu ramen",
+      "description": "Chicken broth, chashu, ajitama",
+      "price": 54500,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_bamboo_lane_c0",
+     "name": "Small plates",
+     "items": [
+      {
+       "id": "r_bamboo_lane_i0",
+       "name": "Edamame truffle dumplings",
+       "description": "Steamed, chilli oil",
+       "price": 42500,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @charlesdeluvio"
+      },
+      {
+       "id": "r_bamboo_lane_i1",
+       "name": "Korean fried chicken",
+       "description": "Gochujang glaze, sesame",
+       "price": 49500,
+       "isVeg": false,
+       "available": true,
+       "spiceLevel": 2,
+       "image": "https://images.unsplash.com/photo-1771384552858-feb0574f958d?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @jon__kelvin"
+      }
+     ]
+    },
+    {
+     "id": "r_bamboo_lane_c1",
+     "name": "Ramen & noodles",
+     "items": [
+      {
+       "id": "r_bamboo_lane_i2",
+       "name": "Shoyu ramen",
+       "description": "Chicken broth, chashu, ajitama",
+       "price": 54500,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1614563637806-1d0e645e0940?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @susannschuster"
+      },
+      {
+       "id": "r_bamboo_lane_i3",
+       "name": "Vegan miso ramen",
+       "description": "Shiitake broth, tofu, bok choy",
+       "price": 49500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1591814468924-caf88d1232e1?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @cceee"
+      },
+      {
+       "id": "r_bamboo_lane_i4",
+       "name": "Hand-pulled dan dan noodles",
+       "description": "Sichuan pepper, peanuts",
+       "price": 44500,
+       "isVeg": true,
+       "available": true,
+       "spiceLevel": 3,
+       "image": "https://images.unsplash.com/photo-1684707878393-02606f779d7f?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @mario"
+      }
+     ]
+    },
+    {
+     "id": "r_bamboo_lane_c2",
+     "name": "Sushi",
+     "items": [
+      {
+       "id": "r_bamboo_lane_i5",
+       "name": "Spicy salmon roll",
+       "description": "8 pcs, sriracha mayo",
+       "price": 64500,
+       "isVeg": false,
+       "available": true,
+       "spiceLevel": 1,
+       "image": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @derekduran"
+      },
+      {
+       "id": "r_bamboo_lane_i6",
+       "name": "Avocado cucumber roll",
+       "description": "8 pcs",
+       "price": 44500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1712192674556-4a89f20240c1?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @ifoodijourney"
+      }
+     ]
+    },
+    {
+     "id": "r_bamboo_lane_c3",
+     "name": "Desserts",
+     "items": [
+      {
+       "id": "r_bamboo_lane_i7",
+       "name": "Matcha cheesecake",
+       "description": "Black sesame crumble",
+       "price": 34500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1492683654773-a3b0476056c0?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @heftiba"
+      }
+     ]
+    }
+   ],
+   "breakfast": false,
+   "shortCode": "BL3"
+  },
+  {
+   "detail": {
+    "id": "r_coastal_tide",
+    "slug": "coastal-tide",
+    "name": "Coastal Tide",
+    "cityId": "blr",
+    "area": "MG Road",
+    "cuisines": [
+     "Seafood",
+     "Mangalorean",
+     "Kerala"
+    ],
+    "rating": 4.6,
+    "ratingCount": 3410,
+    "costForTwo": 200000,
+    "priceBand": 3,
+    "currency": "INR",
+    "countryCode": "IN",
+    "distanceKm": 4,
+    "isPureVeg": false,
+    "tags": [
+     "Seafood",
+     "Heritage building"
+    ],
+    "art": {
+     "hue": 195,
+     "motif": "seafood",
+     "image": "https://images.unsplash.com/photo-1789993496277-33397db03554?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @zoshuacolah"
+    },
+    "headlineOffer": "Flat 20% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "31, Linking Road, MG Road, Bengaluru",
+    "about": "Ghee roasts, fish thalis and tawa-fried catch of the day from the west coast, in a restored 1920s bungalow.",
+    "phone": "+91 9848703701",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Tue",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Wed",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Thu",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Fri",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sat",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sun",
+      "open": "12:00",
+      "close": "23:30"
+     }
+    ],
+    "highlights": [
+     "Catch of the day",
+     "Neer dosa made to order",
+     "Heritage bungalow"
+    ],
+    "offers": [
+     {
+      "id": "r_coastal_tide_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 20% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 20,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_coastal_tide_bill",
+      "scope": "BILL",
+      "title": "15% off",
+      "subtitle": "on bill payment, up to ₹800",
+      "percentOff": 15,
+      "maxDiscount": 80000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount ₹800"
+      ]
+     },
+     {
+      "id": "r_coastal_tide_flat",
+      "scope": "BILL",
+      "title": "Flat ₹150 off",
+      "subtitle": "on bills above ₹1200",
+      "flatOff": 15000,
+      "minBill": 120000,
+      "terms": [
+       "Minimum bill ₹1200",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_coastal_tide_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to ₹500 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 50000,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_coastal_tide_p0",
+      "caption": "Interiors",
+      "hue": 195,
+      "url": "https://images.unsplash.com/photo-1719639946823-6b2d49d1969f?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @ninjason"
+     },
+     {
+      "id": "r_coastal_tide_p1",
+      "caption": "Signature dish",
+      "hue": 232,
+      "url": "https://images.unsplash.com/photo-1632660345494-9cc2607f89c2?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @advocator_sy"
+     },
+     {
+      "id": "r_coastal_tide_p2",
+      "caption": "Bar",
+      "hue": 269,
+      "url": "https://images.unsplash.com/photo-1670752617062-e1c4087a346d?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @tasae34"
+     },
+     {
+      "id": "r_coastal_tide_p3",
+      "caption": "Seating",
+      "hue": 306,
+      "url": "https://images.unsplash.com/photo-1608816042754-d69cb2271bea?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @vtrpldn"
+     },
+     {
+      "id": "r_coastal_tide_p4",
+      "caption": "Dessert",
+      "hue": 343,
+      "url": "https://images.unsplash.com/photo-1590055619273-44b5b6ce52e8?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @rasmusgs"
+     },
+     {
+      "id": "r_coastal_tide_p5",
+      "caption": "Chef's special",
+      "hue": 20,
+      "url": "https://images.unsplash.com/photo-1579208030886-b937da0925dc?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @milodude"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_coastal_tide_i0",
+      "name": "Prawn ghee roast",
+      "description": "Byadgi chilli, ghee, curry leaves",
+      "price": 59500,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true,
+      "spiceLevel": 2
+     },
+     {
+      "id": "r_coastal_tide_i3",
+      "name": "Fish curry & neer dosa",
+      "description": "Coconut gravy, 3 neer dosas",
+      "price": 54500,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_coastal_tide_c0",
+     "name": "Starters",
+     "items": [
+      {
+       "id": "r_coastal_tide_i0",
+       "name": "Prawn ghee roast",
+       "description": "Byadgi chilli, ghee, curry leaves",
+       "price": 59500,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "spiceLevel": 2,
+       "image": "https://images.unsplash.com/photo-1764311792750-c10a9b45178f?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @varanga22"
+      },
+      {
+       "id": "r_coastal_tide_i1",
+       "name": "Rava fried pomfret",
+       "description": "Semolina crust, lime",
+       "price": 69500,
+       "isVeg": false,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1665401015549-712c0dc5ef85?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @keeshasskitchen"
+      },
+      {
+       "id": "r_coastal_tide_i2",
+       "name": "Mushroom pepper fry",
+       "description": "Kerala style, black pepper",
+       "price": 34500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1708229562225-948380ed7411?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @priyankabrokenheart90"
+      }
+     ]
+    },
+    {
+     "id": "r_coastal_tide_c1",
+     "name": "Mains",
+     "items": [
+      {
+       "id": "r_coastal_tide_i3",
+       "name": "Fish curry & neer dosa",
+       "description": "Coconut gravy, 3 neer dosas",
+       "price": 54500,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1570275239925-4af0aa93a0dc?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @0x00kevin"
+      },
+      {
+       "id": "r_coastal_tide_i4",
+       "name": "Veg stew & appam",
+       "description": "Coconut milk stew, 2 appams",
+       "price": 39500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1559561723-c3f4195835db?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @how_it_feel"
+      },
+      {
+       "id": "r_coastal_tide_i5",
+       "name": "Crab sukka",
+       "description": "Dry coconut masala",
+       "price": 89500,
+       "isVeg": false,
+       "available": true,
+       "spiceLevel": 2,
+       "image": "https://images.unsplash.com/photo-1668236534990-73c4ed23043c?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @paul19977"
+      }
+     ]
+    },
+    {
+     "id": "r_coastal_tide_c2",
+     "name": "Desserts",
+     "items": [
+      {
+       "id": "r_coastal_tide_i6",
+       "name": "Elaneer payasam",
+       "description": "Tender coconut kheer",
+       "price": 24500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1708782343229-b58f8e0b7020?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @rimshaj123"
+      }
+     ]
+    }
+   ],
+   "breakfast": false,
+   "shortCode": "CT4"
+  },
+  {
+   "detail": {
+    "id": "r_daily_grind",
+    "slug": "the-daily-grind",
+    "name": "The Daily Grind",
+    "cityId": "blr",
+    "area": "Jayanagar",
+    "cuisines": [
+     "Cafe",
+     "Continental",
+     "Bakery"
+    ],
+    "rating": 4.2,
+    "ratingCount": 1260,
+    "costForTwo": 80000,
+    "priceBand": 1,
+    "currency": "INR",
+    "countryCode": "IN",
+    "distanceKm": 6.3,
+    "isPureVeg": false,
+    "tags": [
+     "Work friendly",
+     "Pet friendly",
+     "All-day breakfast"
+    ],
+    "art": {
+     "hue": 28,
+     "motif": "cafe",
+     "image": "https://images.unsplash.com/photo-1590444710142-805dc802f1f0?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @blessingeffect"
+    },
+    "headlineOffer": "Flat 15% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "38, Station Road, Jayanagar, Bengaluru",
+    "about": "Single-origin pour-overs, sourdough toasties and all-day breakfast in a sunny neighbourhood cafe.",
+    "phone": "+91 9849938268",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "08:00",
+      "close": "22:00"
+     },
+     {
+      "day": "Tue",
+      "open": "08:00",
+      "close": "22:00"
+     },
+     {
+      "day": "Wed",
+      "open": "08:00",
+      "close": "22:00"
+     },
+     {
+      "day": "Thu",
+      "open": "08:00",
+      "close": "22:00"
+     },
+     {
+      "day": "Fri",
+      "open": "08:00",
+      "close": "22:00"
+     },
+     {
+      "day": "Sat",
+      "open": "08:00",
+      "close": "22:00"
+     },
+     {
+      "day": "Sun",
+      "open": "08:00",
+      "close": "22:00"
+     }
+    ],
+    "highlights": [
+     "Specialty coffee",
+     "Fast Wi-Fi",
+     "Pet friendly patio"
+    ],
+    "offers": [
+     {
+      "id": "r_daily_grind_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 15% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 15,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_daily_grind_bill",
+      "scope": "BILL",
+      "title": "10% off",
+      "subtitle": "on bill payment, up to ₹200",
+      "percentOff": 10,
+      "maxDiscount": 20000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount ₹200"
+      ]
+     },
+     {
+      "id": "r_daily_grind_flat",
+      "scope": "BILL",
+      "title": "Flat ₹150 off",
+      "subtitle": "on bills above ₹480",
+      "flatOff": 15000,
+      "minBill": 48000,
+      "terms": [
+       "Minimum bill ₹480",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_daily_grind_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to ₹500 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 50000,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_daily_grind_p0",
+      "caption": "Interiors",
+      "hue": 28,
+      "url": "https://images.unsplash.com/photo-1641124962413-4eee4dff807e?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @rawkkim"
+     },
+     {
+      "id": "r_daily_grind_p1",
+      "caption": "Signature dish",
+      "hue": 65,
+      "url": "https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @fahmipaping"
+     },
+     {
+      "id": "r_daily_grind_p2",
+      "caption": "Bar",
+      "hue": 102,
+      "url": "https://images.unsplash.com/photo-1620807773206-49c1f2957417?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @lighttouchedphotography"
+     },
+     {
+      "id": "r_daily_grind_p3",
+      "caption": "Seating",
+      "hue": 139,
+      "url": "https://images.unsplash.com/photo-1579018183467-a60b8dc9dd78?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @praveeeeeeeen"
+     },
+     {
+      "id": "r_daily_grind_p4",
+      "caption": "Dessert",
+      "hue": 176,
+      "url": "https://images.unsplash.com/photo-1623334044303-241021148842?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @commonboxturtle"
+     },
+     {
+      "id": "r_daily_grind_p5",
+      "caption": "Chef's special",
+      "hue": 213,
+      "url": "https://images.unsplash.com/photo-1588137378633-dea1336ce1e2?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @dougbagg_"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_daily_grind_i0",
+      "name": "Avocado sourdough toast",
+      "description": "Poached egg optional, chilli flakes",
+      "price": 39500,
+      "isVeg": true,
+      "available": true,
+      "addons": [
+       {
+        "id": "egg",
+        "name": "Poached egg",
+        "price": 6000
+       }
+      ],
+      "isBestseller": true
+     },
+     {
+      "id": "r_daily_grind_i5",
+      "name": "Pour-over",
+      "description": "Single origin, ask for today's beans",
+      "price": 22000,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_daily_grind_c0",
+     "name": "All-day breakfast",
+     "items": [
+      {
+       "id": "r_daily_grind_i0",
+       "name": "Avocado sourdough toast",
+       "description": "Poached egg optional, chilli flakes",
+       "price": 39500,
+       "isVeg": true,
+       "available": true,
+       "addons": [
+        {
+         "id": "egg",
+         "name": "Poached egg",
+         "price": 6000
+        }
+       ],
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1612215047504-a6c07dbe4f7f?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @magnoliasagestudio"
+      },
+      {
+       "id": "r_daily_grind_i1",
+       "name": "Akuri on toast",
+       "description": "Parsi-style spiced scrambled eggs",
+       "price": 32500,
+       "isVeg": false,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1583552336796-531290f1fe2a?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @elalfred_12"
+      },
+      {
+       "id": "r_daily_grind_i2",
+       "name": "Buttermilk pancakes",
+       "description": "Maple, berries, whipped butter",
+       "price": 34500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @nikldn"
+      }
+     ]
+    },
+    {
+     "id": "r_daily_grind_c1",
+     "name": "Sandwiches",
+     "items": [
+      {
+       "id": "r_daily_grind_i3",
+       "name": "Pesto chicken panini",
+       "description": "Mozzarella, sundried tomato",
+       "price": 37500,
+       "isVeg": false,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1649305785246-a1d65e8bc078?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @tonyrocket"
+      },
+      {
+       "id": "r_daily_grind_i4",
+       "name": "Caprese focaccia",
+       "description": "Tomato, mozzarella, basil",
+       "price": 34500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1619452357216-e88ca8119eeb?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @paulaberto"
+      }
+     ]
+    },
+    {
+     "id": "r_daily_grind_c2",
+     "name": "Coffee",
+     "items": [
+      {
+       "id": "r_daily_grind_i5",
+       "name": "Pour-over",
+       "description": "Single origin, ask for today's beans",
+       "price": 22000,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1781460877110-6988cbaf0eb0?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @bgoodpic"
+      },
+      {
+       "id": "r_daily_grind_i6",
+       "name": "Flat white",
+       "description": "Double ristretto",
+       "price": 21000,
+       "isVeg": true,
+       "available": true,
+       "variants": [
+        {
+         "id": "dairy",
+         "name": "Dairy milk",
+         "price": 0
+        },
+        {
+         "id": "oat",
+         "name": "Oat milk",
+         "price": 6000
+        }
+       ],
+       "image": "https://images.unsplash.com/photo-1502462041640-b3d7e50d0662?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @jonasjacobsson"
+      }
+     ]
+    }
+   ],
+   "breakfast": true,
+   "shortCode": "TDG5"
+  },
+  {
+   "detail": {
+    "id": "r_ember_oak",
+    "slug": "ember-and-oak",
+    "name": "Ember & Oak Grillhouse",
+    "cityId": "blr",
+    "area": "Whitefield",
+    "cuisines": [
+     "Steakhouse",
+     "Grill",
+     "European"
+    ],
+    "rating": 4.7,
+    "ratingCount": 980,
+    "costForTwo": 420000,
+    "priceBand": 4,
+    "currency": "INR",
+    "countryCode": "IN",
+    "distanceKm": 12.5,
+    "isPureVeg": false,
+    "tags": [
+     "Fine dining",
+     "Wine list",
+     "Date night"
+    ],
+    "art": {
+     "hue": 8,
+     "motif": "grill",
+     "image": "https://images.unsplash.com/photo-1644704265419-96ddaf628e71?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @clark_douglas"
+    },
+    "headlineOffer": "Flat 15% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "45, 1st Main, Whitefield, Bengaluru",
+    "about": "Dry-aged cuts, open-fire vegetables and a 200-label wine cellar. Smart casual dress code.",
+    "phone": "+91 9851172835",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Tue",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Wed",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Thu",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Fri",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sat",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sun",
+      "open": "12:00",
+      "close": "23:30"
+     }
+    ],
+    "highlights": [
+     "Dry-aged meats",
+     "Sommelier on site",
+     "Chef's tasting menu"
+    ],
+    "offers": [
+     {
+      "id": "r_ember_oak_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 15% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 15,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_ember_oak_bill",
+      "scope": "BILL",
+      "title": "10% off",
+      "subtitle": "on bill payment, up to ₹1500",
+      "percentOff": 10,
+      "maxDiscount": 150000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount ₹1500"
+      ]
+     },
+     {
+      "id": "r_ember_oak_flat",
+      "scope": "BILL",
+      "title": "Flat ₹150 off",
+      "subtitle": "on bills above ₹2520",
+      "flatOff": 15000,
+      "minBill": 252000,
+      "terms": [
+       "Minimum bill ₹2520",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_ember_oak_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to ₹500 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 50000,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_ember_oak_p0",
+      "caption": "Interiors",
+      "hue": 8,
+      "url": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @ninjason"
+     },
+     {
+      "id": "r_ember_oak_p1",
+      "caption": "Signature dish",
+      "hue": 45,
+      "url": "https://images.unsplash.com/photo-1546964124-0cce460f38ef?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @loija"
+     },
+     {
+      "id": "r_ember_oak_p2",
+      "caption": "Bar",
+      "hue": 82,
+      "url": "https://images.unsplash.com/photo-1562601579-599dec564e06?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @hermez777"
+     },
+     {
+      "id": "r_ember_oak_p3",
+      "caption": "Seating",
+      "hue": 119,
+      "url": "https://images.unsplash.com/photo-1776993298456-98c71c0e177e?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @francotheshooter"
+     },
+     {
+      "id": "r_ember_oak_p4",
+      "caption": "Dessert",
+      "hue": 156,
+      "url": "https://images.unsplash.com/photo-1524351199678-941a58a3df50?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @kittinskie"
+     },
+     {
+      "id": "r_ember_oak_p5",
+      "caption": "Chef's special",
+      "hue": 193,
+      "url": "https://images.unsplash.com/photo-1604343933806-5348d1384b1a?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @hulkiokantabak"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_ember_oak_i0",
+      "name": "Dry-aged ribeye 300g",
+      "description": "Bone marrow butter, chimichurri",
+      "price": 249500,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true,
+      "variants": [
+       {
+        "id": "mr",
+        "name": "Medium rare",
+        "price": 0
+       },
+       {
+        "id": "m",
+        "name": "Medium",
+        "price": 0
+       },
+       {
+        "id": "w",
+        "name": "Well done",
+        "price": 0
+       }
+      ]
+     },
+     {
+      "id": "r_ember_oak_i1",
+      "name": "Smoked brisket platter",
+      "description": "12-hour smoke, pickles, slaw",
+      "price": 129500,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_ember_oak_c0",
+     "name": "From the fire",
+     "items": [
+      {
+       "id": "r_ember_oak_i0",
+       "name": "Dry-aged ribeye 300g",
+       "description": "Bone marrow butter, chimichurri",
+       "price": 249500,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "variants": [
+        {
+         "id": "mr",
+         "name": "Medium rare",
+         "price": 0
+        },
+        {
+         "id": "m",
+         "name": "Medium",
+         "price": 0
+        },
+        {
+         "id": "w",
+         "name": "Well done",
+         "price": 0
+        }
+       ],
+       "image": "https://images.unsplash.com/photo-1588347818036-558601350947?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @edsonsrdz"
+      },
+      {
+       "id": "r_ember_oak_i1",
+       "name": "Smoked brisket platter",
+       "description": "12-hour smoke, pickles, slaw",
+       "price": 129500,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1614398750956-402891a7dce1?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @phambot"
+      },
+      {
+       "id": "r_ember_oak_i2",
+       "name": "Smoked paneer steak",
+       "description": "Charred peppers, romesco",
+       "price": 69500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @sonance"
+      }
+     ]
+    },
+    {
+     "id": "r_ember_oak_c1",
+     "name": "Sides",
+     "items": [
+      {
+       "id": "r_ember_oak_i3",
+       "name": "Truffle fries",
+       "description": "Parmesan, herbs",
+       "price": 34500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1585109649139-366815a0d713?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @pandajoyce"
+      },
+      {
+       "id": "r_ember_oak_i4",
+       "name": "Charred corn",
+       "description": "Chipotle butter",
+       "price": 29500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1601284702796-a27ffd3eff3c?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @robykrc"
+      }
+     ]
+    },
+    {
+     "id": "r_ember_oak_c2",
+     "name": "Desserts",
+     "items": [
+      {
+       "id": "r_ember_oak_i5",
+       "name": "Burnt Basque cheesecake",
+       "description": "Salted caramel",
+       "price": 49500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1635327173758-85badf17f995?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @mahyar_mirghasmi"
+      }
+     ]
+    }
+   ],
+   "breakfast": false,
+   "shortCode": "EAO6"
+  },
+  {
+   "detail": {
+    "id": "r_sugar_bloom",
+    "slug": "sugar-bloom",
+    "name": "Sugar Bloom",
+    "cityId": "blr",
+    "area": "Indiranagar",
+    "cuisines": [
+     "Desserts",
+     "Bakery",
+     "Cafe"
+    ],
+    "rating": 4.5,
+    "ratingCount": 2210,
+    "costForTwo": 60000,
+    "priceBand": 1,
+    "currency": "INR",
+    "countryCode": "IN",
+    "distanceKm": 0.8,
+    "isPureVeg": true,
+    "tags": [
+     "Pure veg",
+     "Desserts"
+    ],
+    "art": {
+     "hue": 330,
+     "motif": "dessert",
+     "image": "https://images.unsplash.com/photo-1595144780677-6d0b5abbd089?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @sserass"
+    },
+    "headlineOffer": "Flat 10% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "52, Church Street, Indiranagar, Bengaluru",
+    "about": "Eggless entremets, gelato and hot chocolate in a pastel patisserie.",
+    "phone": "+91 9852407402",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "10:00",
+      "close": "23:00"
+     },
+     {
+      "day": "Tue",
+      "open": "10:00",
+      "close": "23:00"
+     },
+     {
+      "day": "Wed",
+      "open": "10:00",
+      "close": "23:00"
+     },
+     {
+      "day": "Thu",
+      "open": "10:00",
+      "close": "23:00"
+     },
+     {
+      "day": "Fri",
+      "open": "10:00",
+      "close": "23:00"
+     },
+     {
+      "day": "Sat",
+      "open": "10:00",
+      "close": "23:00"
+     },
+     {
+      "day": "Sun",
+      "open": "10:00",
+      "close": "23:00"
+     }
+    ],
+    "highlights": [
+     "100% eggless",
+     "Gelato made in-house",
+     "Custom cakes"
+    ],
+    "offers": [
+     {
+      "id": "r_sugar_bloom_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 10% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 10,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_sugar_bloom_bill",
+      "scope": "BILL",
+      "title": "10% off",
+      "subtitle": "on bill payment, up to ₹150",
+      "percentOff": 10,
+      "maxDiscount": 15000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount ₹150"
+      ]
+     },
+     {
+      "id": "r_sugar_bloom_flat",
+      "scope": "BILL",
+      "title": "Flat ₹150 off",
+      "subtitle": "on bills above ₹360",
+      "flatOff": 15000,
+      "minBill": 36000,
+      "terms": [
+       "Minimum bill ₹360",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_sugar_bloom_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to ₹500 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 50000,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_sugar_bloom_p0",
+      "caption": "Interiors",
+      "hue": 330,
+      "url": "https://images.unsplash.com/photo-1568627105594-589deb497ffd?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @istlona"
+     },
+     {
+      "id": "r_sugar_bloom_p1",
+      "caption": "Signature dish",
+      "hue": 7,
+      "url": "https://images.unsplash.com/photo-1541779774450-da0f04dd9080?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @mat_graphik"
+     },
+     {
+      "id": "r_sugar_bloom_p2",
+      "caption": "Bar",
+      "hue": 44,
+      "url": "https://images.unsplash.com/photo-1517578239113-b03992dcdd25?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @giancarloduarte"
+     },
+     {
+      "id": "r_sugar_bloom_p3",
+      "caption": "Seating",
+      "hue": 81,
+      "url": "https://images.unsplash.com/photo-1778278553049-46bb932d8ae9?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @katiemont"
+     },
+     {
+      "id": "r_sugar_bloom_p4",
+      "caption": "Dessert",
+      "hue": 118,
+      "url": "https://images.unsplash.com/photo-1569864358642-9d1684040f43?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @chelseaaudibert"
+     },
+     {
+      "id": "r_sugar_bloom_p5",
+      "caption": "Chef's special",
+      "hue": 155,
+      "url": "https://images.unsplash.com/photo-1567206563064-6f60f40a2b57?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @lamaroscu"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_sugar_bloom_i0",
+      "name": "Hazelnut praline dome",
+      "description": "Eggless, feuilletine crunch",
+      "price": 32500,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     },
+     {
+      "id": "r_sugar_bloom_i3",
+      "name": "Belgian hot chocolate",
+      "description": "70% dark, marshmallow",
+      "price": 27500,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_sugar_bloom_c0",
+     "name": "Entremets",
+     "items": [
+      {
+       "id": "r_sugar_bloom_i0",
+       "name": "Hazelnut praline dome",
+       "description": "Eggless, feuilletine crunch",
+       "price": 32500,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1722846047434-07c0fc7b1a71?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @thiagojapyassu"
+      },
+      {
+       "id": "r_sugar_bloom_i1",
+       "name": "Mango passionfruit tart",
+       "description": "Seasonal",
+       "price": 29500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1688458297155-228a3b1e5b49?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @muzkafilms"
+      }
+     ]
+    },
+    {
+     "id": "r_sugar_bloom_c1",
+     "name": "Gelato",
+     "items": [
+      {
+       "id": "r_sugar_bloom_i2",
+       "name": "Two-scoop gelato",
+       "description": "Pick any two flavours",
+       "price": 24500,
+       "isVeg": true,
+       "available": true,
+       "variants": [
+        {
+         "id": "cup",
+         "name": "Cup",
+         "price": 0
+        },
+        {
+         "id": "cone",
+         "name": "Waffle cone",
+         "price": 4000
+        }
+       ],
+       "image": "https://images.unsplash.com/photo-1572307230741-453859592dce?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @whereiskylenow"
+      }
+     ]
+    },
+    {
+     "id": "r_sugar_bloom_c2",
+     "name": "Drinks",
+     "items": [
+      {
+       "id": "r_sugar_bloom_i3",
+       "name": "Belgian hot chocolate",
+       "description": "70% dark, marshmallow",
+       "price": 27500,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1497048297103-b34f2fc1df34?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @rachaelgorjestani"
+      }
+     ]
+    }
+   ],
+   "breakfast": false,
+   "shortCode": "SB7"
+  },
+  {
+   "detail": {
+    "id": "r_hops_republic",
+    "slug": "hops-republic",
+    "name": "Hops Republic",
+    "cityId": "blr",
+    "area": "Koramangala",
+    "cuisines": [
+     "Brewery",
+     "Finger Food",
+     "American"
+    ],
+    "rating": 4.1,
+    "ratingCount": 6730,
+    "costForTwo": 220000,
+    "priceBand": 3,
+    "currency": "INR",
+    "countryCode": "IN",
+    "distanceKm": 3,
+    "isPureVeg": false,
+    "tags": [
+     "Microbrewery",
+     "Live sports",
+     "Large groups"
+    ],
+    "art": {
+     "hue": 42,
+     "motif": "bar",
+     "image": "https://images.unsplash.com/photo-1778535078194-dc4844f00bf7?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @andreagalvan"
+    },
+    "headlineOffer": "Flat 30% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "59, 100 Feet Road, Koramangala, Bengaluru",
+    "about": "Six house brews on tap, loaded fries and wings, and big screens for every match.",
+    "phone": "+91 9853641969",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "12:00",
+      "close": "01:00"
+     },
+     {
+      "day": "Tue",
+      "open": "12:00",
+      "close": "01:00"
+     },
+     {
+      "day": "Wed",
+      "open": "12:00",
+      "close": "01:00"
+     },
+     {
+      "day": "Thu",
+      "open": "12:00",
+      "close": "01:00"
+     },
+     {
+      "day": "Fri",
+      "open": "12:00",
+      "close": "01:00"
+     },
+     {
+      "day": "Sat",
+      "open": "12:00",
+      "close": "01:00"
+     },
+     {
+      "day": "Sun",
+      "open": "12:00",
+      "close": "01:00"
+     }
+    ],
+    "highlights": [
+     "6 craft beers on tap",
+     "Happy hours 12–7 PM",
+     "Sports screening"
+    ],
+    "offers": [
+     {
+      "id": "r_hops_republic_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 30% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 30,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_hops_republic_bill",
+      "scope": "BILL",
+      "title": "20% off",
+      "subtitle": "on bill payment, up to ₹1000",
+      "percentOff": 20,
+      "maxDiscount": 100000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount ₹1000"
+      ]
+     },
+     {
+      "id": "r_hops_republic_flat",
+      "scope": "BILL",
+      "title": "Flat ₹150 off",
+      "subtitle": "on bills above ₹1320",
+      "flatOff": 15000,
+      "minBill": 132000,
+      "terms": [
+       "Minimum bill ₹1320",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_hops_republic_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to ₹500 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 50000,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_hops_republic_p0",
+      "caption": "Interiors",
+      "hue": 42,
+      "url": "https://images.unsplash.com/photo-1709548145082-04d0cde481d4?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @oliverguhr"
+     },
+     {
+      "id": "r_hops_republic_p1",
+      "caption": "Signature dish",
+      "hue": 79,
+      "url": "https://images.unsplash.com/photo-1650939986300-ce9609921fa7?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @cowiijay"
+     },
+     {
+      "id": "r_hops_republic_p2",
+      "caption": "Bar",
+      "hue": 116,
+      "url": "https://images.unsplash.com/photo-1687771454203-97d0b08bbeb2?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @bohdans"
+     },
+     {
+      "id": "r_hops_republic_p3",
+      "caption": "Seating",
+      "hue": 153,
+      "url": "https://images.unsplash.com/photo-1788131523678-73a4f0cc9dc0?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @suicide_chewbacca"
+     },
+     {
+      "id": "r_hops_republic_p4",
+      "caption": "Dessert",
+      "hue": 190,
+      "url": "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @kaaficlever"
+     },
+     {
+      "id": "r_hops_republic_p5",
+      "caption": "Chef's special",
+      "hue": 227,
+      "url": "https://images.unsplash.com/photo-1561758033-d89a9ad46330?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @jonathanborba"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_hops_republic_i0",
+      "name": "Loaded nachos",
+      "description": "Cheese sauce, jalapeño, salsa",
+      "price": 39500,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     },
+     {
+      "id": "r_hops_republic_i1",
+      "name": "Buffalo wings",
+      "description": "Blue cheese dip",
+      "price": 44500,
+      "isVeg": false,
+      "available": true,
+      "spiceLevel": 2,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_hops_republic_c0",
+     "name": "Bar bites",
+     "items": [
+      {
+       "id": "r_hops_republic_i0",
+       "name": "Loaded nachos",
+       "description": "Cheese sauce, jalapeño, salsa",
+       "price": 39500,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1582169296194-e4d644c48063?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @coffeefyworkafe"
+      },
+      {
+       "id": "r_hops_republic_i1",
+       "name": "Buffalo wings",
+       "description": "Blue cheese dip",
+       "price": 44500,
+       "isVeg": false,
+       "available": true,
+       "spiceLevel": 2,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1734987942068-a1a459d65d3d?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @snappr"
+      },
+      {
+       "id": "r_hops_republic_i2",
+       "name": "Peri peri fries",
+       "description": "Garlic mayo",
+       "price": 29500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @mitchel3uo"
+      }
+     ]
+    },
+    {
+     "id": "r_hops_republic_c1",
+     "name": "Burgers",
+     "items": [
+      {
+       "id": "r_hops_republic_i3",
+       "name": "Smash burger",
+       "description": "Double patty, American cheese",
+       "price": 49500,
+       "isVeg": false,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @amir_v_ali"
+      },
+      {
+       "id": "r_hops_republic_i4",
+       "name": "Crispy paneer burger",
+       "description": "Sriracha slaw",
+       "price": 42500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1551782450-a2132b4ba21d?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @rollelflex_graphy726"
+      }
+     ]
+    },
+    {
+     "id": "r_hops_republic_c2",
+     "name": "House brews",
+     "items": [
+      {
+       "id": "r_hops_republic_i5",
+       "name": "Hefeweizen 330ml",
+       "description": "Banana, clove",
+       "price": 34500,
+       "isVeg": true,
+       "available": true,
+       "variants": [
+        {
+         "id": "330",
+         "name": "330 ml",
+         "price": 0
+        },
+        {
+         "id": "pitcher",
+         "name": "Pitcher 1.5 L",
+         "price": 105000
+        }
+       ],
+       "image": "https://images.unsplash.com/photo-1713474898385-26c268d30a23?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @switchinglanes"
+      },
+      {
+       "id": "r_hops_republic_i6",
+       "name": "Kombucha (non-alcoholic)",
+       "description": "Ginger lemongrass",
+       "price": 24500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1583396216852-1e1d61137170?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @to_metz"
+      }
+     ]
+    }
+   ],
+   "breakfast": false,
+   "shortCode": "HR8"
+  },
+  {
+   "detail": {
+    "id": "r_annapoorna",
+    "slug": "annapoorna-bhavan",
+    "name": "Annapoorna Bhavan",
+    "cityId": "blr",
+    "area": "Jayanagar",
+    "cuisines": [
+     "South Indian",
+     "Udupi"
+    ],
+    "rating": 4.4,
+    "ratingCount": 8900,
+    "costForTwo": 40000,
+    "priceBand": 1,
+    "currency": "INR",
+    "countryCode": "IN",
+    "distanceKm": 6,
+    "isPureVeg": true,
+    "tags": [
+     "Pure veg",
+     "Breakfast",
+     "Quick bites"
+    ],
+    "art": {
+     "hue": 48,
+     "motif": "curry",
+     "image": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @paul19977"
+    },
+    "headlineOffer": "Flat 10% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "66, Linking Road, Jayanagar, Bengaluru",
+    "about": "Crisp ghee dosas, idli-vada and filter coffee, served fast since 1987.",
+    "phone": "+91 9854876536",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "07:00",
+      "close": "22:30"
+     },
+     {
+      "day": "Tue",
+      "open": "07:00",
+      "close": "22:30"
+     },
+     {
+      "day": "Wed",
+      "open": "07:00",
+      "close": "22:30"
+     },
+     {
+      "day": "Thu",
+      "open": "07:00",
+      "close": "22:30"
+     },
+     {
+      "day": "Fri",
+      "open": "07:00",
+      "close": "22:30"
+     },
+     {
+      "day": "Sat",
+      "open": "07:00",
+      "close": "22:30"
+     },
+     {
+      "day": "Sun",
+      "open": "07:00",
+      "close": "22:30"
+     }
+    ],
+    "highlights": [
+     "Filter coffee",
+     "Ghee roast dosa",
+     "Open from 7 AM"
+    ],
+    "offers": [
+     {
+      "id": "r_annapoorna_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 10% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 10,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_annapoorna_bill",
+      "scope": "BILL",
+      "title": "10% off",
+      "subtitle": "on bill payment, up to ₹100",
+      "percentOff": 10,
+      "maxDiscount": 10000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount ₹100"
+      ]
+     },
+     {
+      "id": "r_annapoorna_flat",
+      "scope": "BILL",
+      "title": "Flat ₹150 off",
+      "subtitle": "on bills above ₹240",
+      "flatOff": 15000,
+      "minBill": 24000,
+      "terms": [
+       "Minimum bill ₹240",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_annapoorna_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to ₹500 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 50000,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_annapoorna_p0",
+      "caption": "Interiors",
+      "hue": 48,
+      "url": "https://images.unsplash.com/photo-1542367592-8849eb950fd8?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @shapira"
+     },
+     {
+      "id": "r_annapoorna_p1",
+      "caption": "Signature dish",
+      "hue": 85,
+      "url": "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @shreyaksingh"
+     },
+     {
+      "id": "r_annapoorna_p2",
+      "caption": "Bar",
+      "hue": 122,
+      "url": "https://images.unsplash.com/photo-1758387941825-a6ecaec9c14d?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @ayyappaa"
+     },
+     {
+      "id": "r_annapoorna_p3",
+      "caption": "Seating",
+      "hue": 159,
+      "url": "https://images.unsplash.com/photo-1699183385736-5c8d99251875?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @vasovacuo"
+     },
+     {
+      "id": "r_annapoorna_p4",
+      "caption": "Dessert",
+      "hue": 196,
+      "url": "https://images.unsplash.com/photo-1695568180070-8b5acead5cf4?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @countingframez"
+     },
+     {
+      "id": "r_annapoorna_p5",
+      "caption": "Chef's special",
+      "hue": 233,
+      "url": "https://images.unsplash.com/photo-1789993494828-735441249a30?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @zoshuacolah"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_annapoorna_i0",
+      "name": "Idli vada",
+      "description": "2 idli, 1 medu vada, sambar, chutneys",
+      "price": 11000,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     },
+     {
+      "id": "r_annapoorna_i1",
+      "name": "Ghee roast dosa",
+      "description": "Paper-thin, crisp, ghee-roasted",
+      "price": 16000,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     },
+     {
+      "id": "r_annapoorna_i4",
+      "name": "Filter coffee",
+      "description": "Chicory blend, frothy",
+      "price": 5000,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_annapoorna_c0",
+     "name": "Breakfast",
+     "items": [
+      {
+       "id": "r_annapoorna_i0",
+       "name": "Idli vada",
+       "description": "2 idli, 1 medu vada, sambar, chutneys",
+       "price": 11000,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1680359871322-aabe6b33eff5?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @prateekjaiswal"
+      },
+      {
+       "id": "r_annapoorna_i1",
+       "name": "Ghee roast dosa",
+       "description": "Paper-thin, crisp, ghee-roasted",
+       "price": 16000,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1743615467204-8fdaa85ff2db?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @zoshuacolah"
+      },
+      {
+       "id": "r_annapoorna_i2",
+       "name": "Masala dosa",
+       "description": "Potato palya, red chutney",
+       "price": 14000,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1694849789325-914b71ab4075?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @zoshuacolah"
+      }
+     ]
+    },
+    {
+     "id": "r_annapoorna_c1",
+     "name": "Meals",
+     "items": [
+      {
+       "id": "r_annapoorna_i3",
+       "name": "South Indian thali",
+       "description": "Rice, sambar, rasam, 2 palyas, curd, payasam",
+       "price": 26000,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1742281257687-092746ad6021?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @zoshuacolah"
+      }
+     ]
+    },
+    {
+     "id": "r_annapoorna_c2",
+     "name": "Beverages",
+     "items": [
+      {
+       "id": "r_annapoorna_i4",
+       "name": "Filter coffee",
+       "description": "Chicory blend, frothy",
+       "price": 5000,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1576685880864-50b3b35f1c55?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @gstravinsky"
+      }
+     ]
+    }
+   ],
+   "breakfast": true,
+   "shortCode": "AB9"
+  },
+  {
+   "detail": {
+    "id": "r_bombay_monsoon",
+    "slug": "bombay-monsoon",
+    "name": "Bombay Monsoon",
+    "cityId": "bom",
+    "area": "Bandra West",
+    "cuisines": [
+     "Modern Indian",
+     "Tasting Menu"
+    ],
+    "rating": 4.8,
+    "ratingCount": 1540,
+    "costForTwo": 500000,
+    "priceBand": 4,
+    "currency": "INR",
+    "countryCode": "IN",
+    "distanceKm": 2.2,
+    "isPureVeg": false,
+    "tags": [
+     "Fine dining",
+     "Chef's table",
+     "Date night"
+    ],
+    "art": {
+     "hue": 265,
+     "motif": "curry",
+     "image": "https://images.unsplash.com/photo-1682862279256-b2a9e4f3d22c?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @tkcymd"
+    },
+    "headlineOffer": "Flat 10% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "73, Station Road, Bandra West, Mumbai",
+    "about": "Regional Indian flavours reimagined as a seasonal tasting menu, with an open kitchen and chef's table.",
+    "phone": "+91 9856111103",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Tue",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Wed",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Thu",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Fri",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sat",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sun",
+      "open": "12:00",
+      "close": "23:30"
+     }
+    ],
+    "highlights": [
+     "9-course tasting menu",
+     "Chef's table for 8",
+     "Indian craft spirits"
+    ],
+    "offers": [
+     {
+      "id": "r_bombay_monsoon_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 10% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 10,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_bombay_monsoon_bill",
+      "scope": "BILL",
+      "title": "10% off",
+      "subtitle": "on bill payment, up to ₹1500",
+      "percentOff": 10,
+      "maxDiscount": 150000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount ₹1500"
+      ]
+     },
+     {
+      "id": "r_bombay_monsoon_flat",
+      "scope": "BILL",
+      "title": "Flat ₹150 off",
+      "subtitle": "on bills above ₹3000",
+      "flatOff": 15000,
+      "minBill": 300000,
+      "terms": [
+       "Minimum bill ₹3000",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_bombay_monsoon_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to ₹500 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 50000,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_bombay_monsoon_p0",
+      "caption": "Interiors",
+      "hue": 265,
+      "url": "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @nickkarvounis"
+     },
+     {
+      "id": "r_bombay_monsoon_p1",
+      "caption": "Signature dish",
+      "hue": 302,
+      "url": "https://images.unsplash.com/photo-1766582931800-fd79665257fa?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @yosuke_ota"
+     },
+     {
+      "id": "r_bombay_monsoon_p2",
+      "caption": "Bar",
+      "hue": 339,
+      "url": "https://images.unsplash.com/photo-1647776112336-72f4c30fafc1?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @olenkasergienko"
+     },
+     {
+      "id": "r_bombay_monsoon_p3",
+      "caption": "Seating",
+      "hue": 16,
+      "url": "https://images.unsplash.com/photo-1653259038915-7cf0b7a4dd6c?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @igorrand"
+     },
+     {
+      "id": "r_bombay_monsoon_p4",
+      "caption": "Dessert",
+      "hue": 53,
+      "url": "https://images.unsplash.com/photo-1703849133132-98c23595b981?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @ionelaaaaa"
+     },
+     {
+      "id": "r_bombay_monsoon_p5",
+      "caption": "Chef's special",
+      "hue": 90,
+      "url": "https://images.unsplash.com/photo-1577106263724-2c8e03bfe9cf?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @sebastiancoman"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_bombay_monsoon_i0",
+      "name": "Paneer tikka",
+      "description": "Charred cottage cheese, mint chutney",
+      "price": 39500,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true,
+      "spiceLevel": 1
+     },
+     {
+      "id": "r_bombay_monsoon_i3",
+      "name": "Dal makhani",
+      "description": "Slow-cooked overnight, white butter",
+      "price": 34500,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     },
+     {
+      "id": "r_bombay_monsoon_i4",
+      "name": "Butter chicken",
+      "description": "Smoked tomato makhani gravy",
+      "price": 49500,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_bombay_monsoon_c0",
+     "name": "Starters",
+     "items": [
+      {
+       "id": "r_bombay_monsoon_i0",
+       "name": "Paneer tikka",
+       "description": "Charred cottage cheese, mint chutney",
+       "price": 39500,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "spiceLevel": 1,
+       "image": "https://images.unsplash.com/photo-1666001120694-3ebe8fd207be?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @rupa_venketa_vardhan"
+      },
+      {
+       "id": "r_bombay_monsoon_i1",
+       "name": "Galouti kebab",
+       "description": "Melt-in-mouth mutton kebab on ulte tawa paratha",
+       "price": 54500,
+       "isVeg": false,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1532636875304-0c89119d9b4d?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @suadkamardeen"
+      },
+      {
+       "id": "r_bombay_monsoon_i2",
+       "name": "Dahi ke kebab",
+       "description": "Hung curd patties, beetroot chutney",
+       "price": 34500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1707592357743-5e25b277ca36?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @sanaumer"
+      }
+     ]
+    },
+    {
+     "id": "r_bombay_monsoon_c1",
+     "name": "Mains",
+     "items": [
+      {
+       "id": "r_bombay_monsoon_i3",
+       "name": "Dal makhani",
+       "description": "Slow-cooked overnight, white butter",
+       "price": 34500,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1697155406121-85aac6236000?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @rashpalsingh"
+      },
+      {
+       "id": "r_bombay_monsoon_i4",
+       "name": "Butter chicken",
+       "description": "Smoked tomato makhani gravy",
+       "price": 49500,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1772730064970-a7b2735c93b9?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @dischef"
+      },
+      {
+       "id": "r_bombay_monsoon_i5",
+       "name": "Lucknowi dum biryani",
+       "description": "Mutton, saffron, kewra",
+       "price": 54500,
+       "isVeg": false,
+       "available": true,
+       "variants": [
+        {
+         "id": "h",
+         "name": "Half",
+         "price": 0
+        },
+        {
+         "id": "f",
+         "name": "Full",
+         "price": 25000
+        }
+       ],
+       "image": "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @shreyaksingh"
+      }
+     ]
+    },
+    {
+     "id": "r_bombay_monsoon_c2",
+     "name": "Breads",
+     "items": [
+      {
+       "id": "r_bombay_monsoon_i6",
+       "name": "Butter naan",
+       "description": "From the tandoor",
+       "price": 9500,
+       "isVeg": true,
+       "available": true,
+       "addons": [
+        {
+         "id": "garlic",
+         "name": "Garlic",
+         "price": 2000
+        },
+        {
+         "id": "cheese",
+         "name": "Cheese",
+         "price": 6000
+        }
+       ],
+       "image": "https://images.unsplash.com/photo-1559561724-4ea348cd867f?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @how_it_feel"
+      },
+      {
+       "id": "r_bombay_monsoon_i7",
+       "name": "Laccha paratha",
+       "description": "Layered whole-wheat bread",
+       "price": 11000,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1683533743190-89c9b19f9ea6?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @ananthan8110"
+      }
+     ]
+    },
+    {
+     "id": "r_bombay_monsoon_c3",
+     "name": "Desserts",
+     "items": [
+      {
+       "id": "r_bombay_monsoon_i8",
+       "name": "Gulab jamun",
+       "description": "Warm, with rabri",
+       "price": 19500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1593701461250-d7b22dfd3a77?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @magictype"
+      }
+     ]
+    }
+   ],
+   "breakfast": false,
+   "shortCode": "BM10"
+  },
+  {
+   "detail": {
+    "id": "r_salt_water",
+    "slug": "salt-water-social",
+    "name": "Salt Water Social",
+    "cityId": "bom",
+    "area": "Juhu",
+    "cuisines": [
+     "Seafood",
+     "Goan",
+     "Coastal"
+    ],
+    "rating": 4.4,
+    "ratingCount": 4210,
+    "costForTwo": 240000,
+    "priceBand": 3,
+    "currency": "INR",
+    "countryCode": "IN",
+    "distanceKm": 4.6,
+    "isPureVeg": false,
+    "tags": [
+     "Sea view",
+     "Sundowners"
+    ],
+    "art": {
+     "hue": 200,
+     "motif": "seafood",
+     "image": "https://images.unsplash.com/photo-1564385654122-62526966ce4f?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @uncertainthink"
+    },
+    "headlineOffer": "Flat 25% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "80, 1st Main, Juhu, Mumbai",
+    "about": "Goan xacuti, prawn balchão and sundowner cocktails facing the sea.",
+    "phone": "+91 9857345670",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Tue",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Wed",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Thu",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Fri",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sat",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sun",
+      "open": "12:00",
+      "close": "23:30"
+     }
+    ],
+    "highlights": [
+     "Sea-facing deck",
+     "Sunset happy hours",
+     "Goan Sunday brunch"
+    ],
+    "offers": [
+     {
+      "id": "r_salt_water_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 25% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 25,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_salt_water_bill",
+      "scope": "BILL",
+      "title": "15% off",
+      "subtitle": "on bill payment, up to ₹900",
+      "percentOff": 15,
+      "maxDiscount": 90000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount ₹900"
+      ]
+     },
+     {
+      "id": "r_salt_water_flat",
+      "scope": "BILL",
+      "title": "Flat ₹150 off",
+      "subtitle": "on bills above ₹1440",
+      "flatOff": 15000,
+      "minBill": 144000,
+      "terms": [
+       "Minimum bill ₹1440",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_salt_water_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to ₹500 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 50000,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_salt_water_p0",
+      "caption": "Interiors",
+      "hue": 200,
+      "url": "https://images.unsplash.com/photo-1618798387548-f94063632035?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @lavinhha"
+     },
+     {
+      "id": "r_salt_water_p1",
+      "caption": "Signature dish",
+      "hue": 237,
+      "url": "https://images.unsplash.com/photo-1781332145637-5e14298f3f26?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @zayed_ahmed_zadu"
+     },
+     {
+      "id": "r_salt_water_p2",
+      "caption": "Bar",
+      "hue": 274,
+      "url": "https://images.unsplash.com/photo-1641924671908-43928ddba115?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @corybjork"
+     },
+     {
+      "id": "r_salt_water_p3",
+      "caption": "Seating",
+      "hue": 311,
+      "url": "https://images.unsplash.com/photo-1784473759594-ffdb534dee53?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @beyzasemin"
+     },
+     {
+      "id": "r_salt_water_p4",
+      "caption": "Dessert",
+      "hue": 348,
+      "url": "https://images.unsplash.com/photo-1588413335367-e49d32c5b50b?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @izgubljenausvemiru"
+     },
+     {
+      "id": "r_salt_water_p5",
+      "caption": "Chef's special",
+      "hue": 25,
+      "url": "https://images.unsplash.com/photo-1606850780554-b55ea4dd0b70?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @maxmota"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_salt_water_i0",
+      "name": "Prawn ghee roast",
+      "description": "Byadgi chilli, ghee, curry leaves",
+      "price": 59500,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true,
+      "spiceLevel": 2
+     },
+     {
+      "id": "r_salt_water_i3",
+      "name": "Fish curry & neer dosa",
+      "description": "Coconut gravy, 3 neer dosas",
+      "price": 54500,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_salt_water_c0",
+     "name": "Starters",
+     "items": [
+      {
+       "id": "r_salt_water_i0",
+       "name": "Prawn ghee roast",
+       "description": "Byadgi chilli, ghee, curry leaves",
+       "price": 59500,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "spiceLevel": 2,
+       "image": "https://images.unsplash.com/photo-1764311792750-c10a9b45178f?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @varanga22"
+      },
+      {
+       "id": "r_salt_water_i1",
+       "name": "Rava fried pomfret",
+       "description": "Semolina crust, lime",
+       "price": 69500,
+       "isVeg": false,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1665401015549-712c0dc5ef85?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @keeshasskitchen"
+      },
+      {
+       "id": "r_salt_water_i2",
+       "name": "Mushroom pepper fry",
+       "description": "Kerala style, black pepper",
+       "price": 34500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1708229562225-948380ed7411?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @priyankabrokenheart90"
+      }
+     ]
+    },
+    {
+     "id": "r_salt_water_c1",
+     "name": "Mains",
+     "items": [
+      {
+       "id": "r_salt_water_i3",
+       "name": "Fish curry & neer dosa",
+       "description": "Coconut gravy, 3 neer dosas",
+       "price": 54500,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1570275239925-4af0aa93a0dc?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @0x00kevin"
+      },
+      {
+       "id": "r_salt_water_i4",
+       "name": "Veg stew & appam",
+       "description": "Coconut milk stew, 2 appams",
+       "price": 39500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1559561723-c3f4195835db?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @how_it_feel"
+      },
+      {
+       "id": "r_salt_water_i5",
+       "name": "Crab sukka",
+       "description": "Dry coconut masala",
+       "price": 89500,
+       "isVeg": false,
+       "available": true,
+       "spiceLevel": 2,
+       "image": "https://images.unsplash.com/photo-1668236534990-73c4ed23043c?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @paul19977"
+      }
+     ]
+    },
+    {
+     "id": "r_salt_water_c2",
+     "name": "Desserts",
+     "items": [
+      {
+       "id": "r_salt_water_i6",
+       "name": "Elaneer payasam",
+       "description": "Tender coconut kheer",
+       "price": 24500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1708782343229-b58f8e0b7020?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @rimshaj123"
+      }
+     ]
+    }
+   ],
+   "breakfast": false,
+   "shortCode": "SWS11"
+  },
+  {
+   "detail": {
+    "id": "r_noodle_theory",
+    "slug": "noodle-theory",
+    "name": "Noodle Theory",
+    "cityId": "bom",
+    "area": "Lower Parel",
+    "cuisines": [
+     "Asian",
+     "Chinese",
+     "Korean"
+    ],
+    "rating": 4.2,
+    "ratingCount": 3380,
+    "costForTwo": 130000,
+    "priceBand": 2,
+    "currency": "INR",
+    "countryCode": "IN",
+    "distanceKm": 6.8,
+    "isPureVeg": false,
+    "tags": [
+     "Quick bites",
+     "Late night"
+    ],
+    "art": {
+     "hue": 0,
+     "motif": "noodles",
+     "image": "https://images.unsplash.com/photo-1631709497146-a239ef373cf1?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @photophotostock"
+    },
+    "headlineOffer": "Flat 20% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "87, Church Street, Lower Parel, Mumbai",
+    "about": "Hand-pulled noodles, bao and Korean fried chicken in a buzzy mill-district diner.",
+    "phone": "+91 9858580237",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "12:00",
+      "close": "01:00"
+     },
+     {
+      "day": "Tue",
+      "open": "12:00",
+      "close": "01:00"
+     },
+     {
+      "day": "Wed",
+      "open": "12:00",
+      "close": "01:00"
+     },
+     {
+      "day": "Thu",
+      "open": "12:00",
+      "close": "01:00"
+     },
+     {
+      "day": "Fri",
+      "open": "12:00",
+      "close": "01:00"
+     },
+     {
+      "day": "Sat",
+      "open": "12:00",
+      "close": "01:00"
+     },
+     {
+      "day": "Sun",
+      "open": "12:00",
+      "close": "01:00"
+     }
+    ],
+    "highlights": [
+     "Hand-pulled noodles",
+     "Open till 1 AM",
+     "Bao bar"
+    ],
+    "offers": [
+     {
+      "id": "r_noodle_theory_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 20% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 20,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_noodle_theory_bill",
+      "scope": "BILL",
+      "title": "15% off",
+      "subtitle": "on bill payment, up to ₹400",
+      "percentOff": 15,
+      "maxDiscount": 40000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount ₹400"
+      ]
+     },
+     {
+      "id": "r_noodle_theory_flat",
+      "scope": "BILL",
+      "title": "Flat ₹150 off",
+      "subtitle": "on bills above ₹780",
+      "flatOff": 15000,
+      "minBill": 78000,
+      "terms": [
+       "Minimum bill ₹780",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_noodle_theory_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to ₹500 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 50000,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_noodle_theory_p0",
+      "caption": "Interiors",
+      "hue": 0,
+      "url": "https://images.unsplash.com/photo-1785310106550-70bdefc15917?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @lishuhang"
+     },
+     {
+      "id": "r_noodle_theory_p1",
+      "caption": "Signature dish",
+      "hue": 37,
+      "url": "https://images.unsplash.com/photo-1523905330026-b8bd1f5f320e?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @threepointswheretwolinesmeet"
+     },
+     {
+      "id": "r_noodle_theory_p2",
+      "caption": "Bar",
+      "hue": 74,
+      "url": "https://images.unsplash.com/photo-1776241954969-55025a3f26ff?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @omikron"
+     },
+     {
+      "id": "r_noodle_theory_p3",
+      "caption": "Seating",
+      "hue": 111,
+      "url": "https://images.unsplash.com/photo-1767769354554-efeaa233f697?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @tanyabarrow"
+     },
+     {
+      "id": "r_noodle_theory_p4",
+      "caption": "Dessert",
+      "hue": 148,
+      "url": "https://images.unsplash.com/photo-1656077713935-8ceade8da5ec?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @chriskabro"
+     },
+     {
+      "id": "r_noodle_theory_p5",
+      "caption": "Chef's special",
+      "hue": 185,
+      "url": "https://images.unsplash.com/photo-1645371958635-88dd6c8e1be7?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @jim_4140so"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_noodle_theory_i0",
+      "name": "Edamame truffle dumplings",
+      "description": "Steamed, chilli oil",
+      "price": 42500,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     },
+     {
+      "id": "r_noodle_theory_i2",
+      "name": "Shoyu ramen",
+      "description": "Chicken broth, chashu, ajitama",
+      "price": 54500,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_noodle_theory_c0",
+     "name": "Small plates",
+     "items": [
+      {
+       "id": "r_noodle_theory_i0",
+       "name": "Edamame truffle dumplings",
+       "description": "Steamed, chilli oil",
+       "price": 42500,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @charlesdeluvio"
+      },
+      {
+       "id": "r_noodle_theory_i1",
+       "name": "Korean fried chicken",
+       "description": "Gochujang glaze, sesame",
+       "price": 49500,
+       "isVeg": false,
+       "available": true,
+       "spiceLevel": 2,
+       "image": "https://images.unsplash.com/photo-1771384552858-feb0574f958d?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @jon__kelvin"
+      }
+     ]
+    },
+    {
+     "id": "r_noodle_theory_c1",
+     "name": "Ramen & noodles",
+     "items": [
+      {
+       "id": "r_noodle_theory_i2",
+       "name": "Shoyu ramen",
+       "description": "Chicken broth, chashu, ajitama",
+       "price": 54500,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1614563637806-1d0e645e0940?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @susannschuster"
+      },
+      {
+       "id": "r_noodle_theory_i3",
+       "name": "Vegan miso ramen",
+       "description": "Shiitake broth, tofu, bok choy",
+       "price": 49500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1591814468924-caf88d1232e1?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @cceee"
+      },
+      {
+       "id": "r_noodle_theory_i4",
+       "name": "Hand-pulled dan dan noodles",
+       "description": "Sichuan pepper, peanuts",
+       "price": 44500,
+       "isVeg": true,
+       "available": true,
+       "spiceLevel": 3,
+       "image": "https://images.unsplash.com/photo-1684707878393-02606f779d7f?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @mario"
+      }
+     ]
+    },
+    {
+     "id": "r_noodle_theory_c2",
+     "name": "Sushi",
+     "items": [
+      {
+       "id": "r_noodle_theory_i5",
+       "name": "Spicy salmon roll",
+       "description": "8 pcs, sriracha mayo",
+       "price": 64500,
+       "isVeg": false,
+       "available": true,
+       "spiceLevel": 1,
+       "image": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @derekduran"
+      },
+      {
+       "id": "r_noodle_theory_i6",
+       "name": "Avocado cucumber roll",
+       "description": "8 pcs",
+       "price": 44500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1712192674556-4a89f20240c1?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @ifoodijourney"
+      }
+     ]
+    },
+    {
+     "id": "r_noodle_theory_c3",
+     "name": "Desserts",
+     "items": [
+      {
+       "id": "r_noodle_theory_i7",
+       "name": "Matcha cheesecake",
+       "description": "Black sesame crumble",
+       "price": 34500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1492683654773-a3b0476056c0?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @heftiba"
+      }
+     ]
+    }
+   ],
+   "breakfast": false,
+   "shortCode": "NT12"
+  },
+  {
+   "detail": {
+    "id": "r_colaba_corner",
+    "slug": "colaba-corner-cafe",
+    "name": "Colaba Corner Cafe",
+    "cityId": "bom",
+    "area": "Colaba",
+    "cuisines": [
+     "Cafe",
+     "Parsi",
+     "Continental"
+    ],
+    "rating": 4.3,
+    "ratingCount": 2760,
+    "costForTwo": 100000,
+    "priceBand": 2,
+    "currency": "INR",
+    "countryCode": "IN",
+    "distanceKm": 9.1,
+    "isPureVeg": false,
+    "tags": [
+     "Heritage",
+     "All-day breakfast"
+    ],
+    "art": {
+     "hue": 24,
+     "motif": "cafe",
+     "image": "https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @krisatomic"
+    },
+    "headlineOffer": "Flat 15% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "94, 100 Feet Road, Colaba, Mumbai",
+    "about": "Akuri on toast, berry pulao and bun maska in a sunlit corner cafe that's been around for decades.",
+    "phone": "+91 9859814804",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "08:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Tue",
+      "open": "08:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Wed",
+      "open": "08:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Thu",
+      "open": "08:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Fri",
+      "open": "08:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sat",
+      "open": "08:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sun",
+      "open": "08:00",
+      "close": "23:30"
+     }
+    ],
+    "highlights": [
+     "Parsi classics",
+     "Bun maska & chai",
+     "Antique interiors"
+    ],
+    "offers": [
+     {
+      "id": "r_colaba_corner_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 15% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 15,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_colaba_corner_bill",
+      "scope": "BILL",
+      "title": "10% off",
+      "subtitle": "on bill payment, up to ₹250",
+      "percentOff": 10,
+      "maxDiscount": 25000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount ₹250"
+      ]
+     },
+     {
+      "id": "r_colaba_corner_flat",
+      "scope": "BILL",
+      "title": "Flat ₹150 off",
+      "subtitle": "on bills above ₹600",
+      "flatOff": 15000,
+      "minBill": 60000,
+      "terms": [
+       "Minimum bill ₹600",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_colaba_corner_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to ₹500 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 50000,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_colaba_corner_p0",
+      "caption": "Interiors",
+      "hue": 24,
+      "url": "https://images.unsplash.com/photo-1624583338957-4d155ca886dc?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @adli_hm"
+     },
+     {
+      "id": "r_colaba_corner_p1",
+      "caption": "Signature dish",
+      "hue": 61,
+      "url": "https://images.unsplash.com/photo-1563690449029-d6e1b8d6003d?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @amir_v_ali"
+     },
+     {
+      "id": "r_colaba_corner_p2",
+      "caption": "Bar",
+      "hue": 98,
+      "url": "https://images.unsplash.com/photo-1634299406775-90f32b656536?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @vdphotography"
+     },
+     {
+      "id": "r_colaba_corner_p3",
+      "caption": "Seating",
+      "hue": 135,
+      "url": "https://images.unsplash.com/photo-1577056922428-a511301a562d?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @meganmarkham"
+     },
+     {
+      "id": "r_colaba_corner_p4",
+      "caption": "Dessert",
+      "hue": 172,
+      "url": "https://images.unsplash.com/photo-1600102186542-82cbd5e7bdb4?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @neetuladdha83"
+     },
+     {
+      "id": "r_colaba_corner_p5",
+      "caption": "Chef's special",
+      "hue": 209,
+      "url": "https://images.unsplash.com/photo-1633945274405-b6c8069047b0?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @shouravsheikh"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_colaba_corner_i0",
+      "name": "Avocado sourdough toast",
+      "description": "Poached egg optional, chilli flakes",
+      "price": 39500,
+      "isVeg": true,
+      "available": true,
+      "addons": [
+       {
+        "id": "egg",
+        "name": "Poached egg",
+        "price": 6000
+       }
+      ],
+      "isBestseller": true
+     },
+     {
+      "id": "r_colaba_corner_i5",
+      "name": "Pour-over",
+      "description": "Single origin, ask for today's beans",
+      "price": 22000,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_colaba_corner_c0",
+     "name": "All-day breakfast",
+     "items": [
+      {
+       "id": "r_colaba_corner_i0",
+       "name": "Avocado sourdough toast",
+       "description": "Poached egg optional, chilli flakes",
+       "price": 39500,
+       "isVeg": true,
+       "available": true,
+       "addons": [
+        {
+         "id": "egg",
+         "name": "Poached egg",
+         "price": 6000
+        }
+       ],
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1612215047504-a6c07dbe4f7f?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @magnoliasagestudio"
+      },
+      {
+       "id": "r_colaba_corner_i1",
+       "name": "Akuri on toast",
+       "description": "Parsi-style spiced scrambled eggs",
+       "price": 32500,
+       "isVeg": false,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1583552336796-531290f1fe2a?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @elalfred_12"
+      },
+      {
+       "id": "r_colaba_corner_i2",
+       "name": "Buttermilk pancakes",
+       "description": "Maple, berries, whipped butter",
+       "price": 34500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @nikldn"
+      }
+     ]
+    },
+    {
+     "id": "r_colaba_corner_c1",
+     "name": "Sandwiches",
+     "items": [
+      {
+       "id": "r_colaba_corner_i3",
+       "name": "Pesto chicken panini",
+       "description": "Mozzarella, sundried tomato",
+       "price": 37500,
+       "isVeg": false,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1649305785246-a1d65e8bc078?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @tonyrocket"
+      },
+      {
+       "id": "r_colaba_corner_i4",
+       "name": "Caprese focaccia",
+       "description": "Tomato, mozzarella, basil",
+       "price": 34500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1619452357216-e88ca8119eeb?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @paulaberto"
+      }
+     ]
+    },
+    {
+     "id": "r_colaba_corner_c2",
+     "name": "Coffee",
+     "items": [
+      {
+       "id": "r_colaba_corner_i5",
+       "name": "Pour-over",
+       "description": "Single origin, ask for today's beans",
+       "price": 22000,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1781460877110-6988cbaf0eb0?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @bgoodpic"
+      },
+      {
+       "id": "r_colaba_corner_i6",
+       "name": "Flat white",
+       "description": "Double ristretto",
+       "price": 21000,
+       "isVeg": true,
+       "available": true,
+       "variants": [
+        {
+         "id": "dairy",
+         "name": "Dairy milk",
+         "price": 0
+        },
+        {
+         "id": "oat",
+         "name": "Oat milk",
+         "price": 6000
+        }
+       ],
+       "image": "https://images.unsplash.com/photo-1502462041640-b3d7e50d0662?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @jonasjacobsson"
+      }
+     ]
+    }
+   ],
+   "breakfast": true,
+   "shortCode": "CCC13"
+  },
+  {
+   "detail": {
+    "id": "r_smokehouse_54",
+    "slug": "smokehouse-54",
+    "name": "Smokehouse 54",
+    "cityId": "bom",
+    "area": "Andheri West",
+    "cuisines": [
+     "BBQ",
+     "Grill",
+     "American"
+    ],
+    "rating": 4.5,
+    "ratingCount": 1890,
+    "costForTwo": 200000,
+    "priceBand": 3,
+    "currency": "INR",
+    "countryCode": "IN",
+    "distanceKm": 7.4,
+    "isPureVeg": false,
+    "tags": [
+     "Live music",
+     "Large groups"
+    ],
+    "art": {
+     "hue": 12,
+     "motif": "grill",
+     "image": "https://images.unsplash.com/photo-1623174078579-594416790e63?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @shootwithlou"
+    },
+    "headlineOffer": "Flat 25% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "101, Linking Road, Andheri West, Mumbai",
+    "about": "Low-and-slow brisket, smoked paneer and pitmaster platters with live blues on weekends.",
+    "phone": "+91 9861049371",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Tue",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Wed",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Thu",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Fri",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sat",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sun",
+      "open": "12:00",
+      "close": "23:30"
+     }
+    ],
+    "highlights": [
+     "12-hour smoked brisket",
+     "Veg smokehouse platter",
+     "Live blues on weekends"
+    ],
+    "offers": [
+     {
+      "id": "r_smokehouse_54_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 25% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 25,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_smokehouse_54_bill",
+      "scope": "BILL",
+      "title": "15% off",
+      "subtitle": "on bill payment, up to ₹700",
+      "percentOff": 15,
+      "maxDiscount": 70000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount ₹700"
+      ]
+     },
+     {
+      "id": "r_smokehouse_54_flat",
+      "scope": "BILL",
+      "title": "Flat ₹150 off",
+      "subtitle": "on bills above ₹1200",
+      "flatOff": 15000,
+      "minBill": 120000,
+      "terms": [
+       "Minimum bill ₹1200",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_smokehouse_54_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to ₹500 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 50000,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_smokehouse_54_p0",
+      "caption": "Interiors",
+      "hue": 12,
+      "url": "https://images.unsplash.com/photo-1765959679068-89bcc0d88e64?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @rm_reins"
+     },
+     {
+      "id": "r_smokehouse_54_p1",
+      "caption": "Signature dish",
+      "hue": 49,
+      "url": "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @joseignaciopompe"
+     },
+     {
+      "id": "r_smokehouse_54_p2",
+      "caption": "Bar",
+      "hue": 86,
+      "url": "https://images.unsplash.com/photo-1611864072666-06ddb3070b19?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @nick_rickert"
+     },
+     {
+      "id": "r_smokehouse_54_p3",
+      "caption": "Seating",
+      "hue": 123,
+      "url": "https://images.unsplash.com/photo-1549488344-1f9b8d2bd1f3?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @orlovamaria"
+     },
+     {
+      "id": "r_smokehouse_54_p4",
+      "caption": "Dessert",
+      "hue": 160,
+      "url": "https://images.unsplash.com/photo-1593307744921-00b909a78419?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @kexum96"
+     },
+     {
+      "id": "r_smokehouse_54_p5",
+      "caption": "Chef's special",
+      "hue": 197,
+      "url": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @bogzilla"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_smokehouse_54_i0",
+      "name": "Dry-aged ribeye 300g",
+      "description": "Bone marrow butter, chimichurri",
+      "price": 249500,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true,
+      "variants": [
+       {
+        "id": "mr",
+        "name": "Medium rare",
+        "price": 0
+       },
+       {
+        "id": "m",
+        "name": "Medium",
+        "price": 0
+       },
+       {
+        "id": "w",
+        "name": "Well done",
+        "price": 0
+       }
+      ]
+     },
+     {
+      "id": "r_smokehouse_54_i1",
+      "name": "Smoked brisket platter",
+      "description": "12-hour smoke, pickles, slaw",
+      "price": 129500,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_smokehouse_54_c0",
+     "name": "From the fire",
+     "items": [
+      {
+       "id": "r_smokehouse_54_i0",
+       "name": "Dry-aged ribeye 300g",
+       "description": "Bone marrow butter, chimichurri",
+       "price": 249500,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "variants": [
+        {
+         "id": "mr",
+         "name": "Medium rare",
+         "price": 0
+        },
+        {
+         "id": "m",
+         "name": "Medium",
+         "price": 0
+        },
+        {
+         "id": "w",
+         "name": "Well done",
+         "price": 0
+        }
+       ],
+       "image": "https://images.unsplash.com/photo-1588347818036-558601350947?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @edsonsrdz"
+      },
+      {
+       "id": "r_smokehouse_54_i1",
+       "name": "Smoked brisket platter",
+       "description": "12-hour smoke, pickles, slaw",
+       "price": 129500,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1614398750956-402891a7dce1?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @phambot"
+      },
+      {
+       "id": "r_smokehouse_54_i2",
+       "name": "Smoked paneer steak",
+       "description": "Charred peppers, romesco",
+       "price": 69500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @sonance"
+      }
+     ]
+    },
+    {
+     "id": "r_smokehouse_54_c1",
+     "name": "Sides",
+     "items": [
+      {
+       "id": "r_smokehouse_54_i3",
+       "name": "Truffle fries",
+       "description": "Parmesan, herbs",
+       "price": 34500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1585109649139-366815a0d713?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @pandajoyce"
+      },
+      {
+       "id": "r_smokehouse_54_i4",
+       "name": "Charred corn",
+       "description": "Chipotle butter",
+       "price": 29500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1601284702796-a27ffd3eff3c?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @robykrc"
+      }
+     ]
+    },
+    {
+     "id": "r_smokehouse_54_c2",
+     "name": "Desserts",
+     "items": [
+      {
+       "id": "r_smokehouse_54_i5",
+       "name": "Burnt Basque cheesecake",
+       "description": "Salted caramel",
+       "price": 49500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1635327173758-85badf17f995?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @mahyar_mirghasmi"
+      }
+     ]
+    }
+   ],
+   "breakfast": false,
+   "shortCode": "S514"
+  },
+  {
+   "detail": {
+    "id": "r_harbour_vine",
+    "slug": "harbour-and-vine",
+    "name": "Harbour & Vine",
+    "cityId": "syd",
+    "area": "Circular Quay",
+    "cuisines": [
+     "Modern Australian",
+     "Seafood"
+    ],
+    "rating": 4.6,
+    "ratingCount": 1320,
+    "costForTwo": 16000,
+    "priceBand": 3,
+    "currency": "AUD",
+    "countryCode": "AU",
+    "distanceKm": 0.8,
+    "isPureVeg": false,
+    "tags": [
+     "Harbour views",
+     "Date night",
+     "Wine list"
+    ],
+    "art": {
+     "hue": 200,
+     "motif": "seafood",
+     "image": "https://images.unsplash.com/photo-1513343987712-5da15ea2a9bb?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @roadtripwithraj"
+    },
+    "headlineOffer": "Flat 20% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "108 St Georges Terrace, Circular Quay, Sydney",
+    "about": "Seasonal seafood and native ingredients with a front-row view of the Opera House.",
+    "phone": "+61 2 92382710",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Tue",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Wed",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Thu",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Fri",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sat",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sun",
+      "open": "12:00",
+      "close": "23:30"
+     }
+    ],
+    "highlights": [
+     "Moreton Bay bug linguine",
+     "Native finger-lime oysters",
+     "Sunset terrace"
+    ],
+    "offers": [
+     {
+      "id": "r_harbour_vine_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 20% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 20,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_harbour_vine_bill",
+      "scope": "BILL",
+      "title": "10% off",
+      "subtitle": "on bill payment, up to $30",
+      "percentOff": 10,
+      "maxDiscount": 3000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount $30"
+      ]
+     },
+     {
+      "id": "r_harbour_vine_flat",
+      "scope": "BILL",
+      "title": "Flat $10 off",
+      "subtitle": "on bills above $96",
+      "flatOff": 1000,
+      "minBill": 9600,
+      "terms": [
+       "Minimum bill $96",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_harbour_vine_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to $25 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 2500,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_harbour_vine_p0",
+      "caption": "Interiors",
+      "hue": 200,
+      "url": "https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @louishansel"
+     },
+     {
+      "id": "r_harbour_vine_p1",
+      "caption": "Signature dish",
+      "hue": 237,
+      "url": "https://images.unsplash.com/photo-1717251752308-2ef72f07484e?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @mitiliemitili"
+     },
+     {
+      "id": "r_harbour_vine_p2",
+      "caption": "Bar",
+      "hue": 274,
+      "url": "https://images.unsplash.com/photo-1662738221342-8106801cee08?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @weareambitious"
+     },
+     {
+      "id": "r_harbour_vine_p3",
+      "caption": "Seating",
+      "hue": 311,
+      "url": "https://images.unsplash.com/photo-1785129495553-fcd3c2314d19?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @addisonlin9"
+     },
+     {
+      "id": "r_harbour_vine_p4",
+      "caption": "Dessert",
+      "hue": 348,
+      "url": "https://images.unsplash.com/photo-1702744754798-4a1d980b03e2?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @savchuks"
+     },
+     {
+      "id": "r_harbour_vine_p5",
+      "caption": "Chef's special",
+      "hue": 25,
+      "url": "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @tempestdesigner"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_harbour_vine_i0",
+      "name": "Prawn ghee roast",
+      "description": "Byadgi chilli, ghee, curry leaves",
+      "price": 2700,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true,
+      "spiceLevel": 2
+     },
+     {
+      "id": "r_harbour_vine_i3",
+      "name": "Fish curry & neer dosa",
+      "description": "Coconut gravy, 3 neer dosas",
+      "price": 2500,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_harbour_vine_c0",
+     "name": "Starters",
+     "items": [
+      {
+       "id": "r_harbour_vine_i0",
+       "name": "Prawn ghee roast",
+       "description": "Byadgi chilli, ghee, curry leaves",
+       "price": 2700,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "spiceLevel": 2,
+       "image": "https://images.unsplash.com/photo-1764311792750-c10a9b45178f?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @varanga22"
+      },
+      {
+       "id": "r_harbour_vine_i1",
+       "name": "Rava fried pomfret",
+       "description": "Semolina crust, lime",
+       "price": 3150,
+       "isVeg": false,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1665401015549-712c0dc5ef85?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @keeshasskitchen"
+      },
+      {
+       "id": "r_harbour_vine_i2",
+       "name": "Mushroom pepper fry",
+       "description": "Kerala style, black pepper",
+       "price": 1550,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1708229562225-948380ed7411?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @priyankabrokenheart90"
+      }
+     ]
+    },
+    {
+     "id": "r_harbour_vine_c1",
+     "name": "Mains",
+     "items": [
+      {
+       "id": "r_harbour_vine_i3",
+       "name": "Fish curry & neer dosa",
+       "description": "Coconut gravy, 3 neer dosas",
+       "price": 2500,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1570275239925-4af0aa93a0dc?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @0x00kevin"
+      },
+      {
+       "id": "r_harbour_vine_i4",
+       "name": "Veg stew & appam",
+       "description": "Coconut milk stew, 2 appams",
+       "price": 1800,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1559561723-c3f4195835db?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @how_it_feel"
+      },
+      {
+       "id": "r_harbour_vine_i5",
+       "name": "Crab sukka",
+       "description": "Dry coconut masala",
+       "price": 4050,
+       "isVeg": false,
+       "available": true,
+       "spiceLevel": 2,
+       "image": "https://images.unsplash.com/photo-1668236534990-73c4ed23043c?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @paul19977"
+      }
+     ]
+    },
+    {
+     "id": "r_harbour_vine_c2",
+     "name": "Desserts",
+     "items": [
+      {
+       "id": "r_harbour_vine_i6",
+       "name": "Elaneer payasam",
+       "description": "Tender coconut kheer",
+       "price": 1100,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1708782343229-b58f8e0b7020?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @rimshaj123"
+      }
+     ]
+    }
+   ],
+   "breakfast": false,
+   "shortCode": "HAV15"
+  },
+  {
+   "detail": {
+    "id": "r_pho_republic",
+    "slug": "pho-republic",
+    "name": "Pho Republic",
+    "cityId": "syd",
+    "area": "Surry Hills",
+    "cuisines": [
+     "Vietnamese",
+     "Asian"
+    ],
+    "rating": 4.4,
+    "ratingCount": 2210,
+    "costForTwo": 5500,
+    "priceBand": 1,
+    "currency": "AUD",
+    "countryCode": "AU",
+    "distanceKm": 2.1,
+    "isPureVeg": false,
+    "tags": [
+     "Quick bites",
+     "Late night"
+    ],
+    "art": {
+     "hue": 140,
+     "motif": "noodles",
+     "image": "https://images.unsplash.com/photo-1730900807088-8b5b4fcbd482?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @svmironov"
+    },
+    "headlineOffer": "Flat 15% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "115 George Street, Surry Hills, Sydney",
+    "about": "Slow-simmered pho, crisp banh xeo and Saigon-style iced coffee until late.",
+    "phone": "+61 2 92481475",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Tue",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Wed",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Thu",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Fri",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sat",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sun",
+      "open": "12:00",
+      "close": "23:30"
+     }
+    ],
+    "highlights": [
+     "24-hour beef bone broth",
+     "Crispy pork belly banh mi",
+     "Open till 2am Fri–Sat"
+    ],
+    "offers": [
+     {
+      "id": "r_pho_republic_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 15% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 15,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_pho_republic_bill",
+      "scope": "BILL",
+      "title": "10% off",
+      "subtitle": "on bill payment, up to $15",
+      "percentOff": 10,
+      "maxDiscount": 1500,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount $15"
+      ]
+     },
+     {
+      "id": "r_pho_republic_flat",
+      "scope": "BILL",
+      "title": "Flat $10 off",
+      "subtitle": "on bills above $33",
+      "flatOff": 1000,
+      "minBill": 3300,
+      "terms": [
+       "Minimum bill $33",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_pho_republic_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to $25 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 2500,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_pho_republic_p0",
+      "caption": "Interiors",
+      "hue": 140,
+      "url": "https://images.unsplash.com/photo-1705743244501-a88b02c524fb?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @duke91"
+     },
+     {
+      "id": "r_pho_republic_p1",
+      "caption": "Signature dish",
+      "hue": 177,
+      "url": "https://images.unsplash.com/photo-1641440615059-42c8ed3af8c8?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @danhk111296"
+     },
+     {
+      "id": "r_pho_republic_p2",
+      "caption": "Bar",
+      "hue": 214,
+      "url": "https://images.unsplash.com/photo-1641659736749-8bbae305e475?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @anetvob"
+     },
+     {
+      "id": "r_pho_republic_p3",
+      "caption": "Seating",
+      "hue": 251,
+      "url": "https://images.unsplash.com/photo-1767485219678-89affb4329a1?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @since9999"
+     },
+     {
+      "id": "r_pho_republic_p4",
+      "caption": "Dessert",
+      "hue": 288,
+      "url": "https://images.unsplash.com/photo-1711161988375-da7eff032e45?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @michalali"
+     },
+     {
+      "id": "r_pho_republic_p5",
+      "caption": "Chef's special",
+      "hue": 325,
+      "url": "https://images.unsplash.com/photo-1695712641569-05eee7b37b6d?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @budi_puspa_wijaya"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_pho_republic_i0",
+      "name": "Edamame truffle dumplings",
+      "description": "Steamed, chilli oil",
+      "price": 1950,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     },
+     {
+      "id": "r_pho_republic_i2",
+      "name": "Shoyu ramen",
+      "description": "Chicken broth, chashu, ajitama",
+      "price": 2500,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_pho_republic_c0",
+     "name": "Small plates",
+     "items": [
+      {
+       "id": "r_pho_republic_i0",
+       "name": "Edamame truffle dumplings",
+       "description": "Steamed, chilli oil",
+       "price": 1950,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @charlesdeluvio"
+      },
+      {
+       "id": "r_pho_republic_i1",
+       "name": "Korean fried chicken",
+       "description": "Gochujang glaze, sesame",
+       "price": 2250,
+       "isVeg": false,
+       "available": true,
+       "spiceLevel": 2,
+       "image": "https://images.unsplash.com/photo-1771384552858-feb0574f958d?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @jon__kelvin"
+      }
+     ]
+    },
+    {
+     "id": "r_pho_republic_c1",
+     "name": "Ramen & noodles",
+     "items": [
+      {
+       "id": "r_pho_republic_i2",
+       "name": "Shoyu ramen",
+       "description": "Chicken broth, chashu, ajitama",
+       "price": 2500,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1614563637806-1d0e645e0940?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @susannschuster"
+      },
+      {
+       "id": "r_pho_republic_i3",
+       "name": "Vegan miso ramen",
+       "description": "Shiitake broth, tofu, bok choy",
+       "price": 2250,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1591814468924-caf88d1232e1?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @cceee"
+      },
+      {
+       "id": "r_pho_republic_i4",
+       "name": "Hand-pulled dan dan noodles",
+       "description": "Sichuan pepper, peanuts",
+       "price": 2000,
+       "isVeg": true,
+       "available": true,
+       "spiceLevel": 3,
+       "image": "https://images.unsplash.com/photo-1684707878393-02606f779d7f?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @mario"
+      }
+     ]
+    },
+    {
+     "id": "r_pho_republic_c2",
+     "name": "Sushi",
+     "items": [
+      {
+       "id": "r_pho_republic_i5",
+       "name": "Spicy salmon roll",
+       "description": "8 pcs, sriracha mayo",
+       "price": 2950,
+       "isVeg": false,
+       "available": true,
+       "spiceLevel": 1,
+       "image": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @derekduran"
+      },
+      {
+       "id": "r_pho_republic_i6",
+       "name": "Avocado cucumber roll",
+       "description": "8 pcs",
+       "price": 2000,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1712192674556-4a89f20240c1?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @ifoodijourney"
+      }
+     ]
+    },
+    {
+     "id": "r_pho_republic_c3",
+     "name": "Desserts",
+     "items": [
+      {
+       "id": "r_pho_republic_i7",
+       "name": "Matcha cheesecake",
+       "description": "Black sesame crumble",
+       "price": 1550,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1492683654773-a3b0476056c0?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @heftiba"
+      }
+     ]
+    }
+   ],
+   "breakfast": false,
+   "shortCode": "PR16"
+  },
+  {
+   "detail": {
+    "id": "r_laneway_grind",
+    "slug": "laneway-grind",
+    "name": "Laneway Grind",
+    "cityId": "mel",
+    "area": "CBD",
+    "cuisines": [
+     "Cafe",
+     "Brunch",
+     "Bakery"
+    ],
+    "rating": 4.7,
+    "ratingCount": 3410,
+    "costForTwo": 5000,
+    "priceBand": 1,
+    "currency": "AUD",
+    "countryCode": "AU",
+    "distanceKm": 0.5,
+    "isPureVeg": false,
+    "tags": [
+     "All-day breakfast",
+     "Work friendly",
+     "Pet friendly"
+    ],
+    "art": {
+     "hue": 32,
+     "motif": "cafe",
+     "image": "https://images.unsplash.com/photo-1767972803062-bd3b450c0a1c?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @cronos449"
+    },
+    "headlineOffer": "Flat 15% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "122 Crown Street, CBD, Melbourne",
+    "about": "Specialty coffee and all-day brunch tucked down one of Melbourne's famous laneways.",
+    "phone": "+61 2 92580240",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "07:00",
+      "close": "16:00"
+     },
+     {
+      "day": "Tue",
+      "open": "07:00",
+      "close": "16:00"
+     },
+     {
+      "day": "Wed",
+      "open": "07:00",
+      "close": "16:00"
+     },
+     {
+      "day": "Thu",
+      "open": "07:00",
+      "close": "16:00"
+     },
+     {
+      "day": "Fri",
+      "open": "07:00",
+      "close": "16:00"
+     },
+     {
+      "day": "Sat",
+      "open": "07:00",
+      "close": "16:00"
+     },
+     {
+      "day": "Sun",
+      "open": "07:00",
+      "close": "16:00"
+     }
+    ],
+    "highlights": [
+     "Single-origin pour-overs",
+     "Smashed avo with dukkah",
+     "Weekend pastry drop"
+    ],
+    "offers": [
+     {
+      "id": "r_laneway_grind_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 15% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 15,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_laneway_grind_bill",
+      "scope": "BILL",
+      "title": "10% off",
+      "subtitle": "on bill payment, up to $12",
+      "percentOff": 10,
+      "maxDiscount": 1200,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount $12"
+      ]
+     },
+     {
+      "id": "r_laneway_grind_flat",
+      "scope": "BILL",
+      "title": "Flat $10 off",
+      "subtitle": "on bills above $30",
+      "flatOff": 1000,
+      "minBill": 3000,
+      "terms": [
+       "Minimum bill $30",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_laneway_grind_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to $25 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 2500,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_laneway_grind_p0",
+      "caption": "Interiors",
+      "hue": 32,
+      "url": "https://images.unsplash.com/photo-1689263560312-b39e79579248?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @pangnotdett"
+     },
+     {
+      "id": "r_laneway_grind_p1",
+      "caption": "Signature dish",
+      "hue": 69,
+      "url": "https://images.unsplash.com/photo-1712746785649-11ffe27af62e?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @nimanaseri"
+     },
+     {
+      "id": "r_laneway_grind_p2",
+      "caption": "Bar",
+      "hue": 106,
+      "url": "https://images.unsplash.com/photo-1586011066531-f3a64f20d51d?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @wstn"
+     },
+     {
+      "id": "r_laneway_grind_p3",
+      "caption": "Seating",
+      "hue": 143,
+      "url": "https://images.unsplash.com/photo-1773487521226-b593cf35c20d?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @geepee_lens"
+     },
+     {
+      "id": "r_laneway_grind_p4",
+      "caption": "Dessert",
+      "hue": 180,
+      "url": "https://images.unsplash.com/photo-1701727080961-00e8c9086e45?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @dtrinksrph"
+     },
+     {
+      "id": "r_laneway_grind_p5",
+      "caption": "Chef's special",
+      "hue": 217,
+      "url": "https://images.unsplash.com/photo-1661182260393-a3918d4e8571?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @valerelli"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_laneway_grind_i0",
+      "name": "Avocado sourdough toast",
+      "description": "Poached egg optional, chilli flakes",
+      "price": 1800,
+      "isVeg": true,
+      "available": true,
+      "addons": [
+       {
+        "id": "egg",
+        "name": "Poached egg",
+        "price": 6000
+       }
+      ],
+      "isBestseller": true
+     },
+     {
+      "id": "r_laneway_grind_i5",
+      "name": "Pour-over",
+      "description": "Single origin, ask for today's beans",
+      "price": 1000,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_laneway_grind_c0",
+     "name": "All-day breakfast",
+     "items": [
+      {
+       "id": "r_laneway_grind_i0",
+       "name": "Avocado sourdough toast",
+       "description": "Poached egg optional, chilli flakes",
+       "price": 1800,
+       "isVeg": true,
+       "available": true,
+       "addons": [
+        {
+         "id": "egg",
+         "name": "Poached egg",
+         "price": 6000
+        }
+       ],
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1612215047504-a6c07dbe4f7f?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @magnoliasagestudio"
+      },
+      {
+       "id": "r_laneway_grind_i1",
+       "name": "Akuri on toast",
+       "description": "Parsi-style spiced scrambled eggs",
+       "price": 1500,
+       "isVeg": false,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1583552336796-531290f1fe2a?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @elalfred_12"
+      },
+      {
+       "id": "r_laneway_grind_i2",
+       "name": "Buttermilk pancakes",
+       "description": "Maple, berries, whipped butter",
+       "price": 1550,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @nikldn"
+      }
+     ]
+    },
+    {
+     "id": "r_laneway_grind_c1",
+     "name": "Sandwiches",
+     "items": [
+      {
+       "id": "r_laneway_grind_i3",
+       "name": "Pesto chicken panini",
+       "description": "Mozzarella, sundried tomato",
+       "price": 1700,
+       "isVeg": false,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1649305785246-a1d65e8bc078?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @tonyrocket"
+      },
+      {
+       "id": "r_laneway_grind_i4",
+       "name": "Caprese focaccia",
+       "description": "Tomato, mozzarella, basil",
+       "price": 1550,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1619452357216-e88ca8119eeb?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @paulaberto"
+      }
+     ]
+    },
+    {
+     "id": "r_laneway_grind_c2",
+     "name": "Coffee",
+     "items": [
+      {
+       "id": "r_laneway_grind_i5",
+       "name": "Pour-over",
+       "description": "Single origin, ask for today's beans",
+       "price": 1000,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1781460877110-6988cbaf0eb0?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @bgoodpic"
+      },
+      {
+       "id": "r_laneway_grind_i6",
+       "name": "Flat white",
+       "description": "Double ristretto",
+       "price": 950,
+       "isVeg": true,
+       "available": true,
+       "variants": [
+        {
+         "id": "dairy",
+         "name": "Dairy milk",
+         "price": 0
+        },
+        {
+         "id": "oat",
+         "name": "Oat milk",
+         "price": 6000
+        }
+       ],
+       "image": "https://images.unsplash.com/photo-1502462041640-b3d7e50d0662?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @jonasjacobsson"
+      }
+     ]
+    }
+   ],
+   "breakfast": true,
+   "shortCode": "LG17"
+  },
+  {
+   "detail": {
+    "id": "r_fitzroy_fire",
+    "slug": "fitzroy-fire",
+    "name": "Fitzroy Fire",
+    "cityId": "mel",
+    "area": "Fitzroy",
+    "cuisines": [
+     "Italian",
+     "Pizza"
+    ],
+    "rating": 4.5,
+    "ratingCount": 1890,
+    "costForTwo": 9000,
+    "priceBand": 2,
+    "currency": "AUD",
+    "countryCode": "AU",
+    "distanceKm": 3.2,
+    "isPureVeg": false,
+    "tags": [
+     "Wood-fired oven",
+     "Large groups"
+    ],
+    "art": {
+     "hue": 8,
+     "motif": "pizza",
+     "image": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @aurel__lens"
+    },
+    "headlineOffer": "Flat 20% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "129 Flinders Lane, Fitzroy, Melbourne",
+    "about": "Blistered Neapolitan pizzas from a 450°C oven and natural wines on tap.",
+    "phone": "+61 2 92679005",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Tue",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Wed",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Thu",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Fri",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sat",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sun",
+      "open": "12:00",
+      "close": "23:30"
+     }
+    ],
+    "highlights": [
+     "48-hour fermented dough",
+     "Natural wine on tap",
+     "Group feasting menus"
+    ],
+    "offers": [
+     {
+      "id": "r_fitzroy_fire_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 20% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 20,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_fitzroy_fire_bill",
+      "scope": "BILL",
+      "title": "10% off",
+      "subtitle": "on bill payment, up to $20",
+      "percentOff": 10,
+      "maxDiscount": 2000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount $20"
+      ]
+     },
+     {
+      "id": "r_fitzroy_fire_flat",
+      "scope": "BILL",
+      "title": "Flat $10 off",
+      "subtitle": "on bills above $54",
+      "flatOff": 1000,
+      "minBill": 5400,
+      "terms": [
+       "Minimum bill $54",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_fitzroy_fire_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to $25 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 2500,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_fitzroy_fire_p0",
+      "caption": "Interiors",
+      "hue": 8,
+      "url": "https://images.unsplash.com/photo-1685397067025-d293a18099ba?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @olstahl"
+     },
+     {
+      "id": "r_fitzroy_fire_p1",
+      "caption": "Signature dish",
+      "hue": 45,
+      "url": "https://images.unsplash.com/photo-1622880833523-7cf1c0bd4296?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @fabrizio_photopf"
+     },
+     {
+      "id": "r_fitzroy_fire_p2",
+      "caption": "Bar",
+      "hue": 82,
+      "url": "https://images.unsplash.com/photo-1596438214057-5ff7c7fa76b1?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @bigdodzy"
+     },
+     {
+      "id": "r_fitzroy_fire_p3",
+      "caption": "Seating",
+      "hue": 119,
+      "url": "https://images.unsplash.com/photo-1618597017017-7ce39f28eb41?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @tamarushphotos"
+     },
+     {
+      "id": "r_fitzroy_fire_p4",
+      "caption": "Dessert",
+      "hue": 156,
+      "url": "https://images.unsplash.com/photo-1611292984550-6dd8def2e668?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @amir_v_ali"
+     },
+     {
+      "id": "r_fitzroy_fire_p5",
+      "caption": "Chef's special",
+      "hue": 193,
+      "url": "https://images.unsplash.com/photo-1649400454485-b8ad827f929d?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @kapoorparas28"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_fitzroy_fire_i0",
+      "name": "Burrata & heirloom tomato",
+      "description": "Creamy burrata, basil oil, toasted sourdough",
+      "price": 2500,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     },
+     {
+      "id": "r_fitzroy_fire_i3",
+      "name": "Margherita",
+      "description": "San Marzano tomato, fior di latte, basil",
+      "price": 2000,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true,
+      "variants": [
+       {
+        "id": "r",
+        "name": "Regular 10\"",
+        "price": 0
+       },
+       {
+        "id": "l",
+        "name": "Large 13\"",
+        "price": 22000
+       }
+      ]
+     },
+     {
+      "id": "r_fitzroy_fire_i8",
+      "name": "Tiramisu",
+      "description": "Mascarpone, espresso, cocoa",
+      "price": 1800,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_fitzroy_fire_c0",
+     "name": "Small plates",
+     "items": [
+      {
+       "id": "r_fitzroy_fire_i0",
+       "name": "Burrata & heirloom tomato",
+       "description": "Creamy burrata, basil oil, toasted sourdough",
+       "price": 2500,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1555072930-714bba1d24e2?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @pinarimsi"
+      },
+      {
+       "id": "r_fitzroy_fire_i1",
+       "name": "Garlic bread with cheese",
+       "description": "Herb butter, mozzarella, chilli flakes",
+       "price": 1350,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1619535860434-ba1d8fa12536?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @jaygajjar"
+      },
+      {
+       "id": "r_fitzroy_fire_i2",
+       "name": "Calamari fritti",
+       "description": "Lemon aioli, pickled chilli",
+       "price": 2250,
+       "isVeg": false,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1682264895449-f75b342cbab6?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @joaniesimon"
+      }
+     ]
+    },
+    {
+     "id": "r_fitzroy_fire_c1",
+     "name": "Wood-fired pizza",
+     "items": [
+      {
+       "id": "r_fitzroy_fire_i3",
+       "name": "Margherita",
+       "description": "San Marzano tomato, fior di latte, basil",
+       "price": 2000,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "variants": [
+        {
+         "id": "r",
+         "name": "Regular 10\"",
+         "price": 0
+        },
+        {
+         "id": "l",
+         "name": "Large 13\"",
+         "price": 22000
+        }
+       ],
+       "image": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @iavnt"
+      },
+      {
+       "id": "r_fitzroy_fire_i4",
+       "name": "Truffle mushroom",
+       "description": "Wild mushrooms, truffle oil, parmesan",
+       "price": 2950,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1590947132387-155cc02f3212?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @v_uk_europe"
+      },
+      {
+       "id": "r_fitzroy_fire_i5",
+       "name": "Spicy pepperoni",
+       "description": "Pepperoni, hot honey, mozzarella",
+       "price": 3150,
+       "isVeg": false,
+       "available": true,
+       "spiceLevel": 2,
+       "image": "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @shouravsheikh"
+      }
+     ]
+    },
+    {
+     "id": "r_fitzroy_fire_c2",
+     "name": "Pasta",
+     "items": [
+      {
+       "id": "r_fitzroy_fire_i6",
+       "name": "Cacio e pepe",
+       "description": "Tonnarelli, pecorino, cracked pepper",
+       "price": 2400,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1588013273468-315fd88ea34c?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @fresh_studio"
+      },
+      {
+       "id": "r_fitzroy_fire_i7",
+       "name": "Prawn aglio olio",
+       "description": "Garlic, chilli, parsley",
+       "price": 2950,
+       "isVeg": false,
+       "available": true,
+       "spiceLevel": 1,
+       "image": "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @islandsandsunsets"
+      }
+     ]
+    },
+    {
+     "id": "r_fitzroy_fire_c3",
+     "name": "Desserts",
+     "items": [
+      {
+       "id": "r_fitzroy_fire_i8",
+       "name": "Tiramisu",
+       "description": "Mascarpone, espresso, cocoa",
+       "price": 1800,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1782458786741-eb404fea310a?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @smuggrin"
+      }
+     ]
+    }
+   ],
+   "breakfast": false,
+   "shortCode": "FF18"
+  },
+  {
+   "detail": {
+    "id": "r_spice_route",
+    "slug": "spice-route-brisbane",
+    "name": "Spice Route",
+    "cityId": "bne",
+    "area": "Fortitude Valley",
+    "cuisines": [
+     "Indian",
+     "North Indian"
+    ],
+    "rating": 4.5,
+    "ratingCount": 980,
+    "costForTwo": 7500,
+    "priceBand": 2,
+    "currency": "AUD",
+    "countryCode": "AU",
+    "distanceKm": 1.9,
+    "isPureVeg": false,
+    "tags": [
+     "Family friendly",
+     "Large groups"
+    ],
+    "art": {
+     "hue": 28,
+     "motif": "curry",
+     "image": "https://images.unsplash.com/photo-1710091691780-c7eb0dc50cf8?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @kalpa_mahagamage"
+    },
+    "headlineOffer": "Flat 20% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "136 Brunswick Street, Fortitude Valley, Brisbane",
+    "about": "Tandoor classics and regional curries, with a weekday thali lunch.",
+    "phone": "+61 2 92777770",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Tue",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Wed",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Thu",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Fri",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sat",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sun",
+      "open": "12:00",
+      "close": "23:30"
+     }
+    ],
+    "highlights": [
+     "Charcoal tandoor",
+     "Butter chicken",
+     "Weekday thali lunch"
+    ],
+    "offers": [
+     {
+      "id": "r_spice_route_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 20% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 20,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_spice_route_bill",
+      "scope": "BILL",
+      "title": "10% off",
+      "subtitle": "on bill payment, up to $20",
+      "percentOff": 10,
+      "maxDiscount": 2000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount $20"
+      ]
+     },
+     {
+      "id": "r_spice_route_flat",
+      "scope": "BILL",
+      "title": "Flat $10 off",
+      "subtitle": "on bills above $45",
+      "flatOff": 1000,
+      "minBill": 4500,
+      "terms": [
+       "Minimum bill $45",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_spice_route_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to $25 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 2500,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_spice_route_p0",
+      "caption": "Interiors",
+      "hue": 28,
+      "url": "https://images.unsplash.com/photo-1779591211944-95f1c62d875c?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @lensfables"
+     },
+     {
+      "id": "r_spice_route_p1",
+      "caption": "Signature dish",
+      "hue": 65,
+      "url": "https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @potofgold07"
+     },
+     {
+      "id": "r_spice_route_p2",
+      "caption": "Bar",
+      "hue": 102,
+      "url": "https://images.unsplash.com/photo-1635716279493-d1e30afc25a0?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @desirae_hayesvitor"
+     },
+     {
+      "id": "r_spice_route_p3",
+      "caption": "Seating",
+      "hue": 139,
+      "url": "https://images.unsplash.com/photo-1703565426315-4209c2e88eea?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @zoshuacolah"
+     },
+     {
+      "id": "r_spice_route_p4",
+      "caption": "Dessert",
+      "hue": 176,
+      "url": "https://images.unsplash.com/photo-1646578515903-67873a5398f9?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @atarinm"
+     },
+     {
+      "id": "r_spice_route_p5",
+      "caption": "Chef's special",
+      "hue": 213,
+      "url": "https://images.unsplash.com/photo-1680993032090-1ef7ea9b51e5?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @zoshuacolah"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_spice_route_i0",
+      "name": "Paneer tikka",
+      "description": "Charred cottage cheese, mint chutney",
+      "price": 1800,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true,
+      "spiceLevel": 1
+     },
+     {
+      "id": "r_spice_route_i3",
+      "name": "Dal makhani",
+      "description": "Slow-cooked overnight, white butter",
+      "price": 1550,
+      "isVeg": true,
+      "available": true,
+      "isBestseller": true
+     },
+     {
+      "id": "r_spice_route_i4",
+      "name": "Butter chicken",
+      "description": "Smoked tomato makhani gravy",
+      "price": 2250,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_spice_route_c0",
+     "name": "Starters",
+     "items": [
+      {
+       "id": "r_spice_route_i0",
+       "name": "Paneer tikka",
+       "description": "Charred cottage cheese, mint chutney",
+       "price": 1800,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "spiceLevel": 1,
+       "image": "https://images.unsplash.com/photo-1666001120694-3ebe8fd207be?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @rupa_venketa_vardhan"
+      },
+      {
+       "id": "r_spice_route_i1",
+       "name": "Galouti kebab",
+       "description": "Melt-in-mouth mutton kebab on ulte tawa paratha",
+       "price": 2500,
+       "isVeg": false,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1532636875304-0c89119d9b4d?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @suadkamardeen"
+      },
+      {
+       "id": "r_spice_route_i2",
+       "name": "Dahi ke kebab",
+       "description": "Hung curd patties, beetroot chutney",
+       "price": 1550,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1707592357743-5e25b277ca36?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @sanaumer"
+      }
+     ]
+    },
+    {
+     "id": "r_spice_route_c1",
+     "name": "Mains",
+     "items": [
+      {
+       "id": "r_spice_route_i3",
+       "name": "Dal makhani",
+       "description": "Slow-cooked overnight, white butter",
+       "price": 1550,
+       "isVeg": true,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1697155406121-85aac6236000?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @rashpalsingh"
+      },
+      {
+       "id": "r_spice_route_i4",
+       "name": "Butter chicken",
+       "description": "Smoked tomato makhani gravy",
+       "price": 2250,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1772730064970-a7b2735c93b9?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @dischef"
+      },
+      {
+       "id": "r_spice_route_i5",
+       "name": "Lucknowi dum biryani",
+       "description": "Mutton, saffron, kewra",
+       "price": 2500,
+       "isVeg": false,
+       "available": true,
+       "variants": [
+        {
+         "id": "h",
+         "name": "Half",
+         "price": 0
+        },
+        {
+         "id": "f",
+         "name": "Full",
+         "price": 25000
+        }
+       ],
+       "image": "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @shreyaksingh"
+      }
+     ]
+    },
+    {
+     "id": "r_spice_route_c2",
+     "name": "Breads",
+     "items": [
+      {
+       "id": "r_spice_route_i6",
+       "name": "Butter naan",
+       "description": "From the tandoor",
+       "price": 450,
+       "isVeg": true,
+       "available": true,
+       "addons": [
+        {
+         "id": "garlic",
+         "name": "Garlic",
+         "price": 2000
+        },
+        {
+         "id": "cheese",
+         "name": "Cheese",
+         "price": 6000
+        }
+       ],
+       "image": "https://images.unsplash.com/photo-1559561724-4ea348cd867f?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @how_it_feel"
+      },
+      {
+       "id": "r_spice_route_i7",
+       "name": "Laccha paratha",
+       "description": "Layered whole-wheat bread",
+       "price": 500,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1683533743190-89c9b19f9ea6?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @ananthan8110"
+      }
+     ]
+    },
+    {
+     "id": "r_spice_route_c3",
+     "name": "Desserts",
+     "items": [
+      {
+       "id": "r_spice_route_i8",
+       "name": "Gulab jamun",
+       "description": "Warm, with rabri",
+       "price": 900,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1593701461250-d7b22dfd3a77?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @magictype"
+      }
+     ]
+    }
+   ],
+   "breakfast": false,
+   "shortCode": "SRB19"
+  },
+  {
+   "detail": {
+    "id": "r_swan_grill",
+    "slug": "swan-river-grill",
+    "name": "Swan River Grill",
+    "cityId": "per",
+    "area": "Perth CBD",
+    "cuisines": [
+     "Steakhouse",
+     "Grill"
+    ],
+    "rating": 4.6,
+    "ratingCount": 760,
+    "costForTwo": 26000,
+    "priceBand": 4,
+    "currency": "AUD",
+    "countryCode": "AU",
+    "distanceKm": 1.1,
+    "isPureVeg": false,
+    "tags": [
+     "Fine dining",
+     "Wine list",
+     "River views"
+    ],
+    "art": {
+     "hue": 4,
+     "motif": "grill",
+     "image": "https://images.unsplash.com/photo-1589854880846-842b8fe2ba4b?auto=format&fit=crop&w=1200&q=80",
+     "imageCredit": "Unsplash · @ben_mcleod"
+    },
+    "headlineOffer": "Flat 15% off on pre-booking",
+    "acceptsBookings": true,
+    "acceptsBillPayment": true,
+    "status": "LIVE",
+    "settings": {
+     "bookingsEnabled": true,
+     "billPaymentEnabled": true,
+     "tablesPerSlot": 6
+    },
+    "address": "143 St Georges Terrace, Perth CBD, Perth",
+    "about": "Dry-aged WA beef over ironbark coals, overlooking the Swan River.",
+    "phone": "+61 2 92876535",
+    "hours": [
+     {
+      "day": "Mon",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Tue",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Wed",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Thu",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Fri",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sat",
+      "open": "12:00",
+      "close": "23:30"
+     },
+     {
+      "day": "Sun",
+      "open": "12:00",
+      "close": "23:30"
+     }
+    ],
+    "highlights": [
+     "45-day dry-aged rib eye",
+     "Margaret River wine list",
+     "River-view private room"
+    ],
+    "offers": [
+     {
+      "id": "r_swan_grill_pre",
+      "scope": "PREBOOK",
+      "title": "Flat 15% off",
+      "subtitle": "on pre-booking a table",
+      "percentOff": 15,
+      "terms": [
+       "Applied when you pay your bill on Feast on the day of your booking — not available at the till",
+       "Not valid on alcohol and tobacco",
+       "One booking per table"
+      ]
+     },
+     {
+      "id": "r_swan_grill_bill",
+      "scope": "BILL",
+      "title": "10% off",
+      "subtitle": "on bill payment, up to $40",
+      "percentOff": 10,
+      "maxDiscount": 4000,
+      "terms": [
+       "For diners who booked on Feast: applied when you pay your bill on Feast for your booking",
+       "Maximum discount $40"
+      ]
+     },
+     {
+      "id": "r_swan_grill_flat",
+      "scope": "BILL",
+      "title": "Flat $10 off",
+      "subtitle": "on bills above $156",
+      "flatOff": 1000,
+      "minBill": 15600,
+      "terms": [
+       "Minimum bill $156",
+       "Not combinable with other bill offers"
+      ]
+     },
+     {
+      "id": "r_swan_grill_bank",
+      "scope": "BANK",
+      "title": "10% off with select cards",
+      "subtitle": "up to $25 on credit cards",
+      "percentOff": 10,
+      "maxDiscount": 2500,
+      "terms": [
+       "Demo bank offer — applied at payment",
+       "Once per card per month"
+      ]
+     }
+    ],
+    "photos": [
+     {
+      "id": "r_swan_grill_p0",
+      "caption": "Interiors",
+      "hue": 4,
+      "url": "https://images.unsplash.com/photo-1600801687775-c9b49cdfced6?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @timaesthetic"
+     },
+     {
+      "id": "r_swan_grill_p1",
+      "caption": "Signature dish",
+      "hue": 41,
+      "url": "https://images.unsplash.com/photo-1570481060336-9c82d078588e?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @tomatetv"
+     },
+     {
+      "id": "r_swan_grill_p2",
+      "caption": "Bar",
+      "hue": 78,
+      "url": "https://images.unsplash.com/photo-1597043851759-3b383a6d1c14?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @apolophotographer"
+     },
+     {
+      "id": "r_swan_grill_p3",
+      "caption": "Seating",
+      "hue": 115,
+      "url": "https://images.unsplash.com/photo-1738877649930-86820910fab3?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @ad_fu"
+     },
+     {
+      "id": "r_swan_grill_p4",
+      "caption": "Dessert",
+      "hue": 152,
+      "url": "https://images.unsplash.com/photo-1673551490812-eaee2e9bf0ef?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @americanheritagechocolate"
+     },
+     {
+      "id": "r_swan_grill_p5",
+      "caption": "Chef's special",
+      "hue": 189,
+      "url": "https://images.unsplash.com/photo-1734987052573-0fbe611842ae?auto=format&fit=crop&w=1000&q=80",
+      "credit": "Unsplash · @snappr"
+     }
+    ],
+    "menuPreview": [
+     {
+      "id": "r_swan_grill_i0",
+      "name": "Dry-aged ribeye 300g",
+      "description": "Bone marrow butter, chimichurri",
+      "price": 11350,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true,
+      "variants": [
+       {
+        "id": "mr",
+        "name": "Medium rare",
+        "price": 0
+       },
+       {
+        "id": "m",
+        "name": "Medium",
+        "price": 0
+       },
+       {
+        "id": "w",
+        "name": "Well done",
+        "price": 0
+       }
+      ]
+     },
+     {
+      "id": "r_swan_grill_i1",
+      "name": "Smoked brisket platter",
+      "description": "12-hour smoke, pickles, slaw",
+      "price": 5900,
+      "isVeg": false,
+      "available": true,
+      "isBestseller": true
+     }
+    ]
+   },
+   "menu": [
+    {
+     "id": "r_swan_grill_c0",
+     "name": "From the fire",
+     "items": [
+      {
+       "id": "r_swan_grill_i0",
+       "name": "Dry-aged ribeye 300g",
+       "description": "Bone marrow butter, chimichurri",
+       "price": 11350,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "variants": [
+        {
+         "id": "mr",
+         "name": "Medium rare",
+         "price": 0
+        },
+        {
+         "id": "m",
+         "name": "Medium",
+         "price": 0
+        },
+        {
+         "id": "w",
+         "name": "Well done",
+         "price": 0
+        }
+       ],
+       "image": "https://images.unsplash.com/photo-1588347818036-558601350947?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @edsonsrdz"
+      },
+      {
+       "id": "r_swan_grill_i1",
+       "name": "Smoked brisket platter",
+       "description": "12-hour smoke, pickles, slaw",
+       "price": 5900,
+       "isVeg": false,
+       "available": true,
+       "isBestseller": true,
+       "image": "https://images.unsplash.com/photo-1614398750956-402891a7dce1?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @phambot"
+      },
+      {
+       "id": "r_swan_grill_i2",
+       "name": "Smoked paneer steak",
+       "description": "Charred peppers, romesco",
+       "price": 3150,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @sonance"
+      }
+     ]
+    },
+    {
+     "id": "r_swan_grill_c1",
+     "name": "Sides",
+     "items": [
+      {
+       "id": "r_swan_grill_i3",
+       "name": "Truffle fries",
+       "description": "Parmesan, herbs",
+       "price": 1550,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1585109649139-366815a0d713?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @pandajoyce"
+      },
+      {
+       "id": "r_swan_grill_i4",
+       "name": "Charred corn",
+       "description": "Chipotle butter",
+       "price": 1350,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1601284702796-a27ffd3eff3c?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @robykrc"
+      }
+     ]
+    },
+    {
+     "id": "r_swan_grill_c2",
+     "name": "Desserts",
+     "items": [
+      {
+       "id": "r_swan_grill_i5",
+       "name": "Burnt Basque cheesecake",
+       "description": "Salted caramel",
+       "price": 2250,
+       "isVeg": true,
+       "available": true,
+       "image": "https://images.unsplash.com/photo-1635327173758-85badf17f995?auto=format&fit=crop&w=480&q=80",
+       "imageSource": "STOCK",
+       "imageCredit": "Unsplash · @mahyar_mirghasmi"
+      }
+     ]
+    }
+   ],
+   "breakfast": false,
+   "shortCode": "SRG20"
+  }
+ ]
+}

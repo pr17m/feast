@@ -1,0 +1,11 @@
+# Which deployment serves which country. Identical in every deployment (it is
+# public information): when a visitor's country is served elsewhere, the API's
+# /v1/geo returns `redirectUrl` and the webapp offers to switch.
+# Countries not listed (or without a URL) are "not available yet".
+
+[countries]
+IN = "https://in.feast.example"
+AU = "https://au.feast.example"
+# NZ = "https://nz.feast.example"
+# CA = "https://ca.feast.example"
+# GB = "https://uk.feast.example"

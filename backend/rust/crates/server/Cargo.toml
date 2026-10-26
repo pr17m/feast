@@ -1,0 +1,30 @@
+[package]
+name = "feast-server"
+description = "The `feast` binary: composition root. Reads config, wires adapters, runs a role (all | gateway | worker | notification | migrate | seed)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "feast"
+path = "src/main.rs"
+
+[dependencies]
+feast-domain.workspace = true
+feast-application.workspace = true
+feast-infra.workspace = true
+feast-notification.workspace = true
+feast-api.workspace = true
+async-trait.workspace = true
+tokio.workspace = true
+axum.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+config.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+clap.workspace = true
+chrono-tz.workspace = true

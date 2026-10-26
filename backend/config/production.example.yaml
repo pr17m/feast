@@ -1,0 +1,65 @@
+# Example production config (YAML works too). Copy to config/production.yaml and
+# run with FEAST_ENV=production FEAST_COUNTRY=<cc>. Put secrets in env vars or
+# config/local.yaml. Per-country differences (payment provider credentials,
+# bucket, URLs) go in env vars or config/countries/<cc>.toml.
+app:
+  demo_mode: false
+  seed_on_empty: false
+  seed_history: false
+
+http:
+  cors_origins: ["https://in.feast.example"]   # FEAST__HTTP__CORS_ORIGINS per country
+  proxy_hops: 1
+
+database:
+  url: "sqlite:///var/lib/feast/feast.db"   # FEAST__DATABASE__URL per country
+  max_connections: 16
+
+bus:
+  kind: redis
+  redis:
+    url: "redis://redis:6379/0"
+
+auth:
+  # jwt_secret: set FEAST__AUTH__JWT_SECRET
+  otp:
+    provider: twilio       # FEAST__AUTH__OTP__TWILIO__ACCOUNT_SID / __AUTH_TOKEN / __SERVICE_SID
+    show_hint: false
+  oauth:
+    google:
+      mode: live
+      client_ids: ["<web-client-id>.apps.googleusercontent.com"]
+    apple:
+      mode: live
+      client_ids: ["in.feast.web", "in.feast.ios"]
+      redirect_uri: "https://app.feast.in/login"
+    facebook:
+      mode: live
+      client_ids: ["<facebook-app-id>"]
+      # client_secret: set FEAST__AUTH__OAUTH__FACEBOOK__CLIENT_SECRET
+
+payments:
+  force_provider: ""
+  providers:
+    mock:
+      enabled: false        # each market uses its own provider (IN: razorpay, AU: stripe)
+  # Enable the provider(s) the country uses; secrets via env, e.g.
+  # FEAST__PAYMENTS__PROVIDERS__RAZORPAY__KEY_ID / __KEY_SECRET
+  # FEAST__PAYMENTS__PROVIDERS__STRIPE__PUBLISHABLE_KEY / __SECRET_KEY
+
+storage:
+  kind: s3
+  s3:
+    endpoint: "https://s3.ap-south-1.amazonaws.com"   # the country's region
+    bucket: "feast-in-documents"
+    region: "ap-south-1"
+    # access_key_id / secret_access_key: FEAST__STORAGE__S3__ACCESS_KEY_ID / __SECRET_ACCESS_KEY
+
+notifications:
+  mode: grpc
+  grpc_url: "http://notification:50051"
+  # service_token: set FEAST__NOTIFICATIONS__SERVICE_TOKEN
+
+log:
+  level: "info,sqlx=warn"
+  format: json

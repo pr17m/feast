@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+// Shared types for Feast internal (service-to-service) APIs.
+package feast.common.v1;
+
+option go_package = "github.com/feast/backend/gen/go/feast/common/v1;commonv1";
+
+// Who is making an internal call. Services trust the gateway/worker to have
+// authenticated the end user; this is passed for authorization and auditing.
+message Caller {
+  // Service name, e.g. "gateway", "worker".
+  string service = 1;
+  // End user on whose behalf the call is made (empty for system calls).
+  string user_id = 2;
+  // Request id for tracing across services.
+  string request_id = 3;
+}
+
+// Cursor pagination for list RPCs.
+message PageRequest {
+  // Max items to return (server caps it; 0 = default).
+  uint32 limit = 1;
+  // Opaque cursor from a previous response (empty = first page).
+  string cursor = 2;
+}
+
+message PageInfo {
+  string next_cursor = 1;
+  bool has_more = 2;
+}

@@ -1,0 +1,25 @@
+# build outputs
+backend/rust/target/
+backend/rust/data/
+backend/data/
+webapp/node_modules/
+webapp/.next/
+webapp/e2e/shots/
+*.tsbuildinfo
+
+# local secrets
+backend/config/local.*
+!backend/config/local.example.*
+deploy/compose/*.env
+!deploy/compose/*.env.example
+deploy/terraform/**/.terraform/
+deploy/terraform/**/*.tfstate*
+deploy/terraform/**/*.auto.tfvars
+.DS_Store
+
+# local scratch
+*.log
+/shots/
+
+# Claude session outputs (screenshots, archives)
+Claude outputs/

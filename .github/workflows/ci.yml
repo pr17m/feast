@@ -1,0 +1,160 @@
+# Feast CI: one pipeline for every country (same code, same images).
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Rust API (SQLite + Postgres)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env: { POSTGRES_USER: feast, POSTGRES_PASSWORD: feast, POSTGRES_DB: feast }
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U feast" --health-interval 5s --health-retries 20
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+    defaults:
+      run:
+        working-directory: backend/rust
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with: { components: "rustfmt, clippy" }
+      - uses: Swatinem/rust-cache@v2
+        with: { workspaces: backend/rust }
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Lint
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: Unit + adapter tests (SQLite, Redis; slot-locking race also on Postgres)
+        env:
+          FEAST_TEST_POSTGRES_URL: postgres://feast:feast@127.0.0.1:5432/feast
+        run: cargo test --workspace --locked
+      - name: API flow on Postgres + Redis (Australia)
+        env:
+          FEAST_COUNTRY: au
+          FEAST_CONFIG_DIR: ../config
+          FEAST__HTTP__PORT: "8091"
+          FEAST__HTTP__AUTH_RATE_LIMIT_PER_MINUTE: "1000"   # many test diners sign in from one IP
+          FEAST__DATABASE__URL: postgres://feast:feast@127.0.0.1:5432/feast
+          FEAST__NOTIFICATIONS__DATABASE_URL: postgres://feast:feast@127.0.0.1:5432/feast
+          FEAST__BUS__KIND: redis
+          FEAST__BUS__REDIS__URL: redis://127.0.0.1:6379/0
+        run: |
+          cargo build --locked -p feast-server
+          sudo apt-get install -y -qq faketime
+          # Deals need a booking for today, so pin the server's clock to early
+          # evening in Sydney, when tonight's slots are still bookable.
+          export FEAST_TEST_NOW="$(date -u +%F)T07:30:00Z"
+          TZ=UTC faketime -f "@$(date -u +%F) 07:30:00" ./target/debug/feast all > /tmp/api.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf localhost:8091/readyz && break; sleep 1; done
+          python3 ../spec/conformance/api_flow.py http://localhost:8091 || (cat /tmp/api.log; exit 1)
+          python3 ../spec/conformance/deal_budget_flow.py http://localhost:8091 || (cat /tmp/api.log; exit 1)
+          python3 ../spec/conformance/booking_deals_flow.py http://localhost:8091 || (cat /tmp/api.log; exit 1)
+          python3 ../spec/conformance/menu_photos_flow.py http://localhost:8091 || (cat /tmp/api.log; exit 1)
+          python3 ../spec/conformance/trust_flow.py http://localhost:8091 || (cat /tmp/api.log; exit 1)
+          python3 ../spec/conformance/arrival_qr_flow.py http://localhost:8091 || (cat /tmp/api.log; exit 1)
+          python3 ../spec/conformance/insights_flow.py http://localhost:8091 || (cat /tmp/api.log; exit 1)
+          python3 ../spec/conformance/offline_audit_flow.py http://localhost:8091 || (cat /tmp/api.log; exit 1)
+
+  webapp:
+    name: Web app (types, lint, build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: webapp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: webapp/package-lock.json }
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npx eslint src
+      - run: npx next build
+
+  e2e:
+    name: Browser tests (India + Australia deployments)
+    needs: [backend, webapp]
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env: { POSTGRES_USER: feast, POSTGRES_PASSWORD: feast, POSTGRES_DB: postgres }
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U feast" --health-interval 5s --health-retries 20
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with: { workspaces: backend/rust }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: webapp/package-lock.json }
+      - name: Build
+        run: |
+          (cd backend/rust && cargo build --locked -p feast-server)
+          (cd webapp && npm ci && npx next build && npx playwright install --with-deps chromium)
+      - name: Start one stack per country
+        run: |
+          PGPASSWORD=feast psql -h 127.0.0.1 -U feast -d postgres -c "create database feast_in" -c "create database feast_au"
+          start() { # country api-port web-port redis-db
+            (cd backend/rust && env FEAST_COUNTRY=$1 FEAST_CONFIG_DIR=../config FEAST__HTTP__PORT=$2 FEAST__HTTP__PROXY_HOPS=1 \
+              FEAST__DATABASE__URL=postgres://feast:feast@127.0.0.1:5432/feast_$1 FEAST__NOTIFICATIONS__DATABASE_URL=postgres://feast:feast@127.0.0.1:5432/feast_$1 \
+              FEAST__BUS__KIND=redis FEAST__BUS__REDIS__URL=redis://127.0.0.1:6379/$4 ./target/debug/feast all > /tmp/api-$1.log 2>&1 &)
+            (cd webapp && FEAST_API_INTERNAL_URL=http://127.0.0.1:$2 FEAST_COUNTRY=$1 npx next start -p $3 > /tmp/web-$1.log 2>&1 &)
+          }
+          start in 8092 3100 1
+          start au 8091 3101 2
+          for i in $(seq 1 90); do curl -sf localhost:8092/readyz && curl -sf localhost:8091/readyz && curl -sf localhost:3100/healthz && curl -sf localhost:3101/healthz && break; sleep 1; done
+      - name: Run browser suite
+        run: cd webapp && node e2e/smoke.mjs /tmp/shots
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e
+          path: |
+            /tmp/shots
+            /tmp/*.log
+
+  images:
+    name: Container images
+    needs: [backend, webapp]
+    runs-on: ubuntu-latest
+    permissions: { contents: read, packages: write }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        if: github.ref == 'refs/heads/main'
+        with: { registry: ghcr.io, username: "${{ github.actor }}", password: "${{ secrets.GITHUB_TOKEN }}" }
+      - name: feast-api (amd64 + arm64)
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: ghcr.io/${{ github.repository_owner }}/feast-api:${{ github.sha }}
+          cache-from: type=gha,scope=api
+          cache-to: type=gha,mode=max,scope=api
+      - name: feast-web (amd64 + arm64)
+        uses: docker/build-push-action@v6
+        with:
+          context: webapp
+          platforms: linux/amd64,linux/arm64
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: ghcr.io/${{ github.repository_owner }}/feast-web:${{ github.sha }}
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web

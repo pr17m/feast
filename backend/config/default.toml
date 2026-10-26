@@ -1,0 +1,175 @@
+# Feast backend configuration — defaults for every setting.
+#
+# Every deployment serves ONE country, chosen when you start it:
+#   feast --country au            or   FEAST_COUNTRY=au feast
+# The country's market (currency, tax, payment provider, licences, cities) comes
+# from config/countries/<cc>.yaml. All countries run the same code/commit.
+#
+# Load order (later wins):
+#   1. config/default.toml            (this file, committed)
+#   2. config/<env>.toml|.yaml        (env = --env flag or FEAST_ENV; default "development")
+#   3. config/countries/<cc>.toml     (optional per-country deployment settings)
+#   4. config/local.toml|.yaml        (git-ignored — put your passwords/secrets here)
+#   5. environment variables          FEAST__<SECTION>__<KEY>, e.g.
+#        FEAST__DATABASE__URL=sqlite://data/feast.db
+#        FEAST__AUTH__JWT_SECRET=...
+#        FEAST__HTTP__CORS_ORIGINS=https://app.feast.in,https://partner.feast.in
+#
+# Run `feast config` to print the effective configuration (secrets masked).
+
+[app]
+env = "development"
+# country = set by --country / FEAST_COUNTRY (time zones come from each city in the country file)
+demo_mode = true                          # demo-only endpoints (data reset)
+initial_partner_password = "feast123"     # password for partner/admin accounts an admin creates (demo)
+seed_on_empty = true                      # load demo data when the database has no restaurants
+seed_history = true                       # include a week of past bookings/payments
+seed_password = ""                        # password for seeded partner/admin accounts; empty = "feast123" (set it when exposed!)
+seed_file = ""                            # demo data JSON; empty = bundled seed/demo.json (filtered to the country)
+
+[http]
+host = "0.0.0.0"
+port = 8080
+cors_origins = ["http://localhost:3000", "http://127.0.0.1:3000"]
+request_timeout_secs = 15
+max_body_bytes = 1_048_576
+max_upload_bytes = 10_485_760             # licence/document uploads (PDF/JPG/PNG/WebP)
+proxy_hops = 0                            # proxies in front that append X-Forwarded-For (web app /v1 proxy or a load balancer: 1; GCP HTTPS LB: 2)
+auth_rate_limit_per_minute = 20           # OTP / sign-in / signup attempts per client IP per minute
+metrics_token = ""                        # Bearer token for GET /metrics (Prometheus); empty = open — keep it internal
+
+[database]
+# Swap the database by changing this URL (and adding that adapter in crates/infra).
+# Empty = sqlite://data/<country>/feast.db (each country deployment has its own database).
+url = ""
+max_connections = 8
+
+[bus]
+kind = "memory"                           # memory (single process) | redis (multi-process, durable)
+memory_capacity = 4096
+consumer_group = "notification-projector"
+
+[bus.redis]
+url = "redis://127.0.0.1:6379"            # redis://:password@host:6379/0
+stream = "feast:events"
+max_len = 100_000                         # approximate stream cap
+block_ms = 5000
+claim_idle_ms = 60_000                    # take over messages stuck on a dead worker after this
+
+[outbox]
+poll_interval_ms = 250
+batch_size = 100
+
+[auth]
+jwt_secret = "change-me-dev-only-secret-0123456789abcdef"   # >= 32 chars; set FEAST__AUTH__JWT_SECRET in prod
+jwt_issuer = "feast"
+token_ttl_secs = 604_800                  # 7 days
+
+[auth.otp]
+provider = "fixed"                        # fixed (dev: same code for all) | log (codes in the log) | twilio (real SMS; required in production)
+fixed_code = "123456"
+show_hint = true                          # return "Demo OTP: 123456" to the client
+ttl_secs = 300
+max_attempts = 5
+
+[auth.otp.twilio]                         # Twilio Verify (https://www.twilio.com/verify) — India + Australia
+account_sid = ""                          # FEAST__AUTH__OTP__TWILIO__ACCOUNT_SID
+auth_token = ""                           # FEAST__AUTH__OTP__TWILIO__AUTH_TOKEN
+service_sid = ""                          # FEAST__AUTH__OTP__TWILIO__SERVICE_SID (VA…)
+
+# Social login. mode: off | demo (fake account picker, no credentials) | live
+# client_ids: every OAuth client that may obtain tokens (web, Android, iOS).
+[auth.oauth.google]
+mode = "demo"
+client_ids = []                           # e.g. ["1234-web.apps.googleusercontent.com", "1234-android.apps.googleusercontent.com"]
+
+[auth.oauth.apple]
+mode = "demo"
+client_ids = []                           # Services ID for web (e.g. "in.feast.web") + iOS bundle id
+redirect_uri = ""                         # Apple JS redirect URI registered for the Services ID
+
+[auth.oauth.facebook]
+mode = "demo"
+client_ids = []                           # [ "<facebook app id>" ]
+client_secret = ""                        # Facebook app secret — keep in local.toml / env
+trust_email = false                       # Facebook has no verified-email flag; true links accounts by email
+
+# Payments. Each market names its provider in config/countries/<cc>.yaml
+# (India: razorpay, Australia: stripe). Enable a provider by adding its section;
+# keep credentials in env vars, e.g. FEAST__PAYMENTS__PROVIDERS__STRIPE__SECRET_KEY.
+# Adding a new provider = one adapter file in crates/infra/src/payments + one line in FACTORIES.
+[payments]
+force_provider = "mock"                   # development: every market uses test payments. Empty in production.
+
+[payments.providers.mock]                 # test payments (no money moves); disable in production
+enabled = true
+allow_simulated_failures = true
+
+# [payments.providers.razorpay]
+# key_id = "rzp_live_xxx"
+# key_secret = ""                         # FEAST__PAYMENTS__PROVIDERS__RAZORPAY__KEY_SECRET
+# webhook_secret = ""                     # FEAST__PAYMENTS__PROVIDERS__RAZORPAY__WEBHOOK_SECRET
+#                                         #   Dashboard → Webhooks → https://<site>/v1/webhooks/payments/razorpay
+#                                         #   events: payment.captured, payment.failed, order.paid
+#
+# [payments.providers.stripe]
+# publishable_key = "pk_live_xxx"
+# secret_key = ""                         # FEAST__PAYMENTS__PROVIDERS__STRIPE__SECRET_KEY
+# webhook_secret = ""                     # FEAST__PAYMENTS__PROVIDERS__STRIPE__WEBHOOK_SECRET (whsec_...)
+#                                         #   Dashboard → Webhooks → https://<site>/v1/webhooks/payments/stripe
+#                                         #   events: payment_intent.succeeded, payment_intent.payment_failed
+
+# Dish photos. Owners upload their own (stored with [storage] under media/, served
+# publicly at /v1/media/…). For dishes without one, Feast can find a matching stock
+# photo: provider = "unsplash" with an Unsplash app's Access Key. Empty = off
+# (dishes without a photo show generated cuisine art).
+[media.stock]
+provider = ""                             # "" | unsplash
+access_key = ""                           # FEAST__MEDIA__STOCK__ACCESS_KEY
+app_name = "feast"                        # your Unsplash app name (attribution links)
+
+# Uploaded files: onboarding documents (licences, private) and dish photos (media/, public). Keep them in the country's region.
+[storage]
+kind = "local"                            # local | s3 (AWS S3, Google Cloud Storage, R2, MinIO) | azure
+local_dir = ""                            # empty = data/<country>/files
+# [storage.s3]
+# endpoint = "https://s3.ap-southeast-2.amazonaws.com"
+# bucket = "feast-au-documents"
+# region = "ap-southeast-2"
+# access_key_id = ""
+# secret_access_key = ""                  # FEAST__STORAGE__S3__SECRET_ACCESS_KEY
+# prefix = ""
+#   Google Cloud Storage: endpoint = "https://storage.googleapis.com", region = "auto",
+#   access_key_id/secret_access_key = an HMAC key of a service account (Cloud Storage → Settings → Interoperability).
+#
+# [storage.azure]
+# account = "feastaudocs"
+# container = "documents"
+# access_key = ""                         # FEAST__STORAGE__AZURE__ACCESS_KEY (or sas_token)
+# sas_token = ""
+# endpoint = ""                           # default https://<account>.blob.core.windows.net
+# prefix = ""
+
+# Visitor country detection for /v1/geo (show the right country / link to its deployment).
+[geo]
+headers = ["cf-ipcountry", "cloudfront-viewer-country", "x-vercel-ip-country", "x-appengine-country", "x-country-code"]
+maxmind_db = ""                           # optional path to GeoLite2-Country.mmdb
+
+# Restaurant listing subscriptions (prices per plan are in the country file).
+[subscriptions]
+trial_days = 30                           # free listing period from approval
+grace_days = 7                            # still listed this long after expiry (PAST_DUE), then hidden
+reminder_interval_secs = 3600             # worker checks for expiry/licence reminders
+
+[notifications]
+mode = "embedded"                         # embedded (in-process) | grpc (separate `feast notification` service)
+database_url = ""                         # empty = sqlite://data/<country>/notifications.db
+max_connections = 4
+grpc_listen = "0.0.0.0:50051"
+grpc_url = "http://127.0.0.1:50051"
+service_token = "dev-internal-token"      # shared secret for service-to-service gRPC
+timeout_ms = 3000
+
+[log]
+level = "info,feast=debug,tower_http=info,sqlx=warn"
+format = "pretty"                         # pretty | json

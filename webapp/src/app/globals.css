@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+/* Feast design tokens. Components use these via Tailwind (bg-brand, text-muted, …). */
+@theme {
+  --color-canvas: #faf7f2;
+  --color-surface: #ffffff;
+  --color-ink: #1c1917;
+  --color-muted: #78716c;
+  --color-faint: #a8a29e;
+  --color-line: #e7e5e4;
+  --color-brand: #0f766e;
+  --color-brand-strong: #115e59;
+  --color-brand-soft: #e6f4f2;
+  --color-deal: #d9480f;
+  --color-deal-soft: #fff1e8;
+  --color-veg: #15803d;
+  --color-nonveg: #b91c1c;
+  --color-rating: #15803d;
+  --color-danger: #b91c1c;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --radius-card: 1rem;
+  --shadow-card: 0 1px 2px rgb(28 25 23 / 0.06), 0 4px 16px rgb(28 25 23 / 0.06);
+  --shadow-sheet: 0 -8px 40px rgb(28 25 23 / 0.18);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: var(--font-sans);
+}
+
+/* Hide scrollbars on horizontal carousels but keep them scrollable. */
+.no-scrollbar {
+  scrollbar-width: none;
+  /* Anchor absolutely-positioned descendants (e.g. sr-only labels) so they can't widen the page. */
+  position: relative;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.animate-sheet-in {
+  animation: sheet-in 180ms ease-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.animate-fade-in {
+  animation: fade-in 150ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sheet-in,
+  .animate-fade-in,
+  .animate-pulse,
+  .animate-spin {
+    animation: none;
+  }
+}

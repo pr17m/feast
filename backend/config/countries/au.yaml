@@ -1,0 +1,129 @@
+# Australia — country config. Selected at deploy time with FEAST_COUNTRY=au
+# (or `feast --country au`). Status: live (launch market).
+#
+# On first start these values create the market and cities in this deployment's
+# database. After that, admins can adjust them in Admin → Markets; run
+# `feast markets sync` to make this file win again. Country code and currency
+# must never change once the deployment has data.
+#
+# Amounts are integers in the currency's minor unit (AUD: 100 = 1.00).
+# Payment credentials are NOT here: set FEAST__PAYMENTS__PROVIDERS__STRIPE__* in the environment.
+country:
+  code: AU
+  defaultCity: syd
+market:
+  countryCode: AU
+  name: Australia
+  currency: AUD
+  currencyDecimals: 2
+  locale: en-AU
+  status: LIVE
+  taxName: GST
+  foodTaxPercent: 10
+  pricesIncludeTax: true
+  platformTaxPercent: 10
+  priceBands:
+  - 6000
+  - 12000
+  - 22000
+  coverChargePerPair: 3000
+  tipPresets:
+  - 0
+  - 500
+  - 1000
+  - 2000
+  planPrices:
+    MONTHLY: 4500
+    QUARTERLY: 12500
+    YEARLY: 45000
+  payments:
+    provider: stripe
+    methods:
+    - CARD
+    - APPLE_PAY
+    - GOOGLE_PAY
+  phone:
+    dialCode: '+61'
+    pattern: ^4\d{8}$
+    example: 412 345 678
+  documents:
+  - id: food_business
+    name: Food business licence / registration
+    issuer: Local council (or state food authority)
+    description: Registration of the food premises with your council or state food authority.
+    required: true
+    numberLabel: Licence / registration number
+    hasExpiry: true
+  - id: fss_certificate
+    name: Food Safety Supervisor certificate
+    issuer: RTO / state food authority
+    description: Certificate for your nominated Food Safety Supervisor (required in NSW, VIC, QLD, ACT).
+    required: true
+    numberLabel: Certificate number
+    hasExpiry: true
+  - id: abn
+    name: ABN registration
+    issuer: Australian Business Register
+    description: Australian Business Number of the business.
+    required: true
+    numberLabel: ABN (11 digits)
+    hasExpiry: false
+  - id: bank_proof
+    name: Bank account proof
+    description: Bank statement or letter showing BSB and account number, for payouts.
+    required: true
+    hasExpiry: false
+  - id: liquor_licence
+    name: Liquor licence
+    issuer: State liquor regulator
+    description: Only if you serve alcohol.
+    required: false
+    numberLabel: Licence number
+    hasExpiry: true
+cities:
+- id: syd
+  name: Sydney
+  countryCode: AU
+  timezone: Australia/Sydney
+  areas:
+  - Circular Quay
+  - Surry Hills
+  - Bondi
+  - Newtown
+  - Parramatta
+  lat: -33.8688
+  lng: 151.2093
+- id: mel
+  name: Melbourne
+  countryCode: AU
+  timezone: Australia/Melbourne
+  areas:
+  - CBD
+  - Fitzroy
+  - St Kilda
+  - Southbank
+  - Richmond
+  lat: -37.8136
+  lng: 144.9631
+- id: bne
+  name: Brisbane
+  countryCode: AU
+  timezone: Australia/Brisbane
+  areas:
+  - Fortitude Valley
+  - South Bank
+  - West End
+  - New Farm
+  lat: -27.4698
+  lng: 153.0251
+- id: per
+  name: Perth
+  countryCode: AU
+  timezone: Australia/Perth
+  areas:
+  - Perth CBD
+  - Northbridge
+  - Fremantle
+  - Subiaco
+  lat: -31.9523
+  lng: 115.8613

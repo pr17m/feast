@@ -1,0 +1,130 @@
+# India — country config. Selected at deploy time with FEAST_COUNTRY=in
+# (or `feast --country in`). Status: live (launch market).
+#
+# On first start these values create the market and cities in this deployment's
+# database. After that, admins can adjust them in Admin → Markets; run
+# `feast markets sync` to make this file win again. Country code and currency
+# must never change once the deployment has data.
+#
+# Amounts are integers in the currency's minor unit (INR: 100 = 1.00).
+# Payment credentials are NOT here: set FEAST__PAYMENTS__PROVIDERS__RAZORPAY__* in the environment.
+country:
+  code: IN
+  defaultCity: blr
+market:
+  countryCode: IN
+  name: India
+  currency: INR
+  currencyDecimals: 2
+  locale: en-IN
+  status: LIVE
+  taxName: GST
+  foodTaxPercent: 5
+  pricesIncludeTax: false
+  platformTaxPercent: 18
+  priceBands:
+  - 90000
+  - 150000
+  - 300000
+  coverChargePerPair: 50000
+  tipPresets:
+  - 0
+  - 2000
+  - 5000
+  - 10000
+  planPrices:
+    MONTHLY: 79900
+    QUARTERLY: 219900
+    YEARLY: 799900
+  payments:
+    provider: razorpay
+    methods:
+    - UPI
+    - CARD
+    - NETBANKING
+    - WALLET
+  phone:
+    dialCode: '+91'
+    pattern: ^[6-9]\d{9}$
+    example: 98765 43210
+  documents:
+  - id: fssai
+    name: FSSAI food licence
+    issuer: Food Safety and Standards Authority of India
+    description: Licence or registration to sell food. Mandatory for every food business.
+    required: true
+    numberLabel: FSSAI licence number (14 digits)
+    hasExpiry: true
+  - id: trade_licence
+    name: Health / trade licence
+    issuer: Municipal corporation
+    description: Local body licence to run an eating house at this address.
+    required: true
+    numberLabel: Licence number
+    hasExpiry: true
+  - id: gst
+    name: GST registration certificate
+    issuer: GSTN
+    description: GST registration (Form REG-06) for invoicing.
+    required: true
+    numberLabel: GSTIN (15 characters)
+    hasExpiry: false
+  - id: shop_establishment
+    name: Shop & Establishment registration
+    issuer: State labour department
+    description: Registration under the state's Shops and Establishments Act.
+    required: true
+    numberLabel: Registration number
+    hasExpiry: false
+  - id: pan
+    name: PAN card
+    issuer: Income Tax Department
+    description: PAN of the business (or proprietor).
+    required: true
+    numberLabel: PAN
+    hasExpiry: false
+  - id: bank_proof
+    name: Bank account proof
+    description: Cancelled cheque or bank letter, for payouts.
+    required: true
+    hasExpiry: false
+  - id: fire_noc
+    name: Fire safety NOC
+    issuer: State fire services
+    description: Required for larger premises (typically 50+ seats).
+    required: false
+    numberLabel: NOC number
+    hasExpiry: true
+  - id: liquor_licence
+    name: Liquor licence
+    issuer: State excise department
+    description: Only if you serve alcohol.
+    required: false
+    numberLabel: Licence number
+    hasExpiry: true
+cities:
+- id: blr
+  name: Bengaluru
+  countryCode: IN
+  timezone: Asia/Kolkata
+  areas:
+  - Indiranagar
+  - Koramangala
+  - HSR Layout
+  - Whitefield
+  - MG Road
+  - Jayanagar
+  lat: 12.9716
+  lng: 77.5946
+- id: bom
+  name: Mumbai
+  countryCode: IN
+  timezone: Asia/Kolkata
+  areas:
+  - Bandra West
+  - Lower Parel
+  - Colaba
+  - Juhu
+  - Andheri West
+  lat: 19.076
+  lng: 72.8777

@@ -1,0 +1,6 @@
+rust/target
+rust/data
+data
+**/*.db
+**/*.db-*
+.git

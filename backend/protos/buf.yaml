@@ -1,0 +1,12 @@
+# Buf workspace for Feast internal gRPC APIs.
+# Lint:     buf lint
+# Breaking: buf breaking --against '.git#branch=main,subdir=backend/protos'
+version: v2
+modules:
+  - path: .
+lint:
+  use:
+    - STANDARD
+breaking:
+  use:
+    - FILE

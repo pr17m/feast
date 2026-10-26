@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /partner
+Disallow: /admin
+Disallow: /t/

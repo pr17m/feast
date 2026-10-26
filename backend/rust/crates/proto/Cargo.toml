@@ -1,0 +1,16 @@
+[package]
+name = "feast-proto"
+description = "Generated gRPC code for Feast internal service-to-service APIs (from /protos)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+tonic.workspace = true
+prost.workspace = true
+
+[build-dependencies]
+tonic-build.workspace = true
+protox.workspace = true

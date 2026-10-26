@@ -1,0 +1,29 @@
+[package]
+name = "feast-api"
+description = "HTTP/JSON gateway (REST + Server-Sent Events) for the web and mobile apps."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+feast-domain.workspace = true
+feast-application.workspace = true
+async-trait.workspace = true
+axum = { workspace = true, features = ["multipart"] }
+tower.workspace = true
+tower-http.workspace = true
+tokio.workspace = true
+tokio-stream.workspace = true
+futures.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tracing.workspace = true
+http = "1"
+
+[dev-dependencies]
+feast-infra.workspace = true
+feast-notification.workspace = true
+chrono-tz.workspace = true
+http-body-util = "0.1"

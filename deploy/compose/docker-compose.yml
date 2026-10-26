@@ -1,0 +1,138 @@
+# Feast — one country on one machine (your laptop, or any VM on AWS/Azure/GCP).
+#
+#   cp au.env.example au.env        # then edit the passwords
+#   docker compose --env-file au.env up -d --build
+#   open http://localhost:8080
+#
+# Share it on the internet (free Cloudflare quick tunnel, no account needed):
+#   docker compose --env-file au.env --profile share up -d
+#   ./share-url.sh au.env           # prints https://<random>.trycloudflare.com
+#
+# Each country is its own stack (own database, Redis, files): run in.env and
+# au.env side by side with different PORTs. Same images for every country.
+
+name: feast-${FEAST_COUNTRY:?set FEAST_COUNTRY in the env file, e.g. au}
+
+x-api: &api
+  image: feast-api:${FEAST_VERSION:-local}   # built by the migrate service below
+  pull_policy: never
+  restart: unless-stopped
+  environment: &api-env
+    FEAST_COUNTRY: ${FEAST_COUNTRY}
+    FEAST_ENV: ${FEAST_ENV:-development}
+    # DATABASE_URL in the env file = use a Postgres you already run; unset = the bundled one.
+    FEAST__DATABASE__URL: ${DATABASE_URL:-postgres://feast:${POSTGRES_PASSWORD:-}@postgres:5432/feast}
+    FEAST__NOTIFICATIONS__DATABASE_URL: ${DATABASE_URL:-postgres://feast:${POSTGRES_PASSWORD:-}@postgres:5432/feast}
+    FEAST__BUS__KIND: redis
+    FEAST__BUS__REDIS__URL: redis://redis:6379/0
+    FEAST__AUTH__JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET (32+ random characters)}
+    FEAST__APP__SEED_PASSWORD: ${SEED_PASSWORD:?set SEED_PASSWORD for the seeded partner/admin accounts}
+    FEAST__APP__INITIAL_PARTNER_PASSWORD: ${SEED_PASSWORD}
+    FEAST__STORAGE__LOCAL_DIR: /app/data/files
+    FEAST__HTTP__PROXY_HOPS: "1"          # requests arrive through the web app's /v1 proxy
+    # Payment keys (empty = test payments). See .env example.
+    FEAST__PAYMENTS__FORCE_PROVIDER: ${PAYMENTS_FORCE_PROVIDER-mock}
+    FEAST__PAYMENTS__PROVIDERS__RAZORPAY__ENABLED: ${RAZORPAY_ENABLED:-false}
+    FEAST__PAYMENTS__PROVIDERS__RAZORPAY__KEY_ID: ${RAZORPAY_KEY_ID:-}
+    FEAST__PAYMENTS__PROVIDERS__RAZORPAY__KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
+    FEAST__PAYMENTS__PROVIDERS__STRIPE__ENABLED: ${STRIPE_ENABLED:-false}
+    FEAST__PAYMENTS__PROVIDERS__STRIPE__PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-}
+    FEAST__PAYMENTS__PROVIDERS__STRIPE__SECRET_KEY: ${STRIPE_SECRET_KEY:-}
+    # Payment webhooks (POST https://<site>/v1/webhooks/payments/<provider>); see README.
+    FEAST__PAYMENTS__PROVIDERS__RAZORPAY__WEBHOOK_SECRET: ${RAZORPAY_WEBHOOK_SECRET:-}
+    FEAST__PAYMENTS__PROVIDERS__STRIPE__WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+    # Stock photos for dishes without an owner photo (empty = generated art). See .env example.
+    FEAST__MEDIA__STOCK__PROVIDER: ${STOCK_PHOTOS_PROVIDER:-}
+    FEAST__MEDIA__STOCK__ACCESS_KEY: ${UNSPLASH_ACCESS_KEY:-}
+  extra_hosts:
+    - "host.docker.internal:host-gateway"   # reach a Postgres running on this machine
+  volumes:
+    - files:/app/data
+  depends_on:
+    postgres: { condition: service_healthy, required: false }
+    redis: { condition: service_started }
+    migrate: { condition: service_completed_successfully }
+
+services:
+  # Bundled database. Started when COMPOSE_PROFILES contains "db" (the default
+  # in the env examples); drop it when DATABASE_URL points at your own Postgres.
+  postgres:
+    image: postgres:16-alpine
+    profiles: ["db"]
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: feast
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-}
+      POSTGRES_DB: feast
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U feast -d feast"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redisdata:/data
+
+  # Applies database migrations, then exits (runs before api/worker start).
+  migrate:
+    image: feast-api:${FEAST_VERSION:-local}
+    build: ../../backend
+    command: ["migrate"]
+    restart: "no"
+    environment: *api-env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      postgres: { condition: service_healthy, required: false }
+
+  # HTTP API + live updates (loads demo data on first start when the database is empty).
+  api:
+    <<: *api
+    command: ["gateway"]
+
+  # Background work: outbox → events → notifications, expiry reminders.
+  worker:
+    <<: *api
+    command: ["worker"]
+
+  # The only public service: the web app, which also forwards /v1/* to the private API.
+  web:
+    image: feast-web:${FEAST_VERSION:-local}
+    build: ../../webapp
+    restart: unless-stopped
+    environment:
+      FEAST_API_INTERNAL_URL: http://api:8080
+      FEAST_COUNTRY: ${FEAST_COUNTRY}
+      # Business details on the policy pages (/legal/*); see webapp/src/lib/legal.ts.
+      FEAST_LEGAL_NAME: ${FEAST_LEGAL_NAME:-}
+      FEAST_LEGAL_ID: ${FEAST_LEGAL_ID:-}
+      FEAST_LEGAL_ADDRESS: ${FEAST_LEGAL_ADDRESS:-}
+      FEAST_SUPPORT_EMAIL: ${FEAST_SUPPORT_EMAIL:-}
+      FEAST_SUPPORT_PHONE: ${FEAST_SUPPORT_PHONE:-}
+      FEAST_PRIVACY_EMAIL: ${FEAST_PRIVACY_EMAIL:-}
+      FEAST_GRIEVANCE_OFFICER: ${FEAST_GRIEVANCE_OFFICER:-}
+      FEAST_GOVERNING_LAW: ${FEAST_GOVERNING_LAW:-}
+      FEAST_LEGAL_UPDATED: ${FEAST_LEGAL_UPDATED:-}
+      FEAST_LEGAL_REVIEWED: ${FEAST_LEGAL_REVIEWED:-false}
+    ports:
+      - "${PORT:-8080}:3000"
+    depends_on: [api]
+
+  # Optional: a public https URL for this stack (docker compose --profile share up -d).
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    profiles: ["share"]
+    restart: unless-stopped
+    command: ["tunnel", "--no-autoupdate", "--url", "http://web:3000"]
+    depends_on: [web]
+
+volumes:
+  pgdata:
+  redisdata:
+  files:

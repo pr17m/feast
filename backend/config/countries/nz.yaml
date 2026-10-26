@@ -1,0 +1,104 @@
+# New Zealand — country config. Selected at deploy time with FEAST_COUNTRY=nz
+# (or `feast --country nz`). Status: coming soon — set market.status: LIVE when launching.
+#
+# On first start these values create the market and cities in this deployment's
+# database. After that, admins can adjust them in Admin → Markets; run
+# `feast markets sync` to make this file win again. Country code and currency
+# must never change once the deployment has data.
+#
+# Amounts are integers in the currency's minor unit (NZD: 100 = 1.00).
+# Payment credentials are NOT here: set FEAST__PAYMENTS__PROVIDERS__STRIPE__* in the environment.
+country:
+  code: NZ
+  defaultCity: akl
+market:
+  countryCode: NZ
+  name: New Zealand
+  currency: NZD
+  currencyDecimals: 2
+  locale: en-NZ
+  status: COMING_SOON
+  taxName: GST
+  foodTaxPercent: 15
+  pricesIncludeTax: true
+  platformTaxPercent: 15
+  priceBands:
+  - 6000
+  - 12000
+  - 22000
+  coverChargePerPair: 3000
+  tipPresets:
+  - 0
+  - 500
+  - 1000
+  - 2000
+  planPrices:
+    MONTHLY: 6500
+    QUARTERLY: 17500
+    YEARLY: 65000
+  payments:
+    provider: stripe
+    methods:
+    - CARD
+    - APPLE_PAY
+    - GOOGLE_PAY
+  phone:
+    dialCode: '+64'
+    pattern: ^2\d{7,9}$
+    example: 21 123 4567
+  documents:
+  - id: food_registration
+    name: Food control plan / national programme registration
+    issuer: Local council or MPI
+    description: Registration under the Food Act 2014.
+    required: true
+    numberLabel: Registration number
+    hasExpiry: true
+  - id: nzbn
+    name: NZBN
+    issuer: NZ Companies Office
+    description: New Zealand Business Number.
+    required: true
+    numberLabel: NZBN (13 digits)
+    hasExpiry: false
+  - id: gst
+    name: GST registration
+    issuer: Inland Revenue
+    description: If GST registered.
+    required: false
+    numberLabel: GST number
+    hasExpiry: false
+  - id: bank_proof
+    name: Bank account proof
+    description: Bank statement or deposit slip, for payouts.
+    required: true
+    hasExpiry: false
+  - id: alcohol_licence
+    name: On-licence (alcohol)
+    issuer: District licensing committee
+    description: Only if you serve alcohol.
+    required: false
+    numberLabel: Licence number
+    hasExpiry: true
+cities:
+- id: akl
+  name: Auckland
+  countryCode: NZ
+  timezone: Pacific/Auckland
+  areas:
+  - CBD
+  - Ponsonby
+  - Newmarket
+  - Parnell
+  lat: -36.8485
+  lng: 174.7633
+- id: wlg
+  name: Wellington
+  countryCode: NZ
+  timezone: Pacific/Auckland
+  areas:
+  - Te Aro
+  - Thorndon
+  - Cuba Street
+  lat: -41.2866
+  lng: 174.7756

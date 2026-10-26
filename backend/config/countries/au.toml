@@ -1,0 +1,8 @@
+# Australia deployment settings (optional layer; loaded when FEAST_COUNTRY=au).
+# Market data (currency, GST, licences, cities) is in au.yaml.
+# Secrets stay in env vars: FEAST__PAYMENTS__PROVIDERS__STRIPE__SECRET_KEY.
+
+[payments.providers.stripe]
+enabled = false                           # set true (FEAST__PAYMENTS__PROVIDERS__STRIPE__ENABLED=true) with real keys
+publishable_key = ""
+secret_key = ""

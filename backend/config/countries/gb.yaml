@@ -1,0 +1,110 @@
+# United Kingdom — country config. Selected at deploy time with FEAST_COUNTRY=gb
+# (or `feast --country gb`). Status: coming soon — set market.status: LIVE when launching.
+#
+# On first start these values create the market and cities in this deployment's
+# database. After that, admins can adjust them in Admin → Markets; run
+# `feast markets sync` to make this file win again. Country code and currency
+# must never change once the deployment has data.
+#
+# Amounts are integers in the currency's minor unit (GBP: 100 = 1.00).
+# Payment credentials are NOT here: set FEAST__PAYMENTS__PROVIDERS__STRIPE__* in the environment.
+country:
+  code: GB
+  defaultCity: lon
+market:
+  countryCode: GB
+  name: United Kingdom
+  currency: GBP
+  currencyDecimals: 2
+  locale: en-GB
+  status: COMING_SOON
+  taxName: VAT
+  foodTaxPercent: 20
+  pricesIncludeTax: true
+  platformTaxPercent: 20
+  priceBands:
+  - 3500
+  - 7000
+  - 14000
+  coverChargePerPair: 2000
+  tipPresets:
+  - 0
+  - 200
+  - 500
+  - 1000
+  planPrices:
+    MONTHLY: 3900
+    QUARTERLY: 10500
+    YEARLY: 39000
+  payments:
+    provider: stripe
+    methods:
+    - CARD
+    - APPLE_PAY
+    - GOOGLE_PAY
+  phone:
+    dialCode: '+44'
+    pattern: ^7\d{9}$
+    example: 7400 123456
+  documents:
+  - id: food_registration
+    name: Food business registration
+    issuer: Local council
+    description: Registration with your local council at least 28 days before trading.
+    required: true
+    numberLabel: Registration reference
+    hasExpiry: false
+  - id: hygiene_rating
+    name: Food hygiene rating
+    issuer: Food Standards Agency
+    description: Your latest FHRS rating certificate.
+    required: true
+    hasExpiry: false
+  - id: company
+    name: Company registration
+    issuer: Companies House
+    description: Certificate of incorporation (or sole-trader proof).
+    required: true
+    numberLabel: Company number
+    hasExpiry: false
+  - id: vat
+    name: VAT registration
+    issuer: HMRC
+    description: If VAT registered.
+    required: false
+    numberLabel: VAT number
+    hasExpiry: false
+  - id: premises_licence
+    name: Premises licence
+    issuer: Local council
+    description: Only if you sell alcohol or late-night refreshment.
+    required: false
+    numberLabel: Licence number
+    hasExpiry: false
+  - id: bank_proof
+    name: Bank account proof
+    description: Bank statement or letter, for payouts.
+    required: true
+    hasExpiry: false
+cities:
+- id: lon
+  name: London
+  countryCode: GB
+  timezone: Europe/London
+  areas:
+  - Soho
+  - Shoreditch
+  - Covent Garden
+  - Notting Hill
+  lat: 51.5072
+  lng: -0.1276
+- id: man
+  name: Manchester
+  countryCode: GB
+  timezone: Europe/London
+  areas:
+  - Northern Quarter
+  - Ancoats
+  - Deansgate
+  lat: 53.4808
+  lng: -2.2426

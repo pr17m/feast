@@ -1,0 +1,8 @@
+# India deployment settings (optional layer; loaded when FEAST_COUNTRY=in).
+# Market data (currency, GST, licences, cities) is in in.yaml.
+# Secrets stay in env vars: FEAST__PAYMENTS__PROVIDERS__RAZORPAY__KEY_SECRET.
+
+[payments.providers.razorpay]
+enabled = false                           # set true (FEAST__PAYMENTS__PROVIDERS__RAZORPAY__ENABLED=true) with real keys
+key_id = ""
+key_secret = ""

@@ -1,0 +1,117 @@
+# Canada — country config. Selected at deploy time with FEAST_COUNTRY=ca
+# (or `feast --country ca`). Status: coming soon — set market.status: LIVE when launching.
+#
+# On first start these values create the market and cities in this deployment's
+# database. After that, admins can adjust them in Admin → Markets; run
+# `feast markets sync` to make this file win again. Country code and currency
+# must never change once the deployment has data.
+#
+# Amounts are integers in the currency's minor unit (CAD: 100 = 1.00).
+# Payment credentials are NOT here: set FEAST__PAYMENTS__PROVIDERS__STRIPE__* in the environment.
+country:
+  code: CA
+  defaultCity: yyz
+market:
+  countryCode: CA
+  name: Canada
+  currency: CAD
+  currencyDecimals: 2
+  locale: en-CA
+  status: COMING_SOON
+  taxName: Sales tax
+  foodTaxPercent: 5
+  pricesIncludeTax: false
+  platformTaxPercent: 5
+  priceBands:
+  - 5000
+  - 10000
+  - 20000
+  coverChargePerPair: 2500
+  tipPresets:
+  - 0
+  - 500
+  - 1000
+  - 2000
+  planPrices:
+    MONTHLY: 5500
+    QUARTERLY: 14900
+    YEARLY: 55000
+  payments:
+    provider: stripe
+    methods:
+    - CARD
+    - APPLE_PAY
+    - GOOGLE_PAY
+  phone:
+    dialCode: '+1'
+    pattern: ^[2-9]\d{9}$
+    example: 416 555 0123
+  documents:
+  - id: food_premises
+    name: Food premises licence / permit
+    issuer: Municipal / provincial public health
+    description: Health permit to operate a food premises.
+    required: true
+    numberLabel: Permit number
+    hasExpiry: true
+  - id: food_handler
+    name: Food handler certificate
+    issuer: Provincially approved provider
+    description: Certified food handler on site.
+    required: true
+    numberLabel: Certificate number
+    hasExpiry: true
+  - id: business_number
+    name: Business Number (BN)
+    issuer: Canada Revenue Agency
+    description: CRA business number / GST-HST registration.
+    required: true
+    numberLabel: BN (9 digits)
+    hasExpiry: false
+  - id: bank_proof
+    name: Void cheque / direct deposit form
+    description: For payouts.
+    required: true
+    hasExpiry: false
+  - id: liquor_licence
+    name: Liquor licence
+    issuer: Provincial liquor authority
+    description: Only if you serve alcohol.
+    required: false
+    numberLabel: Licence number
+    hasExpiry: true
+cities:
+- id: yyz
+  name: Toronto
+  countryCode: CA
+  timezone: America/Toronto
+  foodTaxPercent: 13
+  areas:
+  - Downtown
+  - Yorkville
+  - Queen West
+  - Leslieville
+  lat: 43.6532
+  lng: -79.3832
+- id: yvr
+  name: Vancouver
+  countryCode: CA
+  timezone: America/Vancouver
+  foodTaxPercent: 5
+  areas:
+  - Gastown
+  - Kitsilano
+  - Yaletown
+  lat: 49.2827
+  lng: -123.1207
+- id: yul
+  name: Montréal
+  countryCode: CA
+  timezone: America/Toronto
+  foodTaxPercent: 14.975
+  areas:
+  - Plateau
+  - Old Montréal
+  - Mile End
+  lat: 45.5019
+  lng: -73.5674

@@ -1,0 +1,15 @@
+# Copy to config/local.toml (git-ignored) for machine-specific settings and secrets.
+# [database]
+# url = "sqlite://data/feast.db"
+#
+# [bus]
+# kind = "redis"
+# [bus.redis]
+# url = "redis://:my-redis-password@127.0.0.1:6379/0"
+#
+# [auth]
+# jwt_secret = "a-long-random-string-at-least-32-characters"
+#
+# [auth.oauth.google]
+# mode = "live"
+# client_ids = ["1234-abc.apps.googleusercontent.com"]
